@@ -32,8 +32,12 @@ def login():
 
 		hash_pass=conta[2]
 	if 	sha256_crypt.verify(password,hash_pass):
+		newToken=uuid4()
+		
+		cursor.execute("update Users set token = '{}' where Username='{}'".format(newToken,username))
+		cnx.commit()
 		return jsonify({'username':username,
-			'token': uuid4()
+			'token': newToken
 			}),200
 	else:
 		return "password errada",404
@@ -76,13 +80,23 @@ def register():
 @app.route('/users',methods=['GET'])	
 def getUsers():
 	args = request.args
-	if(args.get("secret") == None or args.get("secret") != "PasswordSecreta"):
-		return "",404
+	
 
 	cnx = mysql.connector.connect(user='root', password='Teste123!',host='51.20.64.58',port='3306',  database='app')
 	cursor=cnx.cursor(dictionary=True)
-	cursor.execute("select Username,Name,LastName,Address,BirthDate,CreatedDate from Users")
+	cursor.execute("select Username,Name,LastName,BirthDate,CreatedDate from Users")
 	conta=cursor.fetchall()
+	return jsonify(conta)
+
+@app.route('/user/<username>',methods=['GET'])	
+def getUser(username):
+	args = request.args
+	print(username)
+	cnx = mysql.connector.connect(user='root', password='Teste123!',host='51.20.64.58',port='3306',  database='app')
+	cursor=cnx.cursor(dictionary=True)
+	params=(username,)
+	cursor.execute("select Username,Name,LastName,BirthDate,CreatedDate from Users where username =%s",params)
+	conta=cursor.fetchone()
 	return jsonify(conta)
 	
 
