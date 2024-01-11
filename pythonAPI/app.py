@@ -75,6 +75,10 @@ def register():
 		return "",200
 @app.route('/users',methods=['GET'])	
 def getUsers():
+	args = request.args
+	if(args.get("secret") == None or args.get("secret") != "PasswordSecreta"):
+		return "",404
+
 	cnx = mysql.connector.connect(user='root', password='Teste123!',host='51.20.64.58',port='3306',  database='app')
 	cursor=cnx.cursor(dictionary=True)
 	cursor.execute("select Username,Name,LastName,Address,BirthDate,CreatedDate from Users")
