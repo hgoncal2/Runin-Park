@@ -10,7 +10,7 @@ app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
 def welcome():
-    return "Hello World!!!"
+    return "Hellu Wurld!!!"
 
 
 @app.route('/login',methods=['POST'])
@@ -24,7 +24,7 @@ def login():
 	cursor=cnx.cursor()
 	cursor.execute("select UserId,username,password from Users where Username=%s",params)
 	conta=cursor.fetchone()
-
+#allelujah
 
 	if conta == None:
 		return "Conta não existe",404
