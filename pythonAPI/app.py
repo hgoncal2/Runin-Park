@@ -113,7 +113,7 @@ def getGroups():
 		name = args.get("name")
 		city=args.get("city")
 		createdDate=datetime.now()
-		cursor.execute("select Name from RunGroups where Name = Trim(Lower('{}'))".format(name))
+		cursor.execute("select Name from RunGroups where LOWER(TRIM(Name)) = LOWER(TRIM('{}'))".format(name))
 		groupName = cursor.fetchone()
 		if groupName is not None:
 			return "groupName_exists",404		
@@ -123,11 +123,7 @@ def getGroups():
 		if userId is None:
 			return "token_not_found", 404
 		else:
-			print(name)
-			print(city)
-			print(userId)
-			ownerId=userId
-			print(ownerId)
+			ownerId=userId['UserId']
 			cursor.execute("insert into RunGroups (Name,City,OwnerId,CreatedDate) values ('{}','{}','{}','{}')".format(name,city,ownerId,createdDate))
 			cnx.commit()
 			return "", 200
