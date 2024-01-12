@@ -4,7 +4,19 @@ import mysql.connector
 from uuid import uuid4
 from passlib.hash import sha256_crypt
 from datetime import datetime,date
+from flask.json.provider import DefaultJSONProvider
+
+class UpdatedJSONProvider(DefaultJSONProvider):
+    def default(self, o):
+        if isinstance(o, datetime):
+            return o.strftime('%d-%m-%Y %H:%M:%S')
+        elif isinstance(o, date):
+            return o.strftime('%d-%m-%Y')
+        return super().default(o)
+
 app = Flask(__name__)
+app.json.ensure_ascii = False
+app.json = UpdatedJSONProvider(app)
 
 
 
@@ -15,7 +27,7 @@ def welcome():
 
 @app.route('/login',methods=['POST'])
 def login():
-	cnx = mysql.connector.connect(user='root', password='Teste123!',host='51.20.64.58',port='3306',  database='app')
+	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
 	args = request.args
 
 	username=args.get("username")
@@ -44,7 +56,7 @@ def login():
 
 @app.route('/register',methods=['POST'])
 def register():
-	cnx = mysql.connector.connect(user='root', password='Teste123!',host='51.20.64.58',port='3306',  database='app')
+	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
 	args = request.args
 	username=args.get("username")
 	password=args.get("password")
@@ -68,6 +80,7 @@ def register():
 
 
 		birthDate=date(int(birthDate[2]),int(birthDate[1]),int(birthDate[0]))
+		birthDate.strftime('%d-%m-%Y')
 		weight=args.get("weight")
 		height=args.get("height")
 		address=args.get("address")
@@ -79,29 +92,28 @@ def register():
 @app.route('/users',methods=['GET'])	
 def getUsers():
 	args = request.args
-	
-
-	cnx = mysql.connector.connect(user='root', password='Teste123!',host='51.20.64.58',port='3306',  database='app')
+	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
 	cursor=cnx.cursor(dictionary=True)
 	cursor.execute("select Username,Name,LastName,BirthDate,CreatedDate from Users")
 	conta=cursor.fetchall()
+	print(conta[1]['BirthDate'])
 	return jsonify(conta)
 
 @app.route('/user/<username>',methods=['GET'])	
 def getUser(username):
 	args = request.args
 	print(username)
-	cnx = mysql.connector.connect(user='root', password='Teste123!',host='51.20.64.58',port='3306',  database='app')
+	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
 	cursor=cnx.cursor(dictionary=True)
-	params=(username,)
-	cursor.execute("select Username,Name,LastName,BirthDate,CreatedDate from Users where username =%s",params)
+	
+	cursor.execute("select Username,Name,LastName,BirthDate,CreatedDate from Users where username = '{}'".format(username))
 	conta=cursor.fetchone()
 	return jsonify(conta)
 	
 
 @app.route('/groups', methods=['GET','POST'])
 def getGroups():
-	cnx = mysql.connector.connect(user='root', password='Teste123!',host='51.20.64.58',port='3306',  database='app')
+	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2',charset="utf8",)
 	cursor=cnx.cursor(dictionary=True)
 	if request.method=='GET':		
 		cursor.execute("select * from RunGroups")
@@ -113,7 +125,8 @@ def getGroups():
 		name = args.get("name")
 		city=args.get("city")
 		createdDate=datetime.now()
-		cursor.execute("select Name from RunGroups where LOWER(TRIM(Name)) = LOWER(TRIM('{}'))".format(name))
+		print(createdDate)
+		cursor.execute("select Name from RunGroups where LOWER(REPLACE(Name,' ','')) = LOWER(REPLACE('{}',' ',''))".format(name))
 		groupName = cursor.fetchone()
 		if groupName is not None:
 			return "groupName_exists",404		
@@ -124,13 +137,27 @@ def getGroups():
 			return "token_not_found", 404
 		else:
 			ownerId=userId['UserId']
-			cursor.execute("insert into RunGroups (Name,City,OwnerId,CreatedDate) values ('{}','{}','{}','{}')".format(name,city,ownerId,createdDate))
+			print(city)
+			cursor.execute("insert into RunGroups (Name,City,OwnerId,CreatedDate) values ('{}','{}','{}','{}')".format(name,city,ownerId,createdDate))			
 			cnx.commit()
+			cursor.execute("select GroupId from RunGroups where Name like '{}'".format(name))
+			groupId = cursor.fetchone()['GroupId']
+			cursor.execute("insert into GroupMembers (GroupId,UserId,GroupAdmin) values ('{}','{}','{}')".format(groupId,ownerId,int(True)))
+			cnx.commit()
+
 			return "", 200
 	return "",404
 
 
 #@app.route('/group/<groupId>')
+#def addToGroup(groupId):
+#	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
+#	cursor=cnx.cursor(dictionary=True)
+#	args = request.args
+#	groupId=(groupId)
+#	cursor.execute("select Username,Name,LastName,BirthDate,CreatedDate from Users where username =%s",params)
+#	conta=cursor.fetchone()
+#	return jsonify(conta)
 
 
 
@@ -138,7 +165,7 @@ def getGroups():
 
 @app.route('/posts', methods=['GET'])
 def getPosts():
-	cnx = mysql.connector.connect(user='root', password='Teste123!',host='51.20.64.58',port='3306',  database='app')
+	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
 	cursor=cnx.cursor(dictionary=True)
 	if request.method=='GET':		
 		cursor.execute("select * from Posts")
