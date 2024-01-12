@@ -24,7 +24,6 @@ def login():
 	cursor=cnx.cursor()
 	cursor.execute("select UserId,username,password from Users where Username=%s",params)
 	conta=cursor.fetchone()
-#allelujah
 
 	if conta == None:
 		return "Conta não existe",404
@@ -100,6 +99,85 @@ def getUser(username):
 	return jsonify(conta)
 	
 
+@app.route('/groups', methods=['GET','POST'])
+def getGroups():
+	cnx = mysql.connector.connect(user='root', password='Teste123!',host='51.20.64.58',port='3306',  database='app')
+	cursor=cnx.cursor(dictionary=True)
+	if request.method=='GET':		
+		cursor.execute("select * from RunGroups")
+		posts=cursor.fetchall()
+		return jsonify(posts)
+
+	if request.method=='POST':
+		args = request.args
+		name = args.get("name")
+		city=args.get("city")
+		createdDate=datetime.now()
+		cursor.execute("select Name from RunGroups where Name = Trim(Lower('{}'))".format(name))
+		groupName = cursor.fetchone()
+		if groupName is not None:
+			return "groupName_exists",404		
+		token = request.headers.get("auth")
+		cursor.execute("select UserId from Users where Token = '{}'".format(token))
+		userId = cursor.fetchone()
+		if userId is None:
+			return "token_not_found", 404
+		else:
+			print(name)
+			print(city)
+			print(userId)
+			ownerId=userId
+			print(ownerId)
+			cursor.execute("insert into RunGroups (Name,City,OwnerId,CreatedDate) values ('{}','{}','{}','{}')".format(name,city,ownerId,createdDate))
+			cnx.commit()
+			return "", 200
+	return "",404
+
+
+#@app.route('/group/<groupId>')
+
+
+
+
+
+@app.route('/posts', methods=['GET'])
+def getPosts():
+	cnx = mysql.connector.connect(user='root', password='Teste123!',host='51.20.64.58',port='3306',  database='app')
+	cursor=cnx.cursor(dictionary=True)
+	if request.method=='GET':		
+		cursor.execute("select * from Posts")
+		posts=cursor.fetchall()
+		return jsonify(posts)	
+
+	if request.method=='POST':
+		args = request.args
+		text = args.get("text")
+		createdDate=datetime.now()
+		userId = args.get("userID")
+		groupId = args.get("groupID")
+		photoId = args.get("photoid")
+		cursor.execute("select * from GroupMembers where userid = {} and groupid = {}".format(userId, groupId))
+		query = cursor.fetchone()
+		if query.rowcount == 0:
+			return "",404
+		else:
+			cursor.execute("select Token from Users where UserId = {}".format(userId))
+			token = cursor.fetchone()
+			if request.headers.get("auth") == token:
+				cursor.execute("insert into Posts (Text,CreatedDate,UserId,GroupId,PhotoId) values ('{}','{}','{}','{}','{}')"
+				.format(text,createdDate,userId,groupId,photoId))
+				cnx.commit()
+				return "", 200
+			else:
+				return "", 502
+
+
+
+
+
+#@app.route('/group/<groupId>/posts', methods=['GET','POST'])
+
+#@app.route('/user/posts')
 
 
 
