@@ -108,7 +108,7 @@ def getUsers(username=None):
 	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2',charset="utf8")
 	cursor=cnx.cursor(dictionary=True)
 	if(username is None):
-		cursor.execute("select Username,Name,LastName,BirthDate,CreatedDate,Weight,Height,Address from Users")
+		cursor.execute("select UserId,Username,Name,LastName,BirthDate,CreatedDate,Weight,Height,Address from Users")
 		conta=cursor.fetchall()
 		cursor.close()
 		cnx.close()
@@ -249,7 +249,7 @@ def getGroupMembers(groupId):
 
 
 
-@app.route('/posts', methods=['GET'])
+@app.route('/posts', methods=['GET','POST'])
 def getPosts():
 	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
 	cursor=cnx.cursor(dictionary=True)
