@@ -90,27 +90,45 @@ def register():
 		cursor.execute("insert into Users (Username,Password,Name,LastName,BirthDate,CreatedDate,Token,Admin) values ('{}','{}','{}','{}','{}','{}','{}','{}')".format(username,password,name,lastName,birthDate,createdDate,token,int(admin)))
 		cnx.commit()
 		return "",200
-@app.route('/users',methods=['GET'])	
-def getUsers():
+
+@app.route('/users',methods=['GET'])
+@app.route('/users/<username>',methods=['GET','PUT'])
+def getUsers(username=None):
 	args = request.args
 	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2',charset="utf8")
 	cursor=cnx.cursor(dictionary=True)
-	cursor.execute("select Username,Name,LastName,BirthDate,CreatedDate from Users")
-	conta=cursor.fetchall()
-	print(conta[1]['BirthDate'])
-	return jsonify(conta)
+	if(username is None):
+		cursor.execute("select Username,Name,LastName,BirthDate,CreatedDate,Weight,Height,Address from Users")
+		conta=cursor.fetchall()
+		
+		return jsonify(conta)
+	else:
+		if(request.method=="GET"):
+			cursor.execute("select Username,Name,LastName,BirthDate,CreatedDate,Weight,Height,Address from Users where username = '{}'".format(username))
+			conta=cursor.fetchone()
+			return jsonify(conta)
+		if(request.method=="PUT"):
+			token = request.headers.get("auth")
+			cursor.execute("select Token from Users where username = '{}'".format(username))
+			token2=cursor.fetchone()['Token']
+			
+			if(token == token2):
+				str=""
+				for i in request.args:
+					str+="{} = '{}'".format(i.capitalize(),request.args.get(i))
+					if(i != list(request.args)[-1]):
+						str+=","
+				cursor.execute("update Users set {} where username = '{}'".format(str,username))
+				cnx.commit()
 
-@app.route('/user/<username>',methods=['GET'])	
-def getUser(username):
-	args = request.args
-	print(username)
-	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
-	cursor=cnx.cursor(dictionary=True)
-	
-	cursor.execute("select Username,Name,LastName,BirthDate,CreatedDate from Users where username = '{}'".format(username))
-	conta=cursor.fetchone()
-	return jsonify(conta)
-	
+				return "",202
+			else:
+				print(request.args)
+				return "",404
+					
+
+
+
 
 @app.route('/groups', methods=['GET','POST'])
 def getGroups():
