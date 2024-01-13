@@ -1,4 +1,4 @@
-from flask import Flask,request,redirect,url_for
+from flask import Flask,request,redirect,url_for,json
 from flask import jsonify
 import mysql.connector
 from uuid import uuid4
@@ -17,6 +17,7 @@ class UpdatedJSONProvider(DefaultJSONProvider):
 app = Flask(__name__)
 app.json.ensure_ascii = False
 app.json = UpdatedJSONProvider(app)
+json.provider.DefaultJSONProvider.ensure_ascii = False
 
 
 
@@ -92,7 +93,7 @@ def register():
 @app.route('/users',methods=['GET'])	
 def getUsers():
 	args = request.args
-	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
+	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2',charset="utf8")
 	cursor=cnx.cursor(dictionary=True)
 	cursor.execute("select Username,Name,LastName,BirthDate,CreatedDate from Users")
 	conta=cursor.fetchall()
@@ -113,7 +114,7 @@ def getUser(username):
 
 @app.route('/groups', methods=['GET','POST'])
 def getGroups():
-	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2',charset="utf8",)
+	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2',charset="utf8")
 	cursor=cnx.cursor(dictionary=True)
 	if request.method=='GET':		
 		cursor.execute("select * from RunGroups")
