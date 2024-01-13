@@ -41,7 +41,7 @@ def login():
 	if conta == None:
 		cursor.close()
 		cnx.close()
-		return "Conta não existe",404
+		return "Conta não existe",403
 	else:
 
 		hash_pass=conta[2]
