@@ -58,7 +58,7 @@ def login():
 	else:
 		cursor.close()
 		cnx.close()
-		return "password errada",404
+		return "password errada",403
 
 
 @app.route('/register',methods=['POST'])
