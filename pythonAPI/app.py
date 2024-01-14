@@ -41,7 +41,7 @@ def login():
 	if conta == None:
 		cursor.close()
 		cnx.close()
-		return "Conta não existe",404
+		return "Conta não existe",403
 	else:
 
 		hash_pass=conta[2]
@@ -58,7 +58,7 @@ def login():
 	else:
 		cursor.close()
 		cnx.close()
-		return "password errada",404
+		return "password errada",403
 
 
 @app.route('/register',methods=['POST'])
@@ -108,14 +108,14 @@ def getUsers(username=None):
 	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2',charset="utf8")
 	cursor=cnx.cursor(dictionary=True)
 	if(username is None):
-		cursor.execute("select Username,Name,LastName,BirthDate,CreatedDate,Weight,Height,Address from Users")
+		cursor.execute("select UserId,Username,Name,LastName,BirthDate,CreatedDate,Weight,Height,Address from Users")
 		conta=cursor.fetchall()
 		cursor.close()
 		cnx.close()
 		return jsonify(conta)
 	else:
 		if(request.method=="GET"):
-			cursor.execute("select Username,Name,LastName,BirthDate,CreatedDate,Weight,Height,Address from Users where username = '{}'".format(username))
+			cursor.execute("select UserId,Username,Name,LastName,BirthDate,CreatedDate,Weight,Height,Address from Users where username = '{}'".format(username))
 			conta=cursor.fetchone()
 			cursor.close()
 			cnx.close()
@@ -277,7 +277,7 @@ def getGroupMembers(groupId):
 
 
 
-@app.route('/posts', methods=['GET'])
+@app.route('/posts', methods=['GET','POST'])
 def getPosts():
 	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
 	cursor=cnx.cursor(dictionary=True)
