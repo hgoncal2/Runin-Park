@@ -144,6 +144,34 @@ def getUsers(username=None):
 					
 
 
+@app.route('/database', methods=['GET'])
+def getDB():
+	
+	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2',charset="utf8")
+	cursor=cnx.cursor()
+	cursor.execute("show tables")
+	reply=cursor.fetchall()
+	cursor.close()
+	print(reply)
+	tables=[]
+	for i in list(reply):
+		tables.append(str(i).split("'")[1])
+	describe=[]
+	cursor=cnx.cursor(dictionary=True)
+	for t in tables:
+		
+		
+		cursor.execute("describe  {};".format(t))
+		reply=cursor.fetchall()
+		describe.append(reply)
+	
+
+	cursor.close()
+	cnx.close()
+	star=""
+	
+	print()
+	return jsonify(list(map(str,describe)))
 
 
 @app.route('/groups', methods=['GET','POST'])
