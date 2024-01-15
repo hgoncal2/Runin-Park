@@ -23,7 +23,7 @@ json.provider.DefaultJSONProvider.ensure_ascii = False
 
 @app.route('/', methods=['GET', 'POST'])
 def welcome():
-    return "Hellu Wurld!!!"
+    return "Hello World!!!"
 
 
 @app.route('/login',methods=['POST'])
@@ -224,7 +224,7 @@ def getGroups(groupId=None):
 		return "",404
 	else:
 		if(request.method=="GET"):
-			cursor.execute("select Name, City, OwnerId, CreatedDate from RunGroups where Name ='{}'".format(groupId))
+			cursor.execute("select * from RunGroups where GroupId ='{}'".format(groupId))
 			group=cursor.fetchone()
 			cursor.close()
 			cnx.close()
@@ -235,12 +235,12 @@ def getGroups(groupId=None):
 
 		if(request.method=="DELETE"):
 			token = request.headers.get("auth")
-			cursor.execute("select OwnerId from RunGroups where Name = '{}'".format(groupId))
+			cursor.execute("select OwnerId from RunGroups where GroupId = '{}'".format(groupId))
 			owner=cursor.fetchone()['OwnerId']
 			cursor.execute("select Token from Users where UserId = '{}'".format(owner))
 			token2=cursor.fetchone()['Token']			
 			if(token == token2):
-				cursor.execute("delete from RunGroups where Name ='{}'".format(groupId))
+				cursor.execute("delete from RunGroups where GroupId ='{}'".format(groupId))
 				cnx.commit()
 				cursor.close()
 				cnx.close()
@@ -253,7 +253,7 @@ def getGroups(groupId=None):
 			return "",404
 
 @app.route('/groups/<groupId>/members', methods=['GET','POST'])
-def getGroupMembers(groupId):
+def getGroupMembers(groupId=None):
 	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
 	cursor=cnx.cursor(dictionary=True)	
 	if request.method=='GET':	
@@ -277,59 +277,80 @@ def getGroupMembers(groupId):
 
 
 
-@app.route('/posts', methods=['GET','POST'])
-def getPosts():
+
+@app.route('/groups/<groupId>/posts', methods=['GET','POST'])
+@app.route('/posts', methods=['GET'])
+def getPosts(groupId=None):
 	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
 	cursor=cnx.cursor(dictionary=True)
-	if request.method=='GET':		
-		cursor.execute("select * from Posts")
-		posts=cursor.fetchall()
-		cursor.close()
-		cnx.close()
-		return jsonify(posts)	
-
-	if request.method=='POST':
-		args = request.args
-		text = args.get("text")
-		createdDate=datetime.now()
-		userId = args.get("userID")
-		groupId = args.get("groupID")
-		photoId = args.get("photoid")
-		cursor.execute("select * from GroupMembers where userid = {} and groupid = {}".format(userId, groupId))
-		query = cursor.fetchone()
-		if query.rowcount == 0:
+	if(groupId is None):
+		if request.method=='GET':		
+			cursor.execute("select * from Posts")
+			posts=cursor.fetchall()
 			cursor.close()
 			cnx.close()
-			return "",404
-		else:
-			cursor.execute("select Token from Users where UserId = {}".format(userId))
-			token = cursor.fetchone()
-			if request.headers.get("auth") == token:
-				cursor.execute("insert into Posts (Text,CreatedDate,UserId,GroupId,PhotoId) values ('{}','{}','{}','{}','{}')"
-				.format(text,createdDate,userId,groupId,photoId))
-				cnx.commit()
+			return jsonify(posts)			
+	else:
+		if request.method=='GET':
+			cursor.execute("select * from Posts where GroupId='{}'".format(groupId))
+			posts=cursor.fetchall()
+			cursor.close()
+			cnx.close()
+			return jsonify(posts)
+		if request.method=='POST':
+			args = request.args
+			token = request.headers.get("auth")
+			cursor.execute("select UserId from Users where Token = '{}'".format(token))
+			userId = cursor.fetchone()['UserId']
+			if userId is None:
 				cursor.close()
 				cnx.close()
-				return "", 200
+				return "token_not_found", 404
 			else:
-				cursor.close()
-				cnx.close()
-				return "", 502
+				text = args.get("text")
+				createdDate=datetime.now()
+				photoId = args.get("photoid")
+				print(userId)
+				cursor.execute("select * from GroupMembers where userid = '{}' and groupid = '{}'".format(userId, groupId))
+				query = cursor.fetchall()
+				if len(query) == 0:
+					cursor.close()
+					cnx.close()
+					return "member_not_in_group",404
+				else:
+					cursor.execute("select Token from Users where UserId = '{}'".format(userId))
+					token = cursor.fetchone()
+					if request.headers.get("auth") == token:
+						cursor.execute("insert into Posts (Text,CreatedDate,UserId,GroupId,PhotoId) values ('{}','{}','{}','{}','{}')"
+						.format(text,createdDate,userId,groupId,photoId))
+						cnx.commit()
+						cursor.close()
+						cnx.close()
+						return "", 200
+					else:
+						cursor.close()
+						cnx.close()
+						return "", 502
+
+
+
+
+#@app.route('/groups/<groupId>/posts/<postId>', methods=['PUT','DELETE'])
 
 #@app.route('/user/posts')
 
 #@app.route('/group/<groupId>/posts', methods=['GET','POST'])
 
 
-#@app.route('/GroupMembers', methods=['GET'])
-#def getGroupMembers():
-#	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
-#	cursor=cnx.cursor(dictionary=True)			
-#	cursor.execute("select * from GroupMembers")
-#	groupMembers=cursor.fetchall()
-#	cursor.close()
-#	cnx.close()
-#	return jsonify(groupMembers)	
+@app.route('/GroupMembers', methods=['GET'])
+def getGroupsMembers():
+	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
+	cursor=cnx.cursor(dictionary=True)
+	cursor.execute("select * from GroupMembers")
+	groupMembers=cursor.fetchall()
+	cursor.close()
+	cnx.close()
+	return jsonify(groupMembers)
 
 
 
