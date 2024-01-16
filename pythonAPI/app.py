@@ -33,24 +33,19 @@ def welcome():
 def login():
 	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
 	args = request.args
-
 	username=args.get("username")
 	password=args.get("password")
-	params=(username,)
 	cursor=cnx.cursor()
-	cursor.execute("select UserId,username,password from Users where Username=%s",params)
+	cursor.execute("select UserId,username,password from Users where Username='{}'".format(username))
 	conta=cursor.fetchone()
-
 	if conta == None:
 		cursor.close()
 		cnx.close()
 		return "Conta não existe",403
 	else:
-
 		hash_pass=conta[2]
 	if 	sha256_crypt.verify(password,hash_pass):
-		newToken=uuid4()
-		
+		newToken=uuid4()		
 		cursor.execute("update Users set token = '{}' where Username='{}'".format(newToken,username))
 		cnx.commit()
 		cursor.close()
@@ -70,71 +65,92 @@ def register():
 	args = request.args
 	username=args.get("username")
 	password=args.get("password")
-	params=(username,)
+	#birthDate=args.get("birthDate")
 	cursor=cnx.cursor()
-	cursor.execute("select Username from Users where Username=%s",params)
+	cursor.execute("select Username from Users where Username='{}'".format(username))
 	conta=cursor.fetchone()
 	if conta != None:
 		cursor.close()
 		cnx.close()
-		return "Account already exists",400
+		return jsonify(Code="409",Description="Account already exists")
 	else:
 		if args.get("secretAdmin") == "PasswordSecreta":
 			admin=True
 		else:
 			admin=False
-
-
 		password=sha256_crypt.hash(args.get("password"))
-		name=args.get("name")
-		lastName=args.get("lastName")
-		birthDate=args.get("birthDate").split("-")
-
-
-		birthDate=date(int(birthDate[2]),int(birthDate[1]),int(birthDate[0]))
-		birthDate.strftime('%d-%m-%Y')
-		weight=args.get("weight")
-		height=args.get("height")
-		address=args.get("address")
+		#name=args.get("name")
+		#lastName=args.get("lastName")
+		#if birthDate is not None:
+		#	birthDate.split("-")
+		#	birthDate=date(int(birthDate[2]),int(birthDate[1]),int(birthDate[0]))
+		#	birthDate.strftime('%d-%m-%Y')
+		#else:
+		#	birthDate = 'NULL'
+		#weight=args.get("weight")
+		#height=args.get("height")
+		#address=args.get("address")
 		createdDate=datetime.now()
 		token= uuid4()
-		cursor.execute("insert into Users (Username,Password,Name,LastName,BirthDate,CreatedDate,Token,Admin) values ('{}','{}','{}','{}','{}','{}','{}','{}')".format(username,password,name,lastName,birthDate,createdDate,token,int(admin)))
+		str=""
+		for i in request.args:
+			str+="{}".format(i.capitalize())
+			if(i != list(request.args)[-1]):
+				str+=","
+		strValues=""
+		for i in request.args:
+			print(i)
+			if i != 'birthDate':
+				strValues+="'{}'".format(request.args.get(i))
+			else:
+				print('a')
+				birthDate="'{}'".format(request.args.get(i).split("-"))
+				#"'{}'".format(request.args.get(i).split("-"))
+				print('b')
+				birthDate=date(int(birthDate[2]),int(birthDate[1]),int(birthDate[0]))
+				print('c')
+				birthDate.strftime('%d-%m-%Y')
+				print('d')
+				strValues+=birthDate
+			if(i != list(request.args)[-1]):
+				strValues+=","
+		cursor.execute("insert into Users ({}) values ({})".format(str,strValues))
+		#cursor.execute("insert into Users (Username,Password,Name,LastName,BirthDate,CreatedDate,Token,Admin,Weight,Height,Address) values ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')".format(username,password,name,lastName,birthDate,createdDate,token,int(admin),weight,height,address))
 		cnx.commit()
 		cursor.close()
 		cnx.close()
-		return "",200
+		return jsonify(Code="200",Description="Conta criada com sucesso")
 
 @app.route('/users',methods=['GET'])
-@app.route('/users/<username>',methods=['GET','PUT'])
-def getUsers(username=None):
+@app.route('/users/<userId>',methods=['GET','PUT'])
+def getUsers(userId=None):
 	args = request.args
 	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2',charset="utf8")
 	cursor=cnx.cursor(dictionary=True)
-	if(username is None):
-		cursor.execute("select UserId,Username,Name,LastName,BirthDate,CreatedDate,Weight,Height,Address from Users")
+	if(userId is None):
+		cursor.execute("select UserId,Username,Name,LastName,BirthDate,CreatedDate,Weight,Height,Address,Token from Users")
 		conta=cursor.fetchall()
 		cursor.close()
 		cnx.close()
 		return jsonify(conta)
 	else:
 		if(request.method=="GET"):
-			cursor.execute("select UserId,Username,Name,LastName,BirthDate,CreatedDate,Weight,Height,Address from Users where username = '{}'".format(username))
+			cursor.execute("select UserId,Username,Name,LastName,BirthDate,CreatedDate,Weight,Height,Address,Token from Users where userId = '{}'".format(userId))
 			conta=cursor.fetchone()
 			cursor.close()
 			cnx.close()
 			return jsonify(conta)
 		if(request.method=="PUT"):
 			token = request.headers.get("auth")
-			cursor.execute("select Token from Users where username = '{}'".format(username))
-			token2=cursor.fetchone()['Token']
-			
+			cursor.execute("select Token from Users where userId = '{}'".format(userId))
+			token2=cursor.fetchone()['Token']			
 			if(token == token2):
 				str=""
 				for i in request.args:
 					str+="{} = '{}'".format(i.capitalize(),request.args.get(i))
 					if(i != list(request.args)[-1]):
 						str+=","
-				cursor.execute("update Users set {} where username = '{}'".format(str,username))
+				cursor.execute("update Users set {} where userId = '{}'".format(str,userId))
 				cnx.commit()
 				cursor.close()
 				cnx.close()
@@ -149,7 +165,7 @@ def getUsers(username=None):
 def getUserGroups(userId=None):	
 	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2',charset="utf8")
 	cursor=cnx.cursor()
-	cursor.execute("select Name from RunGroups g inner join  GroupMembers gm on g.GroupId=gm.GroupId where gm.userId='{}'".format(userId))
+	cursor.execute("select Name,g.GroupId from RunGroups g inner join  GroupMembers gm on g.GroupId=gm.GroupId where gm.userId='{}'".format(userId))
 	groups=cursor.fetchall()
 	cursor.close()
 	cnx.close()
@@ -251,7 +267,25 @@ def getGroups(groupId=None):
 			return jsonify(group)
 
 		if(request.method=="PUT"):
-			return
+			token = request.headers.get("auth")
+			cursor.execute("select Token from Users u inner join RunGroups g on u.UserId=g.OwnerId where g.groupId = '{}'".format(groupId))
+			token2=cursor.fetchone()['Token']			
+			if(token == token2):
+				str=""
+				for i in request.args:
+					str+="{} = '{}'".format(i.capitalize(),request.args.get(i))
+					if(i != list(request.args)[-1]):
+						str+=","
+				cursor.execute("update RunGroups set {} where groupId = '{}'".format(str,groupId))
+				cnx.commit()
+				cursor.close()
+				cnx.close()
+				return "",202
+			else:
+				print(request.args)
+				cursor.close()
+				cnx.close()
+				return "",404
 
 		if(request.method=="DELETE"):
 			token = request.headers.get("auth")
@@ -368,12 +402,24 @@ def delPosts(groupId=None,postId=None):
 			return "no_permission",404
 	if request.method=='PUT':
 		return 1
-
-
-
-
-
-#@app.route('/group/<groupId>/posts', methods=['GET','POST'])
+	
+@app.route('/users/<userId>/posts/<postId>', methods=['PUT','DELETE'])
+def delUserPosts(userId=None,postId=None):
+	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
+	cursor=cnx.cursor(dictionary=True)
+	token = request.headers.get("auth")
+	if request.method=='DELETE':
+		cursor.execute("select Token from Users where UserId = '{}'".format(userId))
+		if request.headers.get("auth") == token:
+			cursor.execute("delete from Posts where PostId='{}'".format(postId))			
+			cnx.commit()
+			cursor.close()
+			cnx.close()
+			return "", 200
+		else:
+			return "no_permission",404
+	if request.method=='PUT':
+		return 1
 
 
 @app.route('/groupMembers', methods=['GET'])
