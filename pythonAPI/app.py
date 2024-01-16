@@ -80,9 +80,10 @@ def register():
 		password=sha256_crypt.hash(args.get("password"))
 		name=args.get("name")
 		lastName=args.get("lastName")
-		birthDate=args.get("birthDate").split("-")
-		birthDate=date(int(birthDate[2]),int(birthDate[1]),int(birthDate[0]))
-		birthDate.strftime('%d-%m-%Y')
+		if birthDate is not None:
+			birthDate=args.get("birthDate").split("-")
+			birthDate=date(int(birthDate[2]),int(birthDate[1]),int(birthDate[0]))
+			birthDate.strftime('%d-%m-%Y')
 		weight=args.get("weight")
 		height=args.get("height")
 		address=args.get("address")
