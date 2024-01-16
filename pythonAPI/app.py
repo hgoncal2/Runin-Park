@@ -385,13 +385,12 @@ def getGroupsMembers():
 	cnx.close()
 	return jsonify(groupMembers)
 
-@app.route('/photos/<base64>', methods=['POST'])
+@app.route('/photos', methods=['POST'])
 def uploadPhoto(base64):
 	with open("imageToSave.png","wb") as fh:
 		fh.write(base64.decodebytes(base64))
 		fh.close()
 	path = os.path.realpath('.')
-
 	return jsonify(Path=path+'/imageToSave.png')
 
 
