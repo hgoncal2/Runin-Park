@@ -1,17 +1,22 @@
 package com.example.myapplication.ui
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout.LayoutParams
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.R
 import com.example.myapplication.databinding.FragmentGroupsBinding
 import com.example.myapplication.model.Group
+import com.example.myapplication.model.User
 import com.example.myapplication.retrofit.RetrofitInit
 import com.example.myapplication.ui.adapter.GroupListAdapter
+import com.example.myapplication.viewModel.UserViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import retrofit2.Call
 import retrofit2.Callback
@@ -30,21 +35,23 @@ private const val ARG_PARAM2 = "param2"
 class GroupsFragment : Fragment() {
    private lateinit var groupsBinding: FragmentGroupsBinding
    private  var groups : List<Group>? = null
+    private val viewModel: UserViewModel by activityViewModels()
+    private  var user: User? = null
+
+    @SuppressLint("SuspiciousIndentation")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         groupsBinding= FragmentGroupsBinding.inflate(inflater,container,false)
 
             loadGroups()
-
-
-
-
-
-
-
-
-
-
+            user = viewModel.user.value
+        if(user != null){
+            groupsBinding.user.setText(user?.name)
+            groupsBinding.user.visibility= View.VISIBLE
+            groupsBinding.groupsViewList.layoutParams.height = LayoutParams.WRAP_CONTENT
+        }else{
+            groupsBinding.groupsViewList.layoutParams.height = LayoutParams.MATCH_PARENT
+        }
 
         return groupsBinding.root
     }
