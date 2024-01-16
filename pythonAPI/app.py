@@ -100,7 +100,7 @@ def register():
 		strValues=""
 		for i in request.args:
 			print(i)
-			if i != 'birthDate':
+			if 'birthDate' not in request.args:
 				strValues+="'{}'".format(request.args.get(i))
 			else:
 				print('a')
@@ -114,7 +114,7 @@ def register():
 				strValues+=birthDate
 			if(i != list(request.args)[-1]):
 				strValues+=","
-		cursor.execute("insert into Users ({}) values ({})".format(str,strValues))
+		cursor.execute("insert into Users (Admin,CreatedDate,{}) values (False,'{}',{})".format(str,createdDate,strValues))
 		#cursor.execute("insert into Users (Username,Password,Name,LastName,BirthDate,CreatedDate,Token,Admin,Weight,Height,Address) values ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')".format(username,password,name,lastName,birthDate,createdDate,token,int(admin),weight,height,address))
 		cnx.commit()
 		cursor.close()
