@@ -46,6 +46,7 @@
             android:layout_marginTop="4dp"
             android:gravity="center"
             android:text="@string/welcome_to_runin_park"
+
             android:textSize="28sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.476"
@@ -56,7 +57,7 @@
             android:id="@+id/username"
             android:layout_width="212dp"
             android:layout_height="53dp"
-
+            android:textColor="@color/black"
             android:layout_marginTop="96dp"
             android:ems="10"
             android:hint="Username"
@@ -73,6 +74,7 @@
             android:ems="10"
             android:hint="Password"
             android:inputType="textPassword"
+            android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/username" />

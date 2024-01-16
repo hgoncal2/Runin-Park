@@ -20,6 +20,7 @@ data class User(
     val username: String?,
     @SerializedName("Weight")
     var weight: Double?,
+    @SerializedName("Token")
     var token : Token?
 
 )

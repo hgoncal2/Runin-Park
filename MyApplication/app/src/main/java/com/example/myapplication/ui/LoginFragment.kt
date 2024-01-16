@@ -2,11 +2,9 @@ package com.example.myapplication.ui
 
 import android.app.Activity
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +13,9 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.example.myapplication.R
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.example.myapplication.databinding.FragmentLoginBinding
 import com.example.myapplication.model.Photo
 import com.example.myapplication.model.Token
@@ -24,7 +24,6 @@ import com.example.myapplication.retrofit.RetrofitInit
 import com.example.myapplication.viewModel.UserViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.io.IOUtils
-import com.squareup.picasso.Picasso
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Call
@@ -75,13 +74,11 @@ class LoginFragment : Fragment() {
             val pickImg = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
             changeImage.launch(pickImg)
         }
-        if (Build.VERSION.SDK_INT >= 30) {
-            if (!Environment.isExternalStorageManager()) {
-                val getpermission = Intent()
-                getpermission.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
-                startActivity(getpermission)
-            }
+
+        loginBinding.registerAccount.setOnClickListener{
+viewModel.replaceFragment(this,RegisterFragment())
         }
+
         return loginBinding.root
     }
 
@@ -121,7 +118,7 @@ class LoginFragment : Fragment() {
 
 
     override fun onResume() {
-        activity?.findViewById<BottomNavigationView>(R.id.bottomNavView)?.menu?.getItem(0)?.setChecked(true)
+        activity?.findViewById<BottomNavigationView>(com.example.myapplication.R.id.bottomNavView)?.menu?.getItem(0)?.setChecked(true)
 
         super.onResume()
     }
@@ -163,7 +160,12 @@ private fun uploadPhoto(file : File){
                     Toast.makeText(this@LoginFragment.context,"Wrong Username or Password!", Toast.LENGTH_LONG).show()
                 }else{
                     var photo : Photo = response.body()!!
-                    Picasso.with(this@LoginFragment.requireContext()).load(photo.path).into(loginBinding.imageView)
+                    val options: RequestOptions = RequestOptions()
+                        .centerCrop()
+                        .placeholder(com.example.myapplication.R.mipmap.ic_launcher_round)
+                        .error(com.example.myapplication.R.mipmap.ic_launcher_round)
+                    Glide.with(this@LoginFragment.requireContext()).load(photo.path).diskCacheStrategy(
+                        DiskCacheStrategy.NONE).skipMemoryCache(true).apply(options).timeout(6000).into(loginBinding.imageView)
 
                 }
 

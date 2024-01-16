@@ -5,27 +5,29 @@
     android:id="@+id/activityMainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#DACDCD"
+    android:background="#E4E4E4"
     android:clickable="true"
     tools:context=".ui.MainActivity">
 
     <FrameLayout
         android:id="@+id/frame_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="1dp">
+        android:layout_height="fill_parent"
+        android:layout_marginBottom="55dp"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
     </FrameLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavView"
-        android:layout_width="0dp"
-        android:layout_height="55dp"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
         android:background="#FFFFFF"
         app:backgroundTint="#E3DEED"
         app:itemIconTint="@drawable/bottom_nav_item_selector"
-
         app:itemPaddingBottom="10dp"
         app:itemPaddingTop="5dp"
         app:itemRippleColor="#7D3FD3"

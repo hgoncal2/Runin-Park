@@ -1,5 +1,6 @@
 package com.example.myapplication.retrofit.service
 
+import com.example.myapplication.model.APIResult
 import com.example.myapplication.model.Token
 import com.example.myapplication.model.User
 import retrofit2.Call
@@ -16,6 +17,10 @@ interface UserService {
     @GET("users/{username}")
     fun getUser(@Path("username") username:String): Call<User>
 
+@POST("register")
+fun register(@Query("username") username: String?,
+          @Query("password") password: String?
 
 
+): Call<APIResult>
 }
