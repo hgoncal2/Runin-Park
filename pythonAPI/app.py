@@ -138,7 +138,7 @@ def getUsers(userId=None):
 		return jsonify(conta)
 	else:
 		if(request.method=="GET"):
-			cursor.execute("select UserId,Username,Name,LastName,BirthDate,CreatedDate,Weight,Height,Address,Token from Users where userId = '{}'".format(userId))
+			cursor.execute("select UserId,Username,Name,LastName,BirthDate,CreatedDate,Weight,Height,Address from Users where Username = '{}'".format(userId))
 			conta=cursor.fetchone()
 			cursor.close()
 			cnx.close()

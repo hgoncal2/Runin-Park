@@ -211,7 +211,7 @@ private fun uploadPhoto(file : File){
             object : Callback<User> {
                 override fun onFailure(call: Call<User>, t: Throwable) {
                     t.printStackTrace()
-
+                    getUser(username)
                 }
                 override fun onResponse(call: Call<User>, response: Response<User>) {
                     var user = response.body()

@@ -46,9 +46,9 @@ class GroupsFragment : Fragment() {
             loadGroups()
             user = viewModel.user.value
         if(user != null){
-            groupsBinding.user.setText(user?.name)
+            groupsBinding.user.setText(user?.username)
             groupsBinding.user.visibility= View.VISIBLE
-            groupsBinding.groupsViewList.layoutParams.height = LayoutParams.WRAP_CONTENT
+                groupsBinding.groupsViewList.layoutParams.height = LayoutParams.WRAP_CONTENT
         }else{
             groupsBinding.groupsViewList.layoutParams.height = LayoutParams.MATCH_PARENT
         }
