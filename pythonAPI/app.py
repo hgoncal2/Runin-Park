@@ -65,6 +65,7 @@ def register():
 	args = request.args
 	username=args.get("username")
 	password=args.get("password")
+	#birthDate=args.get("birthDate")
 	cursor=cnx.cursor()
 	cursor.execute("select Username from Users where Username='{}'".format(username))
 	conta=cursor.fetchone()
@@ -78,18 +79,43 @@ def register():
 		else:
 			admin=False
 		password=sha256_crypt.hash(args.get("password"))
-		name=args.get("name")
-		lastName=args.get("lastName")
-		if birthDate is not None:
-			birthDate=args.get("birthDate").split("-")
-			birthDate=date(int(birthDate[2]),int(birthDate[1]),int(birthDate[0]))
-			birthDate.strftime('%d-%m-%Y')
-		weight=args.get("weight")
-		height=args.get("height")
-		address=args.get("address")
+		#name=args.get("name")
+		#lastName=args.get("lastName")
+		#if birthDate is not None:
+		#	birthDate.split("-")
+		#	birthDate=date(int(birthDate[2]),int(birthDate[1]),int(birthDate[0]))
+		#	birthDate.strftime('%d-%m-%Y')
+		#else:
+		#	birthDate = 'NULL'
+		#weight=args.get("weight")
+		#height=args.get("height")
+		#address=args.get("address")
 		createdDate=datetime.now()
 		token= uuid4()
-		cursor.execute("insert into Users (Username,Password,Name,LastName,BirthDate,CreatedDate,Token,Admin,Weight,Height,Address) values ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')".format(username,password,name,lastName,birthDate,createdDate,token,int(admin),weight,height,address))
+		str=""
+		for i in request.args:
+			str+="{}".format(i.capitalize())
+			if(i != list(request.args)[-1]):
+				str+=","
+		strValues=""
+		for i in request.args:
+			print(i)
+			if i != 'birthDate':
+				strValues+="'{}'".format(request.args.get(i))
+			else:
+				print('a')
+				birthDate="'{}'".format(request.args.get(i).split("-"))
+				#"'{}'".format(request.args.get(i).split("-"))
+				print('b')
+				birthDate=date(int(birthDate[2]),int(birthDate[1]),int(birthDate[0]))
+				print('c')
+				birthDate.strftime('%d-%m-%Y')
+				print('d')
+				strValues+=birthDate
+			if(i != list(request.args)[-1]):
+				strValues+=","
+		cursor.execute("insert into Users ({}) values ({})".format(str,strValues))
+		#cursor.execute("insert into Users (Username,Password,Name,LastName,BirthDate,CreatedDate,Token,Admin,Weight,Height,Address) values ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')".format(username,password,name,lastName,birthDate,createdDate,token,int(admin),weight,height,address))
 		cnx.commit()
 		cursor.close()
 		cnx.close()
