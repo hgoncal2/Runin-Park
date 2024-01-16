@@ -7,6 +7,7 @@ from uuid import uuid4
 from passlib.hash import sha256_crypt
 from datetime import datetime,date
 from flask.json.provider import DefaultJSONProvider
+from flask import current_app
 
 class UpdatedJSONProvider(DefaultJSONProvider):
     def default(self, o):
@@ -384,15 +385,17 @@ def getGroupsMembers():
 	cursor.close()
 	cnx.close()
 	return jsonify(groupMembers)
+@app.route('/logo')
+def flask_logo():
+    return current_app.send_static_file('flask-logo.png')
 
 @app.route('/photos', methods=['POST'])
-def uploadPhoto(base64):
-	with open("imageToSave.png","wb") as fh:
-		fh.write(base64.decodebytes(base64))
-		fh.close()
+def uploadPhoto():
+	print(request.files)
 	path = os.path.realpath('.')
-	return jsonify(Path=path+'/imageToSave.png')
-
+	request.files["image"].save(path+"/static/img/teste.jpg")
+	return jsonify(Path="http://16.170.180.240:5000/static/img/teste.jpg")
+		
 
 
 if __name__ == '__main__':
