@@ -78,7 +78,6 @@ def register():
 			admin=True
 		else:
 			admin=False
-		password=sha256_crypt.hash(args.get("password"))
 		#name=args.get("name")
 		#lastName=args.get("lastName")
 		#if birthDate is not None:
@@ -101,7 +100,11 @@ def register():
 		for i in request.args:
 			print(i)
 			if 'birthDate' not in request.args:
-				strValues+="'{}'".format(request.args.get(i))
+				if(i == "password"):
+					password=sha256_crypt.hash(args.get("password"))
+					strValues+="'{}'".format(password)
+				else:
+					strValues+="'{}'".format(request.args.get(i))
 			else:
 				print('a')
 				birthDate="'{}'".format(request.args.get(i).split("-"))

@@ -52,7 +52,7 @@ register(registerBinding.registerUsername.text.toString(),registerBinding.regist
                 override fun onFailure(call: Call<APIResult>, t: Throwable) {
                     t.printStackTrace()
                     Toast.makeText(this@RegisterFragment.context,"Login", Toast.LENGTH_LONG).show()
-                    viewModel.removeFragment(this@RegisterFragment)
+
 
                 }
                 override fun onResponse(call: Call<APIResult>, response: Response<APIResult>) {
@@ -62,7 +62,7 @@ register(registerBinding.registerUsername.text.toString(),registerBinding.regist
                         val result : APIResult? = response.body()
                         if(result?.code=="200"){
                             Toast.makeText(this@RegisterFragment.context,"${result.description}!", Toast.LENGTH_LONG).show()
-
+                            viewModel.removeFragment(this@RegisterFragment)
                         }else{
                             Toast.makeText(this@RegisterFragment.context,"Error!", Toast.LENGTH_LONG).show()
 
