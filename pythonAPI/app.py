@@ -38,10 +38,12 @@ def login():
 	cursor=cnx.cursor()
 	cursor.execute("select UserId,username,password from Users where Username='{}'".format(username))
 	conta=cursor.fetchone()
+	cursor.execute("select UserId from Users where Username='{}'".format(username))
+	conta=cursor.fetchone()
 	if conta == None:
 		cursor.close()
 		cnx.close()
-		return "Conta não existe",403
+		return jsonify(Code="409",Description="Nome de utilizador e/ou Password incorreto(s)")
 	else:
 		hash_pass=conta[2]
 	if 	sha256_crypt.verify(password,hash_pass):
@@ -65,7 +67,6 @@ def register():
 	args = request.args
 	username=args.get("username")
 	password=args.get("password")
-	#birthDate=args.get("birthDate")
 	cursor=cnx.cursor()
 	cursor.execute("select Username from Users where Username='{}'".format(username))
 	conta=cursor.fetchone()
@@ -78,47 +79,8 @@ def register():
 			admin=True
 		else:
 			admin=False
-		#name=args.get("name")
-		#lastName=args.get("lastName")
-		#if birthDate is not None:
-		#	birthDate.split("-")
-		#	birthDate=date(int(birthDate[2]),int(birthDate[1]),int(birthDate[0]))
-		#	birthDate.strftime('%d-%m-%Y')
-		#else:
-		#	birthDate = 'NULL'
-		#weight=args.get("weight")
-		#height=args.get("height")
-		#address=args.get("address")
-		createdDate=datetime.now()
-		token= uuid4()
-		str=""
-		for i in request.args:
-			str+="{}".format(i.capitalize())
-			if(i != list(request.args)[-1]):
-				str+=","
-		strValues=""
-		for i in request.args:
-			print(i)
-			if 'birthDate' not in request.args:
-				if(i == "password"):
-					password=sha256_crypt.hash(args.get("password"))
-					strValues+="'{}'".format(password)
-				else:
-					strValues+="'{}'".format(request.args.get(i))
-			else:
-				print('a')
-				birthDate="'{}'".format(request.args.get(i).split("-"))
-				#"'{}'".format(request.args.get(i).split("-"))
-				print('b')
-				birthDate=date(int(birthDate[2]),int(birthDate[1]),int(birthDate[0]))
-				print('c')
-				birthDate.strftime('%d-%m-%Y')
-				print('d')
-				strValues+=birthDate
-			if(i != list(request.args)[-1]):
-				strValues+=","
-		cursor.execute("insert into Users (Admin,CreatedDate,{}) values (False,'{}',{})".format(str,createdDate,strValues))
-		#cursor.execute("insert into Users (Username,Password,Name,LastName,BirthDate,CreatedDate,Token,Admin,Weight,Height,Address) values ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')".format(username,password,name,lastName,birthDate,createdDate,token,int(admin),weight,height,address))
+		createdDate=datetime.now()		
+		cursor.execute("insert into Users (Admin,CreatedDate,username, password) values ({},'{}','{}','{}')".format(admin,createdDate,username,password))
 		cnx.commit()
 		cursor.close()
 		cnx.close()
@@ -131,7 +93,7 @@ def getUsers(userId=None):
 	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2',charset="utf8")
 	cursor=cnx.cursor(dictionary=True)
 	if(userId is None):
-		cursor.execute("select UserId,Username,Name,LastName,BirthDate,CreatedDate,Weight,Height,Address,Token from Users")
+		cursor.execute("select UserId,Username,Name,LastName,BirthDate,CreatedDate,Weight,Height,Address from Users")
 		conta=cursor.fetchall()
 		cursor.close()
 		cnx.close()
