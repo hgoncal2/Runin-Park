@@ -33,9 +33,10 @@ class GroupListAdapter(private val groups: List<Group>,private val context: Cont
             val nome: TextView = itemView.findViewById(R.id.group_item_nome)
          //   val createdDate: TextView = itemView.findViewById(R.id.group_item_createdDate)
            // val ownerId: TextView = itemView.findViewById(R.id.group_item_ownerId)
-
             city.text = "${group.city}"
             nome.text = "${group.name}"
+
+
 
 
         }

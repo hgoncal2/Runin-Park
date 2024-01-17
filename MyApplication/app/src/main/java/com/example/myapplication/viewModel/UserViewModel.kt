@@ -4,11 +4,30 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.myapplication.R
+import com.example.myapplication.model.Group
 import com.example.myapplication.model.User
 
 class UserViewModel : ViewModel(){
 
-var user = MutableLiveData<User>()
+
+var user = MutableLiveData<User?>()
+    var loggedIn = MutableLiveData<Boolean>(false)
+    var groups = MutableLiveData<List<Group>>()
+
+
+
+
+    fun setUser(newUser: User?){
+        user.value = newUser
+    }
+    fun setGroups(groups: List<Group>?){
+        this.groups.value = groups
+    }
+
+
+    fun setLoggedIn(loggedIn : Boolean){
+        this.loggedIn.value = loggedIn
+    }
 
     fun replaceFragment(frag: Fragment,fragment: Fragment){
         val fragmentManager = frag.parentFragmentManager

@@ -15,7 +15,7 @@ data class User(
     @SerializedName("Name")
     var name: String?,
     @SerializedName("UserId")
-    val userId : Int?,
+    val userId : Int,
     @SerializedName("Username")
     val username: String?,
     @SerializedName("Weight")

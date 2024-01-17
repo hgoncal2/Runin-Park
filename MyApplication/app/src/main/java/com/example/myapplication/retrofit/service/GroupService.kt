@@ -12,6 +12,7 @@ interface GroupService {
     @GET("groups/{name}")
     fun getGroup(@Path("name") username:String): Call<Group>
 
-
+    @GET("users/{userId}/groups")
+    fun getUserGroups(@Path("userId") userId:Int): Call<List<Group>>
 
 }

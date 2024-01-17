@@ -4,23 +4,25 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import com.example.myapplication.R
 import com.example.myapplication.databinding.ActivityMainBinding
-import com.example.myapplication.model.Token
-import com.example.myapplication.model.User
+import com.example.myapplication.viewModel.UserViewModel
 
 
 class MainActivity : AppCompatActivity() {
-    lateinit var token:Token
-    private lateinit var user: User
+
     private lateinit var binding: ActivityMainBinding
+    private val viewModel: UserViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding= ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         replaceFragment(LoginFragment())
 
 
@@ -28,22 +30,47 @@ class MainActivity : AppCompatActivity() {
             hideKeyboard(it)
         }
 
+viewModel.loggedIn.observe(this, Observer {
+    if(it==true ){
+        login()
+    }else{
+        replaceFragment(LoginFragment())
+    }
+})
 
         binding.bottomNavView.setOnItemSelectedListener {
 
             when(it.itemId){
                 R.id.item_groups -> replaceFragment(GroupsFragment())
                 R.id.item_login -> replaceFragment(LoginFragment())
+                R.id.item_dashboard -> replaceFragment(DashBoardFragment())
+                R.id.item_my_groups -> replaceFragment(GroupsFragment())
+                R.id.item_logout -> logout()
             }
 
         true
         }
 
+    }
 
+    private fun logout(){
+        viewModel.setLoggedIn(false)
+        viewModel.setUser(null)
+        binding.bottomNavView.menu.clear()
+        binding.bottomNavView.inflateMenu(R.menu.bottom_nav)
+        removeFragment(DashBoardFragment())
+        Toast.makeText(this,"Logged Out Successful!",Toast.LENGTH_LONG).show()
 
 
     }
 
+    private fun login(){
+        replaceFragment(GroupsFragment())
+        removeFragment(LoginFragment())
+        binding.bottomNavView.menu.clear()
+        binding.bottomNavView.inflateMenu(R.menu.loggedin_bottom_nav)
+        replaceFragment(DashBoardFragment())
+    }
     companion object{
         fun Context.hideKeyboard(view: View) {
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -56,8 +83,15 @@ class MainActivity : AppCompatActivity() {
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.frame_layout,fragment)
-        fragmentTransaction.addToBackStack(null)
-        fragmentTransaction.commit()
+        fragmentTransaction.addToBackStack(null).commit()
+
+    }
+    private fun removeFragment(fragment: Fragment){
+        val fragmentManager = supportFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.remove(fragment).commit()
+
+
 
 
     }
