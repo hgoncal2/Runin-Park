@@ -30,6 +30,17 @@
             android:textSize="30sp"
             android:visibility="gone" />
 
+        <TextView
+            android:paddingTop="100dp"
+            android:id="@+id/no_groups"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#F3F5F8"
+            android:gravity="center"
+            android:text="You have no joined groups"
+            android:textSize="30sp"
+            android:visibility="gone" />
+
         <ScrollView
 
             android:layout_width="match_parent"

@@ -48,7 +48,7 @@ class LoginFragment : Fragment() {
     // TODO: Rename and change types of parameters
 
     private lateinit var loginBinding: FragmentLoginBinding
-    private lateinit var token:Token
+    private  var token:Token? = null
     private val viewModel: UserViewModel by activityViewModels()
 
 
@@ -152,20 +152,22 @@ private fun uploadPhoto(file : File){
         object : Callback<Photo> {
             override fun onFailure(call: Call<Photo>, t: Throwable) {
                 t.printStackTrace()
-                Toast.makeText(this@LoginFragment.context,"Login",Toast.LENGTH_LONG).show()
+                Toast.makeText(this@LoginFragment.context,"Error Uploading Image!",Toast.LENGTH_LONG).show()
 
             }
             override fun onResponse(call: Call<Photo>, response: Response<Photo>) {
                 if(response.code() == 403){
                     Toast.makeText(this@LoginFragment.context,"Wrong Username or Password!", Toast.LENGTH_LONG).show()
                 }else{
-                    var photo : Photo = response.body()!!
-                    val options: RequestOptions = RequestOptions()
-                        .centerCrop()
-                        .placeholder(com.example.myapplication.R.mipmap.ic_launcher_round)
-                        .error(com.example.myapplication.R.mipmap.ic_launcher_round)
-                    Glide.with(this@LoginFragment.requireContext()).load(photo.path).diskCacheStrategy(
-                        DiskCacheStrategy.NONE).skipMemoryCache(true).apply(options).timeout(6000).into(loginBinding.imageView)
+                    response.body().let {
+                        val options: RequestOptions = RequestOptions()
+                            .centerCrop()
+                            .placeholder(com.example.myapplication.R.mipmap.ic_launcher_round)
+                            .error(com.example.myapplication.R.mipmap.ic_launcher_round)
+                        Glide.with(this@LoginFragment.requireContext()).load(it?.path).diskCacheStrategy(
+                            DiskCacheStrategy.NONE).skipMemoryCache(true).apply(options).timeout(6000).into(loginBinding.imageView)
+
+                    }
 
                 }
 
@@ -214,10 +216,15 @@ private fun uploadPhoto(file : File){
                     getUser(username)
                 }
                 override fun onResponse(call: Call<User>, response: Response<User>) {
-                    var user = response.body()
-                    viewModel.user.value= user
-                    user?.token=token
-                    print(user)
+                    response.body()?.let {
+                        it.token=token
+                        token=null
+                        viewModel.setUser(it)
+                        viewModel.setLoggedIn(true)
+
+                    }
+
+
 
                 }
             }

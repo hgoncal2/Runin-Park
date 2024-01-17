@@ -1,6 +1,5 @@
 package com.example.myapplication.ui
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,12 +7,12 @@ import android.view.ViewGroup
 import android.widget.FrameLayout.LayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.R
 import com.example.myapplication.databinding.FragmentGroupsBinding
 import com.example.myapplication.model.Group
-import com.example.myapplication.model.User
 import com.example.myapplication.retrofit.RetrofitInit
 import com.example.myapplication.ui.adapter.GroupListAdapter
 import com.example.myapplication.viewModel.UserViewModel
@@ -36,22 +35,50 @@ class GroupsFragment : Fragment() {
    private lateinit var groupsBinding: FragmentGroupsBinding
    private  var groups : List<Group>? = null
     private val viewModel: UserViewModel by activityViewModels()
-    private  var user: User? = null
 
-    @SuppressLint("SuspiciousIndentation")
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         groupsBinding= FragmentGroupsBinding.inflate(inflater,container,false)
-
+        if(viewModel.loggedIn.value == false){
             loadGroups()
-            user = viewModel.user.value
-        if(user != null){
-            groupsBinding.user.setText(user?.username)
-            groupsBinding.user.visibility= View.VISIBLE
-                groupsBinding.groupsViewList.layoutParams.height = LayoutParams.WRAP_CONTENT
-        }else{
-            groupsBinding.groupsViewList.layoutParams.height = LayoutParams.MATCH_PARENT
         }
+
+
+
+        viewModel.groups.observe(viewLifecycleOwner, Observer {
+
+            if(viewModel.loggedIn.value == true){
+                if(viewModel.groups.value?.size == 0){
+                    if(groupsBinding.noGroups.visibility == View.GONE){
+                        groupsBinding.noGroups.visibility= View.VISIBLE
+
+                    }
+
+                }else{
+                    if(groupsBinding.noGroups.visibility == View.VISIBLE) groupsBinding.noGroups.visibility= View.GONE
+                    GroupListAdapter(it,this@GroupsFragment.requireContext()).notifyDataSetChanged()
+                }
+
+            }
+
+        })
+
+        viewModel.user.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                groupsBinding.user.setText(it.username)
+                groupsBinding.user.visibility= View.VISIBLE
+                groupsBinding.groupsViewList.layoutParams.height = LayoutParams.WRAP_CONTENT
+                loadUserGroups(it.userId)
+            } ?: run {
+                groupsBinding.user.visibility= View.GONE
+            }
+
+
+
+        })
+
+
 
         return groupsBinding.root
     }
@@ -93,8 +120,39 @@ class GroupsFragment : Fragment() {
                 }
                 override fun onResponse(call: Call<List<Group>>, response: Response<List<Group>>) {
 
-                    groups = response.body()
-                    val adapter = GroupListAdapter(groups!!,this@GroupsFragment.requireContext())
+                    viewModel.setGroups(response.body())
+                    val adapter = viewModel.groups.value?.let { GroupListAdapter(it,this@GroupsFragment.requireContext()) }
+                    groupsBinding.groupsViewList.adapter=adapter
+                    groupsBinding.groupsViewList.layoutManager= LinearLayoutManager(this@GroupsFragment.requireContext())
+                    groupsBinding.groupsViewList.addItemDecoration(DividerItemDecoration(this@GroupsFragment.requireContext(), LinearLayoutManager.VERTICAL))
+
+
+
+
+
+                }
+            }
+        )
+
+    }
+
+    private fun loadUserGroups(userId : Int){
+
+        val call = RetrofitInit().groupService().getUserGroups(userId)
+        call.enqueue(
+            object : Callback<List<Group>> {
+                override fun onFailure(call: Call<List<Group>>, t: Throwable) {
+                    t.printStackTrace()
+
+                }
+                override fun onResponse(call: Call<List<Group>>, response: Response<List<Group>>) {
+
+                    viewModel.setGroups(response.body())
+                    val adapter = viewModel.groups.value?.let {
+
+                        GroupListAdapter(it,this@GroupsFragment.requireContext())
+
+                    }
                     groupsBinding.groupsViewList.adapter=adapter
                     groupsBinding.groupsViewList.layoutManager= LinearLayoutManager(this@GroupsFragment.requireContext())
                     groupsBinding.groupsViewList.addItemDecoration(DividerItemDecoration(this@GroupsFragment.requireContext(), LinearLayoutManager.VERTICAL))
@@ -104,8 +162,6 @@ class GroupsFragment : Fragment() {
                 }
             }
         )
-
-
 
     }
 }
