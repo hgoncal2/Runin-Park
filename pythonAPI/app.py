@@ -167,8 +167,8 @@ def getUsers(userId=None):
 @app.route('/users/<userId>/groups',methods=['GET'])
 def getUserGroups(userId=None):	
 	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2',charset="utf8")
-	cursor=cnx.cursor()
-	cursor.execute("select Name,g.GroupId from RunGroups g inner join  GroupMembers gm on g.GroupId=gm.GroupId where gm.userId='{}'".format(userId))
+	cursor=cnx.cursor(dictionary=True)
+	cursor.execute("select Name,g.GroupId as GroupId,g.CreatedDate as CreatedDate,g.City as City,g.OwnerId as OwnerId from RunGroups g inner join  GroupMembers gm on g.GroupId=gm.GroupId where gm.userId='{}'".format(userId))
 	groups=cursor.fetchall()
 	cursor.close()
 	cnx.close()

@@ -162,7 +162,7 @@ private fun uploadPhoto(file : File){
                     response.body().let {
                         val options: RequestOptions = RequestOptions()
                             .centerCrop()
-                            .placeholder(com.example.myapplication.R.mipmap.ic_launcher_round)
+                            .placeholder(com.example.myapplication.R.drawable.loading_spinning)
                             .error(com.example.myapplication.R.mipmap.ic_launcher_round)
                         Glide.with(this@LoginFragment.requireContext()).load(it?.path).diskCacheStrategy(
                             DiskCacheStrategy.NONE).skipMemoryCache(true).apply(options).timeout(6000).into(loginBinding.imageView)
