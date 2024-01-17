@@ -66,7 +66,8 @@ def register():
 	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
 	args = request.args
 	username=args.get("username")
-	password=args.get("password")
+	createdDate=datetime.now()		
+	password=sha256_crypt.hash(args.get("password"))
 	cursor=cnx.cursor()
 	cursor.execute("select Username from Users where Username='{}'".format(username))
 	conta=cursor.fetchone()
@@ -78,8 +79,7 @@ def register():
 		if args.get("secretAdmin") == "PasswordSecreta":
 			admin=True
 		else:
-			admin=False
-		createdDate=datetime.now()		
+			admin=False		
 		cursor.execute("insert into Users (Admin,CreatedDate,username, password) values ({},'{}','{}','{}')".format(admin,createdDate,username,password))
 		cnx.commit()
 		cursor.close()
@@ -93,15 +93,16 @@ def getUsers(userId=None):
 	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2',charset="utf8")
 	cursor=cnx.cursor(dictionary=True)
 	if(userId is None):
-		cursor.execute("select UserId,Username,Name,LastName,BirthDate,CreatedDate,Weight,Height,Address from Users")
+		cursor.execute("select UserId,Username,Name,LastName,BirthDate,CreatedDate,Weight,Height,Address,PhotoId from Users")
 		conta=cursor.fetchall()
 		cursor.close()
 		cnx.close()
 		return jsonify(conta)
 	else:
 		if(request.method=="GET"):
-			cursor.execute("select UserId,Username,Name,LastName,BirthDate,CreatedDate,Weight,Height,Address from Users where Username = '{}'".format(userId))
+			cursor.execute("select UserId,Username,Name,LastName,BirthDate,CreatedDate,Weight,Height,Address,PhotoId from Users where Username = '{}'".format(userId))
 			conta=cursor.fetchone()
+			
 			cursor.close()
 			cnx.close()
 			return jsonify(conta)
@@ -400,12 +401,67 @@ def getGroupsMembers():
 def flask_logo():
     return current_app.send_static_file('flask-logo.png')
 
+
+@app.route('/photos', methods=['GET'])
+def getPhotos():
+	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
+	cursor=cnx.cursor(dictionary=True)
+	cursor.execute("select * from Photos")
+	photos=cursor.fetchall()
+	cursor.close()
+	cnx.close()
+	return jsonify(photos)
+
+
+
 @app.route('/photos', methods=['POST'])
 def uploadPhoto():
-	print(request.files)
-	path = os.path.realpath('.')
-	request.files["image"].save(path+"/static/img/teste.jpg")
-	return jsonify(Path="http://16.170.180.240:5000/static/img/teste.jpg")
+	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
+	cursor=cnx.cursor(dictionary=True)
+	table = request.args.get("table")
+	if table == 'Users':
+		pk='UserId'
+		token = request.headers.get("auth")
+		cursor.execute("select UserId from Users where token = '{}'".format(token))
+		pkId=cursor.fetchone()['UserId']
+	if table == 'RunGroups':
+		pk='UserId'
+
+	if table == 'Posts':
+		pk='UserId'
+
+	if table == 'Replies':
+		pk='UserId'
+
+	if table == 'CommentId':
+		pk='UserId'
+
+	if table == 'Run':
+		pk='UserId'
+
+
+	#path = os.path.realpath('.')
+	#request.files["image"].save(path+"/static/img/'{}'".format())
+	
+	cursor.execute("insert into Photos (PathToPhoto) values ('')")
+	cnx.commit()
+	cursor.execute("select PhotoId from Photos order by PhotoId desc limit 1")
+	photoId=cursor.fetchone()['PhotoId']
+	print(photoId)
+	pathPhoto='http://16.170.180.240:5000/static/img/'+str(photoId)
+	cursor.execute("update Photos set PathToPhoto = '{}' where PhotoId = {}".format(pathPhoto,photoId))
+	cnx.commit()
+	print(table)
+	print(photoId)
+	print(pk)
+	print(pkId)
+	cursor.execute("update {} set PhotoId = {} where {} = {}".format(table,photoId,pk,pkId))
+	cnx.commit()
+	cursor.close()
+	cnx.close()
+	return jsonify(Path="http://16.170.180.240:5000/static/img/{}".format(photoId))
+
+
 		
 
 
