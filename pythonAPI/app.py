@@ -99,9 +99,8 @@ def getUsers(userId=None):
 	else:
 		if(request.method=="GET"):
 			#cursor.execute("select UserId,Username,Name,LastName,BirthDate,CreatedDate,Weight,Height,Address,PhotoId from Users where Username = '{}'".format(userId))
-			cursor.execute("select u.UserId,u.Username,u.Name,u.LastName,u.BirthDate,u.CreatedDate,u.Weight,u.Height,u.Address,u.PhotoId,p.PathToPhoto PhotoPath from Users u inner join Photos p on p.PhotoId=u.PhotoId where u.Username = '{}'".format(userId))
+			cursor.execute("select u.UserId,u.Username,u.Name,u.LastName,u.BirthDate,u.CreatedDate,u.Weight,u.Height,u.Address,u.PhotoId,p.PathToPhoto PhotoPath from Users u left join Photos p on p.PhotoId=u.PhotoId where u.Username = '{}'".format(userId))
 			conta=cursor.fetchone()
-			
 			cursor.close()
 			cnx.close()
 			return jsonify(conta)

@@ -196,7 +196,7 @@ private fun uploadPhoto(file : File){
 
                 }
                 override fun onResponse(call: Call<Token>, response: Response<Token>) {
-                    if(response.code() == 403 ){
+                    if(response.code() == 403 || response.code() == 404 ){
                         Toast.makeText(this@LoginFragment.context,"Wrong Username or Password!", Toast.LENGTH_LONG).show()
                     }else{
                         token= response.body()!!
