@@ -36,15 +36,15 @@ def login():
 	username=args.get("username")
 	password=args.get("password")
 	cursor=cnx.cursor()
-	cursor.execute("select UserId,username,password from Users where Username='{}'".format(username))
+	cursor.execute("select UserId,Username,Password from Users where Username='{}'".format(username))
 	conta=cursor.fetchone()
-	cursor.execute("select UserId from Users where Username='{}'".format(username))
-	conta=cursor.fetchone()
+	
 	if conta == None:
 		cursor.close()
 		cnx.close()
-		return jsonify(Code="409",Description="Nome de utilizador e/ou Password incorreto(s)")
+		return "",403
 	else:
+		
 		hash_pass=conta[2]
 	if 	sha256_crypt.verify(password,hash_pass):
 		newToken=uuid4()		
@@ -418,10 +418,13 @@ def getPhotos():
 def uploadPhoto():
 	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
 	cursor=cnx.cursor(dictionary=True)
-	table = request.args.get("table")
+	args=request.args
+	table = args.get("table")
+	
+	print(args)
 	if table == 'Users':
 		pk='UserId'
-		token = request.headers.get("auth")
+		token = args.get("auth")
 		cursor.execute("select UserId from Users where token = '{}'".format(token))
 		pkId=cursor.fetchone()['UserId']
 	if table == 'RunGroups':
@@ -440,26 +443,27 @@ def uploadPhoto():
 		pk='UserId'
 
 
-	#path = os.path.realpath('.')
-	#request.files["image"].save(path+"/static/img/'{}'".format())
+	path = os.path.realpath('.')
 	
+	pk='UserId'
+	token = args.get("auth")
+	print(token)
+	cursor.execute("select UserId from Users where token = '{}'".format(token))
+	pkId=cursor.fetchone()['UserId']
+	print(pkId)
 	cursor.execute("insert into Photos (PathToPhoto) values ('')")
 	cnx.commit()
 	cursor.execute("select PhotoId from Photos order by PhotoId desc limit 1")
 	photoId=cursor.fetchone()['PhotoId']
-	print(photoId)
-	pathPhoto='http://16.170.180.240:5000/static/img/'+str(photoId)
+	request.files["image"].save(path+"/static/img/{}.png".format(photoId))
+	pathPhoto="http://16.170.180.240:5000/static/img/{}.png".format(photoId)
 	cursor.execute("update Photos set PathToPhoto = '{}' where PhotoId = {}".format(pathPhoto,photoId))
 	cnx.commit()
-	print(table)
-	print(photoId)
-	print(pk)
-	print(pkId)
-	cursor.execute("update {} set PhotoId = {} where {} = {}".format(table,photoId,pk,pkId))
+	cursor.execute("update Users set PhotoId = {} where {} = {}".format(photoId,pk,pkId))
 	cnx.commit()
 	cursor.close()
 	cnx.close()
-	return jsonify(Path="http://16.170.180.240:5000/static/img/{}".format(photoId))
+	return jsonify(Path="http://16.170.180.240:5000/static/img/{}.png".format(photoId))
 
 
 		

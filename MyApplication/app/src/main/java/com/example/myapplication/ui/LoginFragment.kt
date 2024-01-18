@@ -77,6 +77,7 @@ class LoginFragment : Fragment() {
 
         loginBinding.registerAccount.setOnClickListener{
 viewModel.replaceFragment(this,RegisterFragment())
+
         }
 
         return loginBinding.root
@@ -146,7 +147,7 @@ private fun uploadPhoto(file : File){
 
     val call = RetrofitInit().photoService().uploadPhoto(
 
-        image = MultipartBody.Part.createFormData("image",file.name,file.asRequestBody())
+        image = MultipartBody.Part.createFormData("image",file.name,file.asRequestBody()),viewModel.user.value?.token?.token
     )
     call.enqueue(
         object : Callback<Photo> {
@@ -185,7 +186,7 @@ private fun uploadPhoto(file : File){
 
                 }
                 override fun onResponse(call: Call<Token>, response: Response<Token>) {
-                    if(response.code() == 403){
+                    if(response.code() == 403 ){
                         Toast.makeText(this@LoginFragment.context,"Wrong Username or Password!", Toast.LENGTH_LONG).show()
                     }else{
                         token= response.body()!!

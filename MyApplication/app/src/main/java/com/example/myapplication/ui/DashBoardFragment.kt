@@ -1,14 +1,38 @@
 package com.example.myapplication.ui
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.example.myapplication.databinding.FragmentDashBoardBinding
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
+import com.example.myapplication.R
+import com.example.myapplication.databinding.FragmentDashboardBinding
+import com.example.myapplication.model.Photo
+import com.example.myapplication.retrofit.RetrofitInit
 import com.example.myapplication.viewModel.UserViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.tabs.TabLayout
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.io.IOUtils
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -23,7 +47,7 @@ private const val ARG_PARAM2 = "param2"
 class DashBoardFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private val viewModel: UserViewModel by activityViewModels()
-private lateinit var dashBoardBinding: FragmentDashBoardBinding
+private lateinit var dashBoardBinding: FragmentDashboardBinding
 
 
 
@@ -31,15 +55,137 @@ private lateinit var dashBoardBinding: FragmentDashBoardBinding
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        dashBoardBinding= FragmentDashBoardBinding.inflate(inflater,container,false)
+        dashBoardBinding= FragmentDashboardBinding.inflate(inflater,container,false)
+        getProfilePicture()
+        dashBoardBinding.profilePicture.setOnClickListener{
+            showPopup(it)
+        }
 
+        if(viewModel.user.value?.profilePhoto != null){
+            val options: RequestOptions = RequestOptions()
+                .centerCrop()
+                .placeholder(com.example.myapplication.R.drawable.loading_spinning)
+                .error(com.example.myapplication.R.mipmap.ic_launcher_round)
+                .circleCrop()
+            Glide.with(this@DashBoardFragment.requireContext()).load(viewModel.user.value?.profilePhoto).diskCacheStrategy(
+                DiskCacheStrategy.NONE).skipMemoryCache(true).apply(options).timeout(6000).into(dashBoardBinding.profilePicture)
+        }
+        dashBoardBinding.dashboardUsername.text = viewModel.user.value?.username
+        dashBoardBinding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                when(tab?.contentDescription){
+                    "dashboard_user_info" -> viewModel.replaceDashboardFragment(this@DashBoardFragment,UserInfoFragment())
+                }
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                print(tab?.id)
+                print("")
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                print(tab?.id)
+                print("")
+            }
+
+
+        })
         return dashBoardBinding.root
         // Inflate the layout for this fragment
+
     }
 
     override fun onResume() {
         activity?.findViewById<BottomNavigationView>(com.example.myapplication.R.id.bottomNavView)?.menu?.getItem(0)?.setChecked(true)
 
         super.onResume()
+    }
+    private val changeImage =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                val data = it.data
+                val imgUri = data?.data
+                val path = imgUri?.path
+
+                val path2 = Environment.getExternalStorageDirectory().path
+                val myJpgPath = "/mnt/sdcard/Download/foto.jpg"
+                val parcelFileDescriptor = imgUri?.let { it1 ->
+                    this.requireContext().contentResolver.openFileDescriptor(
+                        it1, "r", null)
+                }
+                val inputStream = FileInputStream(parcelFileDescriptor?.fileDescriptor)
+                val file = File(this.requireContext().cacheDir, "dwadw")
+                val outputStream = FileOutputStream(file)
+                IOUtils.copy(inputStream, outputStream)
+                uploadPhoto(file)
+
+            }}
+
+    private fun showPopup(view: View) {
+        val popup = PopupMenu(this@DashBoardFragment.requireContext(), view)
+        popup.inflate(R.menu.profile_popup_menu)
+
+        popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item: MenuItem? ->
+
+            when (item!!.itemId) {
+                R.id.view_profile -> {
+                    val pickImg = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+                    changeImage.launch(pickImg)
+                }
+
+            }
+
+            true
+        })
+
+
+
+        popup.show()
+    }
+    private fun uploadPhoto(file : File){
+
+        val call = RetrofitInit().photoService().uploadPhoto(
+
+            image = MultipartBody.Part.createFormData("image",file.name,file.asRequestBody()),viewModel.user.value?.token?.token
+        )
+        call.enqueue(
+            object : Callback<Photo> {
+                override fun onFailure(call: Call<Photo>, t: Throwable) {
+                    t.printStackTrace()
+                    Toast.makeText(this@DashBoardFragment.context,"Error Uploading Image!", Toast.LENGTH_LONG).show()
+
+                }
+                override fun onResponse(call: Call<Photo>, response: Response<Photo>) {
+                    if(response.code() == 403){
+                        Toast.makeText(this@DashBoardFragment.context,"Wrong Username or Password!", Toast.LENGTH_LONG).show()
+                    }else{
+                        response.body().let {
+                            viewModel.user.value?.profilePhoto=it?.path
+                            val options: RequestOptions = RequestOptions()
+                                .centerCrop()
+                                .placeholder(com.example.myapplication.R.drawable.loading_spinning)
+                                .error(com.example.myapplication.R.mipmap.ic_launcher_round)
+                                .circleCrop()
+                            Glide.with(this@DashBoardFragment.requireContext()).load(it?.path).diskCacheStrategy(
+                                DiskCacheStrategy.NONE).skipMemoryCache(true).apply(options).timeout(6000).into(dashBoardBinding.profilePicture)
+
+                        }
+
+                    }
+
+                }
+            }
+        )
+    }
+    private fun getProfilePicture(){
+        val options: RequestOptions = RequestOptions()
+            .centerCrop()
+            .placeholder(com.example.myapplication.R.drawable.loading_spinning)
+            .error(com.example.myapplication.R.mipmap.ic_launcher_round)
+            .circleCrop()
+        Glide.with(this@DashBoardFragment.requireContext()).load(R.drawable.default_groups).diskCacheStrategy(
+            DiskCacheStrategy.NONE).skipMemoryCache(true).apply(options).timeout(6000).into(dashBoardBinding.profilePicture)
     }
 }

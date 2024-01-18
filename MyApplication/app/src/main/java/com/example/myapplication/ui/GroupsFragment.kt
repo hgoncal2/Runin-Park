@@ -42,6 +42,8 @@ class GroupsFragment : Fragment() {
         groupsBinding= FragmentGroupsBinding.inflate(inflater,container,false)
         if(viewModel.loggedIn.value == false){
             loadGroups()
+        }else{
+           // viewModel.user.value?.let { loadUserGroups(it.userId) }
         }
 
 

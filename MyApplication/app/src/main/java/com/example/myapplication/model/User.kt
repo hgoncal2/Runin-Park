@@ -21,6 +21,8 @@ data class User(
     @SerializedName("Weight")
     var weight: Double?,
     @SerializedName("Token")
-    var token : Token?
+    var token : Token?,
+    @SerializedName("PhotoPath")
+    var profilePhoto : String?
 
 )

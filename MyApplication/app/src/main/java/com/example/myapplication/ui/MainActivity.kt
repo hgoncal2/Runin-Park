@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import com.example.myapplication.R
 import com.example.myapplication.databinding.ActivityMainBinding
@@ -23,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding= ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        replaceFragment(LoginFragment())
+        //replaceFragment(LoginFragment())
 
 
         binding.activityMainLayout.setOnClickListener{
@@ -35,6 +36,7 @@ viewModel.loggedIn.observe(this, Observer {
         login()
     }else{
         replaceFragment(LoginFragment())
+
     }
 })
 
@@ -65,11 +67,12 @@ viewModel.loggedIn.observe(this, Observer {
     }
 
     private fun login(){
-        replaceFragment(GroupsFragment())
-        removeFragment(LoginFragment())
+
+        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         binding.bottomNavView.menu.clear()
         binding.bottomNavView.inflateMenu(R.menu.loggedin_bottom_nav)
         replaceFragment(DashBoardFragment())
+
     }
     companion object{
         fun Context.hideKeyboard(view: View) {
@@ -83,6 +86,7 @@ viewModel.loggedIn.observe(this, Observer {
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.frame_layout,fragment)
+
         fragmentTransaction.addToBackStack(null).commit()
 
     }
