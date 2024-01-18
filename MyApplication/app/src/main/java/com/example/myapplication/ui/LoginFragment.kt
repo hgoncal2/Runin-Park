@@ -2,10 +2,8 @@ package com.example.myapplication.ui
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -64,11 +62,7 @@ class LoginFragment : Fragment() {
         loginBinding.btnLogin.setOnClickListener{
             login(loginBinding.username.text.toString(),loginBinding.password.text.toString())
         }
-        loginBinding.img.setOnClickListener{
 
-            val pickImg = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
-            changeImage.launch(pickImg)
-        }
 
         loginBinding.registerAccount.setOnClickListener{
 viewModel.replaceFragment(this,RegisterFragment(),"register")

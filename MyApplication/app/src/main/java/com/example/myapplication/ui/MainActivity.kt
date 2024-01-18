@@ -73,8 +73,9 @@ viewModel.loggedIn.observe(this, Observer {
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         binding.bottomNavView.menu.clear()
         binding.bottomNavView.inflateMenu(R.menu.loggedin_bottom_nav)
-        replaceFragment(DashBoardFragment(),"dashboard")
         viewModel.user.value?.let { viewModel.loadUserGroups(it.userId) }
+        replaceFragment(DashBoardFragment(),"dashboard")
+
 
     }
     companion object{
