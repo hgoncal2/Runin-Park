@@ -52,13 +52,11 @@ def login():
 		cnx.commit()
 		cursor.close()
 		cnx.close()
-		return jsonify({'username':username,
-			'token': newToken
-			}),200
+		return jsonify({'token': newToken})
 	else:
 		cursor.close()
 		cnx.close()
-		return "password errada",403
+		return "",403
 
 
 @app.route('/register',methods=['POST'])
