@@ -61,7 +61,7 @@ viewModel.loggedIn.observe(this, Observer {
         viewModel.setUser(null)
         binding.bottomNavView.menu.clear()
         binding.bottomNavView.inflateMenu(R.menu.bottom_nav)
-        removeFragment(DashBoardFragment())
+        removeFragment("dashboard")
         viewModel.loadGroups()
         Toast.makeText(this,"Logged Out Successful!",Toast.LENGTH_LONG).show()
 
@@ -88,15 +88,19 @@ viewModel.loggedIn.observe(this, Observer {
 
     private fun replaceFragment(fragment: Fragment,tag:String = ""){
         val fragmentManager = supportFragmentManager
+        val nextFrag= supportFragmentManager.findFragmentByTag(tag)
         val fragmentTransaction = fragmentManager.beginTransaction()
         val  added_frags = fragmentManager.fragments;
         var added = false
         for(frag  in added_frags) {
             if(frag.tag == tag){
+                if(nextFrag!=null && !nextFrag.isVisible){
+                    fragmentTransaction.show(frag)
+                    fragmentManager.popBackStack()
+                }
                 added=true
 
-                fragmentTransaction.show(frag)
-                fragmentManager.popBackStack()
+
 
             } else{
                 fragmentTransaction.hide(frag)
@@ -114,14 +118,25 @@ viewModel.loggedIn.observe(this, Observer {
         fragmentTransaction.addToBackStack(null).commit()
 
     }
-    private fun removeFragment(fragment: Fragment){
-        val fragmentManager = supportFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.remove(fragment).commit()
+    private fun removeFragment(fragTag: String){
+
+        val fragment= supportFragmentManager.findFragmentByTag(fragTag)
+        if (fragment != null) {
+            supportFragmentManager.beginTransaction().remove(fragment).commit()
+        }
 
 
+    }
+    override fun onBackPressed() {
+        val count = supportFragmentManager.backStackEntryCount
+        if (count == 1) {
 
-
+            super.onBackPressed()
+            this.moveTaskToBack(true)
+            //additional code
+        } else {
+            supportFragmentManager.popBackStack()
+        }
     }
 
 
