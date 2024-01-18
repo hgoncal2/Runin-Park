@@ -42,13 +42,19 @@ class GroupsFragment : Fragment() {
         groupsBinding.groupsViewList.layoutManager= LinearLayoutManager(this@GroupsFragment.requireContext())
         groupsBinding.groupsViewList.addItemDecoration(DividerItemDecoration(this@GroupsFragment.requireContext(), LinearLayoutManager.VERTICAL))
 
-        if(viewModel.loggedIn.value == false){
-            viewModel.loadGroups()
+        viewModel.loggedIn.observe(viewLifecycleOwner, Observer {
+            if(viewModel.loggedIn.value == false){
+                viewModel.loadGroups()
 
-            //adicionar observer
-        }else{
-           // viewModel.user.value?.let { loadUserGroups(it.userId) }
-        }
+                //adicionar observer
+            }else{
+                viewModel.user.value?.userId?.let { it1 -> viewModel.loadUserGroups(it1) }
+
+                // viewModel.user.value?.let { loadUserGroups(it.userId) }
+            }
+            })
+
+
 
 
 
@@ -63,8 +69,7 @@ class GroupsFragment : Fragment() {
 
                 }else{
                     if(groupsBinding.noGroups.visibility == View.VISIBLE) groupsBinding.noGroups.visibility= View.GONE
-                    GroupListAdapter(it,this@GroupsFragment.requireContext()).notifyDataSetChanged()
-
+                        adapter.notifyDataSetChanged()
                 }
 
             }else{

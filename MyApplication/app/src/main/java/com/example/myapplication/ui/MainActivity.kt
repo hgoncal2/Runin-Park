@@ -24,8 +24,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding= ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        replaceFragment(LoginFragment())
-        //replaceFragment(LoginFragment())
+
 
 
         binding.activityMainLayout.setOnClickListener{
@@ -61,15 +60,16 @@ class MainActivity : AppCompatActivity() {
         viewModel.setUser(null)
         binding.bottomNavView.menu.clear()
         binding.bottomNavView.inflateMenu(R.menu.bottom_nav)
-        removeFragment(DashBoardFragment())
+        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         Toast.makeText(this,"Logged Out Successful!",Toast.LENGTH_LONG).show()
+        replaceFragment(LoginFragment())
 
 
     }
 
     private fun login(){
-        replaceFragment(GroupsFragment())
-        removeFragment(LoginFragment())
+        //replaceFragment(GroupsFragment())
+
 
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         binding.bottomNavView.menu.clear()
@@ -91,6 +91,14 @@ class MainActivity : AppCompatActivity() {
         fragmentTransaction.replace(R.id.frame_layout,fragment)
 
         fragmentTransaction.addToBackStack(null).commit()
+
+    }
+    override fun onBackPressed() {
+        if(supportFragmentManager.backStackEntryCount==1){
+            this.moveTaskToBack(true);
+        }else{
+            supportFragmentManager.popBackStack()
+        }
 
     }
     private fun removeFragment(fragment: Fragment){
