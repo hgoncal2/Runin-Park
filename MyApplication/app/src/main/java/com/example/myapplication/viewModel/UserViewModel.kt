@@ -27,6 +27,8 @@ class UserViewModel : ViewModel(){
 var user = MutableLiveData<User?>()
     var loggedIn = MutableLiveData<Boolean>(false)
     var groups = MutableLiveData<List<Group>>()
+    var tgroups = mutableListOf<Group>()
+
 
 
 
@@ -34,8 +36,50 @@ var user = MutableLiveData<User?>()
     fun setUser(newUser: User?){
         user.value = newUser
     }
+     fun loadGroups(){
+
+        val call = RetrofitInit().groupService().getGroups()
+        call.enqueue(
+            object : Callback<List<Group>> {
+                override fun onFailure(call: Call<List<Group>>, t: Throwable) {
+                    t.printStackTrace()
+
+                }
+                override fun onResponse(call: Call<List<Group>>, response: Response<List<Group>>) {
+
+                    setGroups(response.body())
+
+                }
+            }
+        )
+    }
+
+     fun loadUserGroups(userId : Int){
+
+        val call = RetrofitInit().groupService().getUserGroups(userId)
+        call.enqueue(
+            object : Callback<List<Group>> {
+                override fun onFailure(call: Call<List<Group>>, t: Throwable) {
+                    t.printStackTrace()
+
+                }
+                override fun onResponse(call: Call<List<Group>>, response: Response<List<Group>>) {
+
+                    setGroups(response.body())
+
+
+
+                }
+            }
+        )
+
+    }
     fun setGroups(groups: List<Group>?){
-        this.groups.value = groups
+        tgroups.clear()
+        if (groups != null) {
+            tgroups.addAll(groups)
+        }
+        this.groups.value = tgroups
     }
 
 
@@ -43,13 +87,32 @@ var user = MutableLiveData<User?>()
         this.loggedIn.value = loggedIn
     }
 
-    fun replaceFragment(frag: Fragment,fragment: Fragment){
-
-        val fragmentManager = frag.parentFragmentManager
+     fun replaceFragment(currentFragment: Fragment,fragment: Fragment,tag:String = ""){
+        val fragmentManager = currentFragment.parentFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
 
-        fragmentTransaction.replace(R.id.frame_layout,fragment)
-        fragmentTransaction.addToBackStack(null)
+        val  added_frags = fragmentManager.fragments;
+        var added = false
+        for(frag  in added_frags) {
+            if(frag.tag == tag){
+                added=true
+                fragmentTransaction.show(frag)
+                fragmentManager.popBackStack()
+
+            } else{
+                fragmentTransaction.hide(frag)
+                fragmentTransaction.addToBackStack(null)
+
+            }
+
+        }
+
+        if (!added) {
+            fragmentTransaction.add(R.id.frame_layout, fragment,tag);
+        }
+
+
+
 
         fragmentTransaction.commit()
 

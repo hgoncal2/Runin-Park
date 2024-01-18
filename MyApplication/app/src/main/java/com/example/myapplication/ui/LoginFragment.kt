@@ -1,6 +1,7 @@
 package com.example.myapplication.ui
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
@@ -9,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -57,12 +57,7 @@ class LoginFragment : Fragment() {
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object: OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
 
-               onBackPressed()
-            }
-        })
         // Inflate the layout for this fragment
         loginBinding= FragmentLoginBinding.inflate(inflater,container,false)
 
@@ -76,7 +71,7 @@ class LoginFragment : Fragment() {
         }
 
         loginBinding.registerAccount.setOnClickListener{
-viewModel.replaceFragment(this,RegisterFragment())
+viewModel.replaceFragment(this,RegisterFragment(),"register")
 
         }
 
@@ -115,13 +110,28 @@ viewModel.replaceFragment(this,RegisterFragment())
         }
 
 
-
-
-
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+    }
     override fun onResume() {
         activity?.findViewById<BottomNavigationView>(com.example.myapplication.R.id.bottomNavView)?.menu?.getItem(0)?.setChecked(true)
 
         super.onResume()
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        if(!hidden){
+            activity?.findViewById<BottomNavigationView>(com.example.myapplication.R.id.bottomNavView)?.menu?.getItem(0)?.setChecked(true)
+
+
+        }
+
+        }
+        //super.onHiddenChanged(hidden)
+
+
+    override fun onStart() {
+        super.onStart()
     }
 
     companion object {
@@ -182,7 +192,7 @@ private fun uploadPhoto(file : File){
             object : Callback<Token> {
                 override fun onFailure(call: Call<Token>, t: Throwable) {
                     t.printStackTrace()
-                    Toast.makeText(this@LoginFragment.context,"Login",Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@LoginFragment.context,"Error Logging In",Toast.LENGTH_LONG).show()
 
                 }
                 override fun onResponse(call: Call<Token>, response: Response<Token>) {

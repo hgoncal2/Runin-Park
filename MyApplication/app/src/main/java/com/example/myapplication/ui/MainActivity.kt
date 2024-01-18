@@ -20,6 +20,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val viewModel: UserViewModel by viewModels()
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding= ActivityMainBinding.inflate(layoutInflater)
@@ -35,7 +36,7 @@ viewModel.loggedIn.observe(this, Observer {
     if(it==true ){
         login()
     }else{
-        replaceFragment(LoginFragment())
+        replaceFragment(LoginFragment(),"login")
 
     }
 })
@@ -43,10 +44,10 @@ viewModel.loggedIn.observe(this, Observer {
         binding.bottomNavView.setOnItemSelectedListener {
 
             when(it.itemId){
-                R.id.item_groups -> replaceFragment(GroupsFragment())
-                R.id.item_login -> replaceFragment(LoginFragment())
-                R.id.item_dashboard -> replaceFragment(DashBoardFragment())
-                R.id.item_my_groups -> replaceFragment(GroupsFragment())
+                R.id.item_groups -> replaceFragment(GroupsFragment(),"groups")
+                R.id.item_login -> replaceFragment(LoginFragment(),"login")
+                R.id.item_dashboard -> replaceFragment(DashBoardFragment(),"dashboard")
+                R.id.item_my_groups -> replaceFragment(GroupsFragment(),"groups")
                 R.id.item_logout -> logout()
             }
 
@@ -61,6 +62,7 @@ viewModel.loggedIn.observe(this, Observer {
         binding.bottomNavView.menu.clear()
         binding.bottomNavView.inflateMenu(R.menu.bottom_nav)
         removeFragment(DashBoardFragment())
+        viewModel.loadGroups()
         Toast.makeText(this,"Logged Out Successful!",Toast.LENGTH_LONG).show()
 
 
@@ -71,7 +73,8 @@ viewModel.loggedIn.observe(this, Observer {
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         binding.bottomNavView.menu.clear()
         binding.bottomNavView.inflateMenu(R.menu.loggedin_bottom_nav)
-        replaceFragment(DashBoardFragment())
+        replaceFragment(DashBoardFragment(),"dashboard")
+        viewModel.user.value?.let { viewModel.loadUserGroups(it.userId) }
 
     }
     companion object{
@@ -82,11 +85,31 @@ viewModel.loggedIn.observe(this, Observer {
     }
 
 
-    private fun replaceFragment(fragment: Fragment){
+    private fun replaceFragment(fragment: Fragment,tag:String = ""){
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.frame_layout,fragment)
+        val  added_frags = fragmentManager.fragments;
+        var added = false
+        for(frag  in added_frags) {
+            if(frag.tag == tag){
+                added=true
 
+                fragmentTransaction.show(frag)
+                fragmentManager.popBackStack()
+
+            } else{
+                fragmentTransaction.hide(frag)
+                fragmentTransaction.addToBackStack(null)
+
+
+            }
+
+        }
+
+        if (!added) {
+            fragmentTransaction.add(R.id.frame_layout, fragment,tag);
+        }
+        print(fragmentManager.backStackEntryCount)
         fragmentTransaction.addToBackStack(null).commit()
 
     }

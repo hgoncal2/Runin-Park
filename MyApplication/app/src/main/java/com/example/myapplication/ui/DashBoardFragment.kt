@@ -9,11 +9,13 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
@@ -60,17 +62,18 @@ private lateinit var dashBoardBinding: FragmentDashboardBinding
         dashBoardBinding.profilePicture.setOnClickListener{
             showPopup(it)
         }
+        viewModel.user.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                dashBoardBinding.dashboardUsername.text = it.username
+                it.profilePhoto?.let { pic -> loadProfilePic(pic,dashBoardBinding.profilePicture) }
 
-        if(viewModel.user.value?.profilePhoto != null){
-            val options: RequestOptions = RequestOptions()
-                .centerCrop()
-                .placeholder(com.example.myapplication.R.drawable.loading_spinning)
-                .error(com.example.myapplication.R.mipmap.ic_launcher_round)
-                .circleCrop()
-            Glide.with(this@DashBoardFragment.requireContext()).load(viewModel.user.value?.profilePhoto).diskCacheStrategy(
-                DiskCacheStrategy.NONE).skipMemoryCache(true).apply(options).timeout(6000).into(dashBoardBinding.profilePicture)
-        }
-        dashBoardBinding.dashboardUsername.text = viewModel.user.value?.username
+            }
+
+
+
+        })
+
+
         dashBoardBinding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 when(tab?.contentDescription){
@@ -143,6 +146,39 @@ private lateinit var dashBoardBinding: FragmentDashboardBinding
 
 
         popup.show()
+    }
+    override fun onHiddenChanged(hidden: Boolean) {
+        if(!hidden){
+            activity?.findViewById<BottomNavigationView>(com.example.myapplication.R.id.bottomNavView)?.menu?.getItem(0)?.setChecked(true)
+
+
+        }
+
+    }
+    private fun loadUser(){
+        viewModel.user.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                dashBoardBinding.dashboardUsername.text = it.username
+                it.profilePhoto?.let { pic -> loadProfilePic(pic,dashBoardBinding.profilePicture) }
+
+            }
+
+
+
+        })
+
+
+    }
+
+    private fun loadProfilePic(path: String,imageView: ImageView){
+        val options: RequestOptions = RequestOptions()
+            .centerCrop()
+            .placeholder(com.example.myapplication.R.drawable.loading_spinning)
+            .error(R.drawable.user_logged_in)
+            .circleCrop()
+        Glide.with(this@DashBoardFragment.requireContext()).load(path).diskCacheStrategy(
+            DiskCacheStrategy.NONE).skipMemoryCache(true).apply(options).timeout(10000).into(imageView)
+
     }
     private fun uploadPhoto(file : File){
 
