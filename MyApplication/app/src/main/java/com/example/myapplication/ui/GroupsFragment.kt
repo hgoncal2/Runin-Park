@@ -1,6 +1,7 @@
 package com.example.myapplication.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +34,7 @@ class GroupsFragment : Fragment() {
     private val viewModel: UserViewModel by activityViewModels()
 
 
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         groupsBinding= FragmentGroupsBinding.inflate(inflater,container,false)
@@ -44,11 +46,16 @@ class GroupsFragment : Fragment() {
 
         viewModel.loggedIn.observe(viewLifecycleOwner, Observer {
             if(viewModel.loggedIn.value == false){
-                viewModel.loadGroups()
+                Log.d("groups",viewModel.groups.toString())
+                Log.d("groupsv",viewModel.groups.value.toString())
+
+                viewModel.groups.value?.let {}?:viewModel.loadGroups()
 
                 //adicionar observer
             }else{
-                viewModel.user.value?.userId?.let { it1 -> viewModel.loadUserGroups(it1) }
+                viewModel.user.value?.userId?.let {user ->
+                    viewModel.groups.value?.let {viewModel.loadUserGroups(user)}
+                }
 
                 // viewModel.user.value?.let { loadUserGroups(it.userId) }
             }

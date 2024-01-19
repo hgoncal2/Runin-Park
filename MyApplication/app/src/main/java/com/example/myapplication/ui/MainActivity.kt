@@ -62,6 +62,7 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavView.inflateMenu(R.menu.bottom_nav)
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         Toast.makeText(this,"Logged Out Successful!",Toast.LENGTH_LONG).show()
+        viewModel.groups.value = null
         replaceFragment(LoginFragment())
 
 
@@ -74,6 +75,7 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         binding.bottomNavView.menu.clear()
         binding.bottomNavView.inflateMenu(R.menu.loggedin_bottom_nav)
+        viewModel.groups.value=null
         replaceFragment(DashBoardFragment())
 
     }

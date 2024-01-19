@@ -65,7 +65,9 @@ private lateinit var dashBoardBinding: FragmentDashboardBinding
         viewModel.user.observe(viewLifecycleOwner, Observer {
             it?.let {
                 dashBoardBinding.dashboardUsername.text = it.username
-                it.profilePhoto?.let { pic -> loadProfilePic(pic,dashBoardBinding.profilePicture) }
+                viewModel.replaceDashboardFragment(this@DashBoardFragment,UserInfoFragment())
+                it.profilePhoto?.let { pic -> loadProfilePic(pic,dashBoardBinding.profilePicture,false) }
+
 
             }
 
@@ -159,7 +161,7 @@ private lateinit var dashBoardBinding: FragmentDashboardBinding
         viewModel.user.observe(viewLifecycleOwner, Observer {
             it?.let {
                 dashBoardBinding.dashboardUsername.text = it.username
-                it.profilePhoto?.let { pic -> loadProfilePic(pic,dashBoardBinding.profilePicture) }
+                it.profilePhoto?.let { pic -> loadProfilePic(pic,dashBoardBinding.profilePicture,false) }
 
             }
 
@@ -170,14 +172,14 @@ private lateinit var dashBoardBinding: FragmentDashboardBinding
 
     }
 
-    private fun loadProfilePic(path: String,imageView: ImageView){
+    private fun loadProfilePic(path: String,imageView: ImageView,cache: Boolean){
         val options: RequestOptions = RequestOptions()
             .centerCrop()
             .placeholder(com.example.myapplication.R.drawable.loading_spinning)
             .error(R.drawable.user_logged_in)
             .circleCrop()
         Glide.with(this@DashBoardFragment.requireContext()).load(path).diskCacheStrategy(
-            DiskCacheStrategy.NONE).skipMemoryCache(true).apply(options).timeout(10000).into(imageView)
+            DiskCacheStrategy.NONE).skipMemoryCache(cache).apply(options).timeout(10000).into(imageView)
 
     }
     private fun uploadPhoto(file : File){
@@ -221,7 +223,6 @@ private lateinit var dashBoardBinding: FragmentDashboardBinding
             .placeholder(com.example.myapplication.R.drawable.loading_spinning)
             .error(com.example.myapplication.R.mipmap.ic_launcher_round)
             .circleCrop()
-        Glide.with(this@DashBoardFragment.requireContext()).load(R.drawable.default_groups).diskCacheStrategy(
-            DiskCacheStrategy.NONE).skipMemoryCache(true).apply(options).timeout(6000).into(dashBoardBinding.profilePicture)
+        Glide.with(this@DashBoardFragment.requireContext()).load(R.drawable.default_groups).apply(options).timeout(6000).into(dashBoardBinding.profilePicture)
     }
 }
