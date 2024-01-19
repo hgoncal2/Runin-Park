@@ -104,26 +104,37 @@ def getUsers(userId=None):
 			cursor.close()
 			cnx.close()
 			return jsonify(conta)
-		if(request.method=="PUT"):
+		if(request.method=="PUT"):			
 			token = request.headers.get("auth")
-			cursor.execute("select Token from Users where userId = '{}'".format(userId))
-			token2=cursor.fetchone()['Token']			
+			cursor.execute("select Token from Users where Username = '{}'".format(userId))
+			token2=cursor.fetchone()["Token"]	
+			print(token)		
 			if(token == token2):
+				print(request.json)
+				name=request.json["Name"]
+				lastName=request.json["LastName"]
+				weight=request.json["Weight"]
+				birthDate=request.json["BirthDate"]
+				address=request.json["Address"]
+				height=request.json["Height"]
+
 				str=""
 				for i in request.args:
 					str+="{} = '{}'".format(i.capitalize(),request.args.get(i))
 					if(i != list(request.args)[-1]):
 						str+=","
-				cursor.execute("update Users set {} where userId = '{}'".format(str,userId))
+				cursor.execute("update Users set Name='{}',LastName='{}',Weight={},BirthDate=STR_TO_DATE('{}', '%d-%m-%Y'),Address='{}',Height={} where Username = '{}'".format(name,lastName,weight,birthDate,address,height,userId))
 				cnx.commit()
 				cursor.close()
 				cnx.close()
-				return "",202
+				return jsonify(Code="200",Description="Conta criada com sucesso")
+
 			else:
 				print(request.args)
 				cursor.close()
 				cnx.close()
-				return "",404
+				return jsonify(Code="403",Description="Error")
+
 			
 @app.route('/users/<userId>/groups',methods=['GET'])
 def getUserGroups(userId=None):	
