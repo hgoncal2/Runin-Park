@@ -29,7 +29,7 @@ import java.text.SimpleDateFormat
 class UserViewModel : ViewModel(){
 
 
-var user = MutableLiveData<User?>()
+    var user = MutableLiveData<User?>()
     var loggedIn = MutableLiveData<Boolean>(false)
     var groups = MutableLiveData<List<Group>>()
     var tgroups = mutableListOf<Group>()
@@ -42,7 +42,7 @@ var user = MutableLiveData<User?>()
         user.value = newUser
     }
 
-     fun login(username: String,password:String,context: Context){
+    fun login(username: String,password:String,context: Context){
         val call = RetrofitInit().userService().login(username, password)
         call.enqueue(
             object : Callback<Token> {
@@ -119,7 +119,41 @@ var user = MutableLiveData<User?>()
             }
         )
     }
-     fun loadGroups(){
+    fun updateUser(user:User,fragment: Fragment){
+        val call= RetrofitInit().userService().updateUser(user.token?.token,user,user.username)
+        call?.enqueue(
+            object : Callback<APIResult> {
+                override fun onFailure(call: Call<APIResult>, t: Throwable) {
+                    t.printStackTrace()
+                    Toast.makeText(fragment.requireContext(),"Login", Toast.LENGTH_LONG).show()
+
+
+                }
+                override fun onResponse(call: Call<APIResult>, response: Response<APIResult>) {
+                    if(response.code() == 403){
+                        Toast.makeText(fragment.requireContext(),"Wrong Username or Password!", Toast.LENGTH_LONG).show()
+                    }else{
+                        val result : APIResult? = response.body()
+                        if(result?.code=="200"){
+                            Toast.makeText(fragment.requireContext(),"${result.description}!", Toast.LENGTH_LONG).show()
+                            setUser(user)
+                        }else{
+                            Toast.makeText(fragment.requireContext(),"Error!", Toast.LENGTH_LONG).show()
+
+                        }
+
+
+
+                    }
+
+                }
+            }
+        )
+    }
+
+
+
+    fun loadGroups(){
 
         val call = RetrofitInit().groupService().getGroups()
         call.enqueue(
@@ -137,7 +171,7 @@ var user = MutableLiveData<User?>()
         )
     }
 
-     fun loadUserGroups(userId : Int){
+    fun loadUserGroups(userId : Int){
 
         val call = RetrofitInit().groupService().getUserGroups(userId)
         call.enqueue(
@@ -170,7 +204,7 @@ var user = MutableLiveData<User?>()
         this.loggedIn.value = loggedIn
     }
 
-     fun replaceFragment(currentFragment: Fragment,fragment: Fragment,tag:String = ""){
+    fun replaceFragment(currentFragment: Fragment,fragment: Fragment,tag:String = ""){
         val fragmentManager = currentFragment.parentFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
 
@@ -213,7 +247,7 @@ var user = MutableLiveData<User?>()
         fragment.parentFragmentManager.popBackStack();
     }
 
-     fun uploadPhoto(file : File,view: ImageView){
+    fun uploadPhoto(file : File,view: ImageView){
 
         val call = RetrofitInit().photoService().uploadPhoto(
 
@@ -235,7 +269,7 @@ var user = MutableLiveData<User?>()
                     if (response.code() == 403) {
                         Toast.makeText(
                             DashBoardFragment().requireContext(),
-                            "Wrong Username or Password!",
+                            "Error uploading pictutre!",
                             Toast.LENGTH_LONG
                         ).show()
                     } else {

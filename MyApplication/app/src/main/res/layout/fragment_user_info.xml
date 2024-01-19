@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="0dp"
-            android:text="Weight"
+            android:text="Weight(Kg) "
             android:textSize="12sp"
             app:layout_constraintBottom_toTopOf="@+id/textView7"
             app:layout_constraintEnd_toEndOf="parent"
@@ -101,7 +101,7 @@
             android:focusableInTouchMode="true"
 
             android:minHeight="48dp"
-            android:text="Name"
+
             app:layout_constraintBottom_toTopOf="@+id/textView4"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.17"
@@ -111,6 +111,7 @@
 
         <com.vicmikhailau.maskededittext.MaskedEditText
             android:id="@+id/birthDate"
+            android:hint="DD/MM/YYYY"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -119,7 +120,7 @@
             android:focusableInTouchMode="true"
             android:inputType="date"
             android:minHeight="48dp"
-            android:text="20/12/1998"
+
             app:layout_constraintBottom_toTopOf="@+id/textView6"
             app:layout_constraintEnd_toEndOf="@+id/textView5"
             app:layout_constraintHorizontal_bias="0.17"
@@ -136,7 +137,7 @@
             android:focusableInTouchMode="true"
             android:inputType="text"
             android:minHeight="48dp"
-            android:text="Name"
+
             app:layout_constraintBottom_toTopOf="@+id/textView5"
             app:layout_constraintEnd_toEndOf="@+id/textView4"
             app:layout_constraintHorizontal_bias="0.17"
@@ -144,16 +145,17 @@
             app:layout_constraintTop_toBottomOf="@+id/textView4"
             app:layout_constraintVertical_bias="0.245" />
 
-        <com.vicmikhailau.maskededittext.MaskedEditText
+        <EditText
             android:id="@+id/weight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
+
             android:focusable="auto"
             android:focusableInTouchMode="true"
             android:inputType="numberDecimal"
             android:minHeight="48dp"
-            android:text="1,80"
+
             app:layout_constraintBottom_toTopOf="@+id/textView7"
             app:layout_constraintEnd_toEndOf="@+id/textView6"
             app:layout_constraintHorizontal_bias="0.17"
@@ -161,7 +163,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textView6"
             app:layout_constraintVertical_bias="0.245" />
 
-        <com.vicmikhailau.maskededittext.MaskedEditText
+        <EditText
             android:id="@+id/height"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -170,7 +172,7 @@
             android:focusableInTouchMode="true"
             android:inputType="numberDecimal"
             android:minHeight="48dp"
-            android:text="1,80m"
+
             app:layout_constraintBottom_toTopOf="@+id/textView8"
             app:layout_constraintEnd_toEndOf="@+id/textView7"
             app:layout_constraintHorizontal_bias="0.17"
@@ -233,9 +235,11 @@
             android:layout_marginEnd="40dp"
             android:clickable="true"
             android:focusable="auto"
+
             android:src="@drawable/edit"
             app:layout_constraintBottom_toBottomOf="@+id/birthDate"
             app:layout_constraintEnd_toEndOf="parent"
+
             app:layout_constraintHorizontal_bias="0.171"
             app:layout_constraintStart_toEndOf="@+id/birthDate"
             app:layout_constraintTop_toTopOf="@+id/birthDate"
@@ -291,7 +295,7 @@
             android:layout_height="50dp"
             android:layout_marginEnd="16dp"
             android:clickable="true"
-            android:src="@drawable/save_svgrepo_com__2_"
+            android:src="@drawable/save"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"

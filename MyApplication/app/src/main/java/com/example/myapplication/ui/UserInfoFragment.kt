@@ -3,17 +3,23 @@ package com.example.myapplication.ui
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
 import android.text.InputType
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.core.widget.doAfterTextChanged
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.example.myapplication.databinding.FragmentUserInfoBinding
+import com.example.myapplication.model.User
 import com.example.myapplication.viewModel.UserViewModel
+import java.text.SimpleDateFormat
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -26,7 +32,7 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class UserInfoFragment : Fragment() {
-
+    private lateinit var newUser: User
     private lateinit var userInfoBinding: FragmentUserInfoBinding
     private val viewModel: UserViewModel by activityViewModels()
 
@@ -47,6 +53,8 @@ class UserInfoFragment : Fragment() {
         userInfoBinding.weight.keyListener = null;
         userInfoBinding.height.keyListener = null;
         userInfoBinding.address.keyListener = null;
+
+
         userInfoBinding.editName.setOnClickListener{
             userInfoBinding.name.inputType = InputType.TYPE_CLASS_TEXT
 
@@ -65,10 +73,17 @@ class UserInfoFragment : Fragment() {
 
         }
         userInfoBinding.editBirthDate.setOnClickListener{
+            userInfoBinding.birthDate.inputType = InputType.TYPE_CLASS_DATETIME
+
+            userInfoBinding.birthDate.text?.let { it1 -> userInfoBinding.birthDate.setSelection(it1.length) }
+            viewModel.showKeyboard(this)
+            userInfoBinding.birthDate.requestFocus()
             userInfoBinding.birthDate.focusable= View.FOCUSABLE
         }
+
+
         userInfoBinding.editWeight.setOnClickListener{
-            userInfoBinding.weight.inputType = InputType.TYPE_CLASS_TEXT
+            userInfoBinding.weight.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
 
             userInfoBinding.weight.text?.let { it1 -> userInfoBinding.weight.setSelection(it1.length) }
             viewModel.showKeyboard(this)
@@ -76,7 +91,7 @@ class UserInfoFragment : Fragment() {
 
         }
         userInfoBinding.editHeight.setOnClickListener{
-            userInfoBinding.height.inputType = InputType.TYPE_CLASS_TEXT
+            userInfoBinding.height.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
 
             userInfoBinding.height.text?.let { it1 -> userInfoBinding.height.setSelection(it1.length) }
             viewModel.showKeyboard(this)
@@ -91,7 +106,18 @@ class UserInfoFragment : Fragment() {
             userInfoBinding.address.requestFocus()
         }
         userInfoBinding.save.setOnClickListener{
-            Log.d("adw","da")
+            newUser=viewModel.user.value!!
+            newUser.birthDate=viewModel.dateFormatter.parse(userInfoBinding.birthDate.text.toString())
+            newUser.name=userInfoBinding.name.text.toString()
+            newUser.lastName=userInfoBinding.lastName.text.toString()
+            newUser.weight=userInfoBinding.weight.text.toString().toDouble()
+            newUser.height=userInfoBinding.height.text.toString().toDouble()
+            newUser.address=userInfoBinding.address.text.toString()
+viewModel.updateUser(newUser,this)
+
+
+
+
         }
         return userInfoBinding.root
     }
@@ -104,8 +130,8 @@ class UserInfoFragment : Fragment() {
                 it.name?.let { v -> userInfoBinding.name.setText(v) } ?: userInfoBinding.name.setText("Valor não preenchido")
                 it.lastName?.let{v -> userInfoBinding.lastName.setText(v)} ?: userInfoBinding.lastName.setText("Valor não preenchido")
                 it.birthDate?.let{v -> userInfoBinding.birthDate.setText(viewModel.dateFormatter.format(v))} ?: userInfoBinding.birthDate.setText("Valor não preenchido")
-                it.weight?.let{v -> userInfoBinding.weight.setText("${v} KG")} ?: userInfoBinding.weight.setText("")
-                it.height?.let{v -> userInfoBinding.height.setText("${v} M")} ?: userInfoBinding.height.setText("")
+                it.weight?.let{v -> userInfoBinding.weight.setText("${v}")} ?: userInfoBinding.weight.setText("")
+                it.height?.let{v -> userInfoBinding.height.setText("${v}")} ?: userInfoBinding.height.setText("")
                 it.address?.let{v -> userInfoBinding.address.setText(v)} ?: userInfoBinding.address.setText("")
             }
 

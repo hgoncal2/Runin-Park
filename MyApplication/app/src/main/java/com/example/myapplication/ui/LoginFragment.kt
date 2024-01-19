@@ -46,7 +46,7 @@ class LoginFragment : Fragment() {
 
 
         loginBinding.registerAccount.setOnClickListener{
-viewModel.replaceFragment(this,RegisterFragment(),"register")
+            viewModel.replaceFragment(this,RegisterFragment(),"register")
 
         }
 
@@ -71,8 +71,8 @@ viewModel.replaceFragment(this,RegisterFragment(),"register")
 
         }
 
-        }
-        //super.onHiddenChanged(hidden)
+    }
+    //super.onHiddenChanged(hidden)
 
 
 

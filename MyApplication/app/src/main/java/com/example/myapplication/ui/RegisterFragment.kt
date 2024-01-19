@@ -32,7 +32,7 @@ class RegisterFragment : Fragment() {
         registerBinding= FragmentRegisterBinding.inflate(inflater,container,false)
 
         registerBinding.registerButton.setOnClickListener{
-viewModel.register(registerBinding.registerUsername.text.toString(),registerBinding.registerPassword.text.toString(),this)
+            viewModel.register(registerBinding.registerUsername.text.toString(),registerBinding.registerPassword.text.toString(),this)
 
         }
 

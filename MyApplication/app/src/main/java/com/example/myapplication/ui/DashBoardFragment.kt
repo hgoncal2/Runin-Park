@@ -49,7 +49,7 @@ private const val ARG_PARAM2 = "param2"
 class DashBoardFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private val viewModel: UserViewModel by activityViewModels()
-private lateinit var dashBoardBinding: FragmentDashboardBinding
+    private lateinit var dashBoardBinding: FragmentDashboardBinding
 
 
 

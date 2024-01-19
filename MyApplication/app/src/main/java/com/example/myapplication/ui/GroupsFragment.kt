@@ -29,8 +29,8 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class GroupsFragment : Fragment() {
-   private lateinit var groupsBinding: FragmentGroupsBinding
-   private  var groups : List<Group>? = null
+    private lateinit var groupsBinding: FragmentGroupsBinding
+    private  var groups : List<Group>? = null
     private val viewModel: UserViewModel by activityViewModels()
 
 
@@ -59,7 +59,7 @@ class GroupsFragment : Fragment() {
 
                 // viewModel.user.value?.let { loadUserGroups(it.userId) }
             }
-            })
+        })
 
 
 
@@ -76,7 +76,7 @@ class GroupsFragment : Fragment() {
 
                 }else{
                     if(groupsBinding.noGroups.visibility == View.VISIBLE) groupsBinding.noGroups.visibility= View.GONE
-                        adapter.notifyDataSetChanged()
+                    adapter.notifyDataSetChanged()
                 }
 
             }else{
