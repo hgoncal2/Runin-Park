@@ -66,7 +66,7 @@ class DashBoardFragment : Fragment() {
             it?.let {
                 dashBoardBinding.dashboardUsername.text = it.username
                 viewModel.replaceDashboardFragment(this@DashBoardFragment,UserInfoFragment())
-                it.profilePhoto?.let { pic -> loadProfilePic(pic,dashBoardBinding.profilePicture,false) }
+                it.profilePhoto?.let { pic -> viewModel.loadPic(pic,dashBoardBinding.profilePicture,false,this,R.drawable.user_logged_in) }
 
 
             }
@@ -157,20 +157,7 @@ class DashBoardFragment : Fragment() {
         }
 
     }
-    private fun loadUser(){
-        viewModel.user.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                dashBoardBinding.dashboardUsername.text = it.username
-                it.profilePhoto?.let { pic -> loadProfilePic(pic,dashBoardBinding.profilePicture,false) }
 
-            }
-
-
-
-        })
-
-
-    }
 
     private fun loadProfilePic(path: String,imageView: ImageView,cache: Boolean){
         val options: RequestOptions = RequestOptions()

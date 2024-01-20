@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.R
 import com.example.myapplication.databinding.FragmentGroupsBinding
+import com.example.myapplication.dialogs.AddGroupDialog
 import com.example.myapplication.model.Group
 import com.example.myapplication.ui.adapter.GroupListAdapter
 import com.example.myapplication.viewModel.UserViewModel
@@ -40,7 +41,7 @@ class GroupsFragment : Fragment() {
         // Inflate the layout for this fragment
         groupsBinding= FragmentGroupsBinding.inflate(inflater,container,false)
 
-        val adapter = GroupListAdapter(viewModel.tgroups,this@GroupsFragment.requireContext()){
+        val adapter = GroupListAdapter(viewModel.adapterGroups,this@GroupsFragment.requireContext()){
             showGroupPage(it)
         }
         groupsBinding.groupsViewList.adapter=adapter
@@ -50,29 +51,52 @@ class GroupsFragment : Fragment() {
 
         viewModel.loggedIn.observe(viewLifecycleOwner, Observer {
             if(viewModel.loggedIn.value == false){
-                Log.d("groups",viewModel.groups.toString())
-                Log.d("groupsv",viewModel.groups.value.toString())
 
-                viewModel.groups.value?.let {}?:viewModel.loadGroups()
+
+                viewModel.allGroups.value?.let {}?:viewModel.loadGroups()
+                groupsBinding.addCreateBtnsLayout.visibility = View.GONE
 
                 //adicionar observer
             }else{
                 viewModel.user.value?.userId?.let {user ->
-                    viewModel.groups.value?.let {viewModel.loadUserGroups(user)}
+                    viewModel.userGroups.value?.let {} ?: viewModel.loadUserGroups(user)
+                    print("adawd")
                 }
+                groupsBinding.addCreateBtnsLayout.visibility = View.VISIBLE
 
                 // viewModel.user.value?.let { loadUserGroups(it.userId) }
             }
         })
 
+        var groupsFiltered = mutableListOf<Group>()
+
+        val groupsDialog = object : AddGroupDialog(this.requireContext(),groupsFiltered,viewModel,this){
+
+        }
+
+
+groupsBinding.btnAddGroup.setOnClickListener{
+    viewModel.allGroups.value.let {viewModel.loadGroups("dialog")}
+   viewModel.allGroups.observe(viewLifecycleOwner,Observer{
+       it?.let {
+          groupsFiltered.clear()
+           groupsFiltered.addAll(it.filterNot { viewModel.userGroups.value?.contains(it) == true }.toMutableList())
+           groupsDialog.adapter?.notifyDataSetChanged()
+if(!groupsDialog.isShowing){
+    groupsDialog.show()
+}
 
 
 
+       }
 
-        viewModel.groups.observe(viewLifecycleOwner, Observer {
+   })
+
+}
+        viewModel.allGroups.observe(viewLifecycleOwner, Observer {
 
             if(viewModel.loggedIn.value == true){
-                if(viewModel.groups.value?.size == 0){
+                if(viewModel.allGroups.value?.size == 0){
                     if(groupsBinding.noGroups.visibility == View.GONE){
                         groupsBinding.noGroups.visibility= View.VISIBLE
 
@@ -84,19 +108,41 @@ class GroupsFragment : Fragment() {
                 }
 
             }else{
-                if(viewModel.groups.value?.size != 0){
+                if(viewModel.allGroups.value?.size != 0){
+                    adapter.notifyDataSetChanged()
+                }
+            }
+
+        })
+        viewModel.userGroups.observe(viewLifecycleOwner, Observer {
+
+            if(viewModel.loggedIn.value == true){
+                if(viewModel.userGroups.value?.size == 0){
+                    if(groupsBinding.noGroups.visibility == View.GONE){
+                        groupsBinding.noGroups.visibility= View.VISIBLE
+
+                    }
+
+                }else{
+                    if(groupsBinding.noGroups.visibility == View.VISIBLE) groupsBinding.noGroups.visibility= View.GONE
+                    adapter.notifyDataSetChanged()
+                }
+
+            }else{
+                if(viewModel.userGroups.value?.size != 0){
                     adapter.notifyDataSetChanged()
                 }
             }
 
         })
 
+
+
         viewModel.user.observe(viewLifecycleOwner, Observer {
             it?.let {
                 groupsBinding.user.setText(it.username)
                 groupsBinding.user.visibility= View.VISIBLE
                 groupsBinding.groupsViewList.layoutParams.height = LayoutParams.WRAP_CONTENT
-                viewModel.loadUserGroups(it.userId)
             } ?: run {
                 groupsBinding.user.visibility= View.GONE
             }

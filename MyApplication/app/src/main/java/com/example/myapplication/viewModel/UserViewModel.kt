@@ -1,6 +1,7 @@
 package com.example.myapplication.viewModel
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.Toast
@@ -32,8 +33,10 @@ class UserViewModel : ViewModel(){
     var user = MutableLiveData<User?>()
     var loggedIn = MutableLiveData<Boolean>(false)
     var selectedGroup = MutableLiveData<Group>()
-    var groups = MutableLiveData<List<Group>>()
-    var tgroups = mutableListOf<Group>()
+    var userGroups = MutableLiveData<List<Group>>()
+
+    var allGroups= MutableLiveData<List<Group>>()
+    var adapterGroups = mutableListOf<Group>()
 
     val dateFormatter = SimpleDateFormat("dd/MM/yyyy")
     lateinit var token : Token
@@ -155,7 +158,7 @@ class UserViewModel : ViewModel(){
 
 
 
-    fun loadGroups(){
+    fun loadGroups(dialog : String? = null){
 
         val call = RetrofitInit().groupService().getGroups()
         call.enqueue(
@@ -165,8 +168,9 @@ class UserViewModel : ViewModel(){
 
                 }
                 override fun onResponse(call: Call<List<Group>>, response: Response<List<Group>>) {
+                    dialog?.let { allGroups.value = response.body() }
+                        ?: setAllGroups(response.body())
 
-                    setGroups(response.body())
 
                 }
             }
@@ -184,7 +188,7 @@ class UserViewModel : ViewModel(){
                 }
                 override fun onResponse(call: Call<List<Group>>, response: Response<List<Group>>) {
 
-                    setGroups(response.body())
+                    setUserGroups(response.body())
 
 
 
@@ -193,12 +197,19 @@ class UserViewModel : ViewModel(){
         )
 
     }
-    fun setGroups(groups: List<Group>?){
-        tgroups.clear()
+    fun setAllGroups(groups: List<Group>?){
+        adapterGroups.clear()
         if (groups != null) {
-            tgroups.addAll(groups)
+            adapterGroups.addAll(groups)
         }
-        this.groups.value = tgroups
+        this.allGroups.value = adapterGroups
+    }
+    fun setUserGroups(groups: List<Group>?){
+        adapterGroups.clear()
+        if (groups != null) {
+            adapterGroups.addAll(groups)
+        }
+        this.userGroups.value = adapterGroups
     }
 
 
@@ -228,6 +239,16 @@ class UserViewModel : ViewModel(){
         fragment.parentFragmentManager.popBackStack();
     }
 
+     fun loadPic(path: String,imageView: ImageView,cache: Boolean,fragment: Fragment,drawable: Int){
+        val options: RequestOptions = RequestOptions()
+            .centerCrop()
+            .placeholder(com.example.myapplication.R.drawable.loading_spinning)
+            .error(drawable)
+            .circleCrop()
+        Glide.with(fragment.requireContext()).load(path).diskCacheStrategy(
+            DiskCacheStrategy.NONE).skipMemoryCache(cache).apply(options).timeout(10000).into(imageView)
+
+    }
     fun uploadPhoto(file : File,view: ImageView){
 
         val call = RetrofitInit().photoService().uploadPhoto(

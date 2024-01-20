@@ -127,8 +127,8 @@ viewModel.updateUser(newUser,this)
         viewModel.user.observe(viewLifecycleOwner, Observer {
             it?.let {
 
-                it.name?.let { v -> userInfoBinding.name.setText(v) } ?: userInfoBinding.name.setText("Valor não preenchido")
-                it.lastName?.let{v -> userInfoBinding.lastName.setText(v)} ?: userInfoBinding.lastName.setText("Valor não preenchido")
+                it.name?.let { v -> userInfoBinding.name.setText(v) } ?: userInfoBinding.name.setText("")
+                it.lastName?.let{v -> userInfoBinding.lastName.setText(v)} ?: userInfoBinding.lastName.setText("")
                 it.birthDate?.let{v -> userInfoBinding.birthDate.setText(viewModel.dateFormatter.format(v))} ?: userInfoBinding.birthDate.setText("Valor não preenchido")
                 it.weight?.let{v -> userInfoBinding.weight.setText("${v}")} ?: userInfoBinding.weight.setText("")
                 it.height?.let{v -> userInfoBinding.height.setText("${v}")} ?: userInfoBinding.height.setText("")

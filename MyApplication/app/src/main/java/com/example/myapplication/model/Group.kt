@@ -12,5 +12,7 @@ data class Group(
     @SerializedName("Name")
     val name: String,
     @SerializedName("OwnerId")
-    val ownerId: Int
+    val ownerId: Int,
+    @SerializedName("GroupPhotoPath")
+    var groupPhoto : String?
 )

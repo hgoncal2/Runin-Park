@@ -57,6 +57,28 @@
                 />
         </ScrollView>
 
+        <LinearLayout
+            android:id="@+id/add_create_btns_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_add_group"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:text="Add Group" />
+
+            <Button
+                android:id="@+id/btn_create_group"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:text="Create Group" />
+        </LinearLayout>
+
     </LinearLayout>
 
 </FrameLayout>
