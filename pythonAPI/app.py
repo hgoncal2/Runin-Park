@@ -423,43 +423,14 @@ def getPhotos():
 
 
 
-@app.route('/photos', methods=['POST'])
-def uploadPhoto():
+@app.route('/photos/users', methods=['POST'])
+def uploadPhotoU():
 	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
 	cursor=cnx.cursor(dictionary=True)
-	args=request.args
-	table = args.get("table")
-	
-	print(args)
-	if table == 'Users':
-		pk='UserId'
-		token = args.get("auth")
-		cursor.execute("select UserId from Users where token = '{}'".format(token))
-		pkId=cursor.fetchone()['UserId']
-	if table == 'RunGroups':
-		pk='UserId'
-
-	if table == 'Posts':
-		pk='UserId'
-
-	if table == 'Replies':
-		pk='UserId'
-
-	if table == 'CommentId':
-		pk='UserId'
-
-	if table == 'Run':
-		pk='UserId'
-
-
 	path = os.path.realpath('.')
-	
-	pk='UserId'
-	token = args.get("auth")
-	print(token)
+	token = request.headers.get("auth")
 	cursor.execute("select UserId from Users where token = '{}'".format(token))
 	pkId=cursor.fetchone()['UserId']
-	print(pkId)
 	cursor.execute("insert into Photos (PathToPhoto) values ('')")
 	cnx.commit()
 	cursor.execute("select PhotoId from Photos order by PhotoId desc limit 1")
@@ -468,14 +439,38 @@ def uploadPhoto():
 	pathPhoto="http://16.170.180.240:5000/static/img/{}.png".format(photoId)
 	cursor.execute("update Photos set PathToPhoto = '{}' where PhotoId = {}".format(pathPhoto,photoId))
 	cnx.commit()
-	cursor.execute("update Users set PhotoId = {} where {} = {}".format(photoId,pk,pkId))
+	cursor.execute("update Users set PhotoId = {} where UserId = {}".format(photoId,pkId))
 	cnx.commit()
 	cursor.close()
 	cnx.close()
 	return jsonify(Path="http://16.170.180.240:5000/static/img/{}.png".format(photoId))
 
 
-		
+@app.route('/photos/<groupId>', methods=['POST'])
+def uploadPhotoG(groupId):
+	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
+	cursor=cnx.cursor(dictionary=True)
+	path = os.path.realpath('.')
+	token = request.headers.get("auth")
+	cursor.execute("select UserId from Users where token = '{}'".format(token))
+	pkId=cursor.fetchone()['UserId']
+	cursor.execute("select OwnerId from RunGroups where GroupId={}".format(groupId))
+	ownerId=cursor.fetchone()['OwnerId']
+	if pkId==ownerId:
+		cursor.execute("insert into Photos (PathToPhoto) values ('')")
+		cnx.commit()
+		cursor.execute("select PhotoId from Photos order by PhotoId desc limit 1")
+		photoId=cursor.fetchone()['PhotoId']
+		request.files["image"].save(path+"/static/img/{}.png".format(photoId))
+		pathPhoto="http://16.170.180.240:5000/static/img/{}.png".format(photoId)
+		cursor.execute("update Photos set PathToPhoto = '{}' where PhotoId = {}".format(pathPhoto,photoId))
+		cnx.commit()
+		cursor.execute("update RunGroups set PhotoId = {} where GroupId = {}".format(photoId,groupId))
+		cnx.commit()
+		cursor.close()
+		cnx.close()
+		return jsonify(Path="http://16.170.180.240:5000/static/img/{}.png".format(photoId))
+	return "",403
 
 
 if __name__ == '__main__':
