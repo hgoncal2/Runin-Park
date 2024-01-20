@@ -31,8 +31,10 @@ class UserViewModel : ViewModel(){
 
     var user = MutableLiveData<User?>()
     var loggedIn = MutableLiveData<Boolean>(false)
+    var selectedGroup = MutableLiveData<Group>()
     var groups = MutableLiveData<List<Group>>()
     var tgroups = mutableListOf<Group>()
+
     val dateFormatter = SimpleDateFormat("dd/MM/yyyy")
     lateinit var token : Token
 
@@ -208,30 +210,9 @@ class UserViewModel : ViewModel(){
         val fragmentManager = currentFragment.parentFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
 
-        val  added_frags = fragmentManager.fragments;
-        var added = false
-        for(frag  in added_frags) {
-            if(frag.tag == tag){
-                added=true
-                fragmentTransaction.show(frag)
-                fragmentManager.popBackStack()
+        fragmentTransaction.replace(R.id.frame_layout,fragment)
 
-            } else{
-                fragmentTransaction.hide(frag)
-                fragmentTransaction.addToBackStack(null)
-
-            }
-
-        }
-
-        if (!added) {
-            fragmentTransaction.add(R.id.frame_layout, fragment,tag);
-        }
-
-
-
-
-        fragmentTransaction.commit()
+        fragmentTransaction.addToBackStack(null).commit()
 
     }
 
