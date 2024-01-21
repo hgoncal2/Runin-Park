@@ -19,6 +19,9 @@ import com.example.myapplication.model.Group
 import com.example.myapplication.ui.adapter.GroupListAdapter
 import com.example.myapplication.viewModel.UserViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -75,23 +78,43 @@ class GroupsFragment : Fragment() {
         }
 
 
+
 groupsBinding.btnAddGroup.setOnClickListener{
-    viewModel.allGroups.value.let {viewModel.loadGroups("dialog")}
-   viewModel.allGroups.observe(viewLifecycleOwner,Observer{
-       it?.let {
-          groupsFiltered.clear()
-           groupsFiltered.addAll(it.filterNot { viewModel.userGroups.value?.contains(it) == true }.toMutableList())
-           groupsDialog.adapter?.notifyDataSetChanged()
-if(!groupsDialog.isShowing){
-    groupsDialog.show()
+
+    viewModel.user.value?.userId?.let { it1 -> viewModel.loadUserGroups(it1) }
+GlobalScope.launch (Dispatchers.Main){
+    viewModel.groupsFiltered.collect { value ->
+        if(value==1){
+            groupsFiltered.clear()
+            viewModel.allGroups.value?.filterNot { viewModel.userGroups.value?.contains(it) == true }
+                ?.let { it1 -> groupsFiltered.addAll(it1.toMutableList()) }
+
+            groupsDialog.adapter?.notifyDataSetChanged()
+            if(!groupsDialog.isShowing){
+                groupsDialog.show()
+                viewModel._groupsFiltered.value=0
+            }
+        }
+    }
 }
+    viewModel.loadGroups("dialog")
+    /*
+        viewModel.loadGroups("dialog")
+        viewModel.groupsFiltered.value= emptyList()
+
+   viewModel.groupsFiltered.observe(viewLifecycleOwner,Observer{
+       it?.let {
+           if(viewModel.groupsFiltered.value?.isNotEmpty() == true){
+
+           }
+
+
 
 
 
        }
 
-   })
-
+   })*/
 }
         viewModel.allGroups.observe(viewLifecycleOwner, Observer {
 

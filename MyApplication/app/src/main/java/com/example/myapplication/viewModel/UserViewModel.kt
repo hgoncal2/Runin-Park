@@ -19,6 +19,10 @@ import com.example.myapplication.model.Token
 import com.example.myapplication.model.User
 import com.example.myapplication.retrofit.RetrofitInit
 import com.example.myapplication.ui.DashBoardFragment
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Call
@@ -37,6 +41,8 @@ class UserViewModel : ViewModel(){
 
     var allGroups= MutableLiveData<List<Group>>()
     var adapterGroups = mutableListOf<Group>()
+    var _groupsFiltered = MutableStateFlow(0)
+    var groupsFiltered = _groupsFiltered.asStateFlow()
 
     val dateFormatter = SimpleDateFormat("dd/MM/yyyy")
     lateinit var token : Token
@@ -168,7 +174,10 @@ class UserViewModel : ViewModel(){
 
                 }
                 override fun onResponse(call: Call<List<Group>>, response: Response<List<Group>>) {
-                    dialog?.let { allGroups.value = response.body() }
+                    dialog?.let { allGroups.value = response.body()
+                                            _groupsFiltered.value=1
+
+                    }
                         ?: setAllGroups(response.body())
 
 

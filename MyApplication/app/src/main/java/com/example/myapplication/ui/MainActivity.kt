@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         binding.bottomNavView.menu.clear()
         binding.bottomNavView.inflateMenu(R.menu.loggedin_bottom_nav)
-       // viewModel.groups.value=null
+       viewModel.allGroups.value=null
         replaceFragment(DashBoardFragment())
 
     }
