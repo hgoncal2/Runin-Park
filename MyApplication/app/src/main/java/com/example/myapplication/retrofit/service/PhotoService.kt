@@ -13,7 +13,7 @@ import retrofit2.http.Query
 interface PhotoService {
 
 
-    @POST("photos/user")
+    @POST("photos/users")
 
     @Multipart
     fun uploadPhoto(@Part image: MultipartBody.Part?, @Header("auth") token: String?): Call<Photo>

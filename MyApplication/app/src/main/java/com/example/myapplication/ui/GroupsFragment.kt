@@ -49,8 +49,7 @@ class GroupsFragment : Fragment() {
         }
         groupsBinding.groupsViewList.adapter=adapter
         groupsBinding.groupsViewList.layoutManager= LinearLayoutManager(this@GroupsFragment.requireContext())
-        groupsBinding.groupsViewList.addItemDecoration(DividerItemDecoration(this@GroupsFragment.requireContext(), LinearLayoutManager.VERTICAL))
-
+        groupsBinding.groupsViewList.addItemDecoration(DividerItemDecoration(this.context, LinearLayoutManager.VERTICAL))
 
         viewModel.loggedIn.observe(viewLifecycleOwner, Observer {
             if(viewModel.loggedIn.value == false){

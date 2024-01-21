@@ -42,7 +42,7 @@ setOnDismissListener{
         // Set up the RecyclerView in the dialog
         val recycler = view.findViewById<RecyclerView>(R.id.add_group_recycler_view)
         recycler.layoutManager = LinearLayoutManager(context)
-        recycler.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
+        recycler.addItemDecoration(DividerItemDecoration(this.context, LinearLayoutManager.VERTICAL))
 
 
 
