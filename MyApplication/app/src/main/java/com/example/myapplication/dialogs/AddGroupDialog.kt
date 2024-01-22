@@ -1,18 +1,15 @@
 package com.example.myapplication.dialogs
-
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.model.Group
 import com.example.myapplication.ui.GroupPageFragment
-import com.example.myapplication.ui.GroupsFragment
 import com.example.myapplication.ui.adapter.AddGroupAdapter
 import com.example.myapplication.viewModel.UserViewModel
 
@@ -52,6 +49,10 @@ setOnDismissListener{
             viewModel.replaceFragment(frag, GroupPageFragment())
 
         }
-        view.findViewById<RecyclerView>(R.id.add_group_recycler_view).adapter = adapter
+        recycler.adapter = adapter
+    }
+
+    fun notifyAdapter(){
+        adapter?.notifyDataSetChanged()
     }
 }

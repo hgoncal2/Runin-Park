@@ -1,7 +1,6 @@
 package com.example.myapplication.viewModel
 
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.Toast
@@ -19,9 +18,7 @@ import com.example.myapplication.model.Token
 import com.example.myapplication.model.User
 import com.example.myapplication.retrofit.RetrofitInit
 import com.example.myapplication.ui.DashBoardFragment
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -94,6 +91,41 @@ class UserViewModel : ViewModel(){
                     }
 
 
+
+                }
+            }
+        )
+    }
+
+    fun joinGroup(groupId: Int,fragment: Fragment){
+        val call = RetrofitInit().userService().addUserToGroup(user.value?.token?.token, groupId)
+        call.enqueue(
+            object : Callback<APIResult> {
+                override fun onFailure(call: Call<APIResult>, t: Throwable) {
+                    t.printStackTrace()
+                    Toast.makeText(fragment.requireContext(),"Error joining group!", Toast.LENGTH_LONG).show()
+
+
+                }
+                override fun onResponse(call: Call<APIResult>, response: Response<APIResult>) {
+                    if(response.code() == 403){
+                        Toast.makeText(fragment.requireContext(),"Error joining group!", Toast.LENGTH_LONG).show()
+                    }else{
+                        val result : APIResult? = response.body()
+                        if(result?.code=="200"){
+                            Toast.makeText(fragment.requireContext(),"${result.description}!", Toast.LENGTH_LONG).show()
+val newUserGroups = mutableListOf<Group>()
+                            selectedGroup.value?.let { newUserGroups.add(it) }
+                            setUserGroups(userGroups.value?.plus(newUserGroups))
+
+                        }else{
+                            Toast.makeText(fragment.requireContext(),"Error joining group!", Toast.LENGTH_LONG).show()
+
+                        }
+
+
+
+                    }
 
                 }
             }

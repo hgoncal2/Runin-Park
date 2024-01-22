@@ -299,7 +299,8 @@ def getGroupMembers(groupId=None):
 		cnx.commit()
 		cursor.close()
 		cnx.close()
-		return "Added_to_Group", 200
+		return jsonify(Code="200",Description="Adicionado ao grupo com sucesso!")
+
 
 
 

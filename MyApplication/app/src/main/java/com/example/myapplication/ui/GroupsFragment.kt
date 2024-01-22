@@ -1,12 +1,10 @@
 package com.example.myapplication.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout.LayoutParams
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -37,6 +35,7 @@ class GroupsFragment : Fragment() {
     private lateinit var groupsBinding: FragmentGroupsBinding
     private  var groups : List<Group>? = null
     private val viewModel: UserViewModel by activityViewModels()
+    var groupsFiltered = mutableListOf<Group>()
 
 
 
@@ -70,7 +69,7 @@ class GroupsFragment : Fragment() {
             }
         })
 
-        var groupsFiltered = mutableListOf<Group>()
+
 
         val groupsDialog = object : AddGroupDialog(this.requireContext(),groupsFiltered,viewModel,this){
 
@@ -88,7 +87,7 @@ GlobalScope.launch (Dispatchers.Main){
             viewModel.allGroups.value?.filterNot { viewModel.userGroups.value?.contains(it) == true }
                 ?.let { it1 -> groupsFiltered.addAll(it1.toMutableList()) }
 
-            groupsDialog.adapter?.notifyDataSetChanged()
+            groupsDialog.notifyAdapter()
             if(!groupsDialog.isShowing){
                 groupsDialog.show()
                 viewModel._groupsFiltered.value=0

@@ -1,5 +1,6 @@
 package com.example.myapplication.ui
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import com.example.myapplication.R
 import com.example.myapplication.databinding.FragmentGroupPageBinding
 import com.example.myapplication.viewModel.UserViewModel
@@ -35,6 +37,10 @@ class GroupPageFragment : Fragment() {
 
 
         })
+
+        groupPageBinding.btnJoinGroup.setOnClickListener{
+            viewModel.selectedGroup.value?.groupId?.let { it1 -> viewModel.joinGroup(it1,this) }
+        }
         viewModel.loggedIn.observe(viewLifecycleOwner) {
             if (!it) {
                 groupPageBinding.notLoggedIn.visibility = View.VISIBLE
@@ -44,8 +50,26 @@ class GroupPageFragment : Fragment() {
                 }
 
                 groupPageBinding.notLoggedIn.visibility = View.GONE
+                viewModel.userGroups.observe(viewLifecycleOwner, Observer {
+                    if(viewModel.userGroups.value?.contains(viewModel.selectedGroup.value!!) == false){
+                        groupPageBinding.btnLeaveGroup.visibility = View.GONE
+                        groupPageBinding.btnJoinGroup.visibility = View.VISIBLE
+                        groupPageBinding.btnJoinGroup.setBackgroundColor(Color.parseColor("#34eb40"))
+                    }else{
+                        groupPageBinding.btnLeaveGroup.visibility = View.VISIBLE
+                        groupPageBinding.btnLeaveGroup.setBackgroundColor(Color.parseColor("#e81010"))
+                        groupPageBinding.btnJoinGroup.visibility = View.GONE
+
+                    }
+
+                })
                 if(viewModel.userGroups.value?.contains(viewModel.selectedGroup.value!!) == false){
                     groupPageBinding.btnJoinGroup.visibility = View.VISIBLE
+                    groupPageBinding.btnJoinGroup.setBackgroundColor(Color.parseColor("#34eb40"))
+                }else{
+                    groupPageBinding.btnLeaveGroup.visibility = View.VISIBLE
+                    groupPageBinding.btnLeaveGroup.setBackgroundColor(Color.parseColor("#e81010"))
+
                 }
 
             }

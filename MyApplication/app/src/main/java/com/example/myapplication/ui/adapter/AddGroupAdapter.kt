@@ -4,20 +4,16 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView.OnItemClickListener
-import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.example.myapplication.ui.GroupPageFragment
 import com.example.myapplication.R
 import com.example.myapplication.model.Group
-import com.example.myapplication.ui.MainActivity
 
 class AddGroupAdapter(private val groups: List<Group>, private val context: Context, private val itemClickListener: (group : Group) -> Unit) :
     RecyclerView.Adapter<AddGroupAdapter.ViewHolder>() {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val group = groups[position]
+
 
         holder.bindView(group,itemClickListener)
     }

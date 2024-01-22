@@ -7,7 +7,6 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
-import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -20,6 +19,8 @@ interface UserService {
                  @Query("password") password: String?): Call<Token>
     @GET("users/{username}")
     fun getUser(@Path("username") username:String): Call<User>
+    @POST("groups/{groupId}/members")
+    fun addUserToGroup(@Header("auth") token: String?,@Path("groupId") groupId:Int): Call<APIResult>
 
     @PUT("users/{username}")
     fun updateUser(@Header("auth") token: String?,@Body user:User,@Path("username") username:String?): Call<APIResult>

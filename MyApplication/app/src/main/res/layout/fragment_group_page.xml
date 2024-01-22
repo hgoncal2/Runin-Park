@@ -10,13 +10,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+        <Button
+            android:id="@+id/btn_leave_group"
+
+            android:layout_width="168dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Leave Group"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/btn_join_group"
+
             android:layout_width="168dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="Join Group"
+            android:clickable="true"
             android:visibility="gone" />
 
         <LinearLayout
@@ -40,15 +50,6 @@
                     android:layout_marginTop="30dp"
                     android:paddingTop="0dp"
                     android:src="@drawable/my_groups" />
-
-                <Button
-                    android:id="@+id/button2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:background="@color/material_dynamic_primary100"
-                    android:text="@string/sair"
-                    android:textColor="#757575" />
 
             </LinearLayout>
 

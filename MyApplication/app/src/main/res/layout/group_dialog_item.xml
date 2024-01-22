@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:visibility="visible">
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,9 +13,10 @@
         <ImageView
 
             android:id="@+id/group_item_img"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
             android:src="@drawable/default_groups" />
 
         <LinearLayout
@@ -46,12 +46,14 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/textView11"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:id="@+id/textView10"
+            android:layout_width="51dp"
+            android:layout_height="55dp"
             android:layout_gravity="center"
-            android:layout_marginEnd="20dp"
-            android:drawableRight="@drawable/arrow_right2" />
+            android:layout_marginRight="20dp"
+            android:layout_weight="1"
+            android:drawableEnd="@drawable/arrow_right"
+            android:gravity="end" />
 
     </LinearLayout>
 
@@ -65,7 +67,7 @@
             android:layout_width="fill_parent"
             android:layout_height="2dp"
             android:layout_gravity="bottom"
-            android:background="#8E65FB"
+            android:background="#8A39DA"
             android:visibility="visible" />
     </LinearLayout>
 
