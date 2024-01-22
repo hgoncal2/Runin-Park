@@ -38,21 +38,23 @@ setOnDismissListener{
         setCancelable(true)
         // Set up the RecyclerView in the dialog
         val recycler = view.findViewById<RecyclerView>(R.id.add_group_recycler_view)
-        recycler.layoutManager = LinearLayoutManager(context)
-        recycler.addItemDecoration(DividerItemDecoration(this.context, LinearLayoutManager.VERTICAL))
+        recycler.layoutManager = LinearLayoutManager(frag.requireContext())
+        recycler.addItemDecoration(DividerItemDecoration(frag.requireContext(), LinearLayoutManager.VERTICAL))
 
 
 
-        var adapter = AddGroupAdapter(groupList,context){
+         adapter = AddGroupAdapter(groupList,context){
             cancel()
             viewModel.selectedGroup.value = it
             viewModel.replaceFragment(frag, GroupPageFragment())
 
         }
         recycler.adapter = adapter
+
+
+
     }
 
-    fun notifyAdapter(){
-        adapter?.notifyDataSetChanged()
-    }
+
+
 }

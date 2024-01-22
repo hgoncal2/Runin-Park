@@ -114,9 +114,7 @@ class UserViewModel : ViewModel(){
                         val result : APIResult? = response.body()
                         if(result?.code=="200"){
                             Toast.makeText(fragment.requireContext(),"${result.description}!", Toast.LENGTH_LONG).show()
-val newUserGroups = mutableListOf<Group>()
-                            selectedGroup.value?.let { newUserGroups.add(it) }
-                            setUserGroups(userGroups.value?.plus(newUserGroups))
+user.value?.let{loadUserGroups(it.userId)}
 
                         }else{
                             Toast.makeText(fragment.requireContext(),"Error joining group!", Toast.LENGTH_LONG).show()

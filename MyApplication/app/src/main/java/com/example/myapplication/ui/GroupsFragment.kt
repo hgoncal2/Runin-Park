@@ -39,8 +39,13 @@ class GroupsFragment : Fragment() {
 
 
 
+
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
+        val groupsDialog = object : AddGroupDialog(this.requireContext(),groupsFiltered,viewModel,this@GroupsFragment){
+
+        }
         groupsBinding= FragmentGroupsBinding.inflate(inflater,container,false)
 
         val adapter = GroupListAdapter(viewModel.adapterGroups,this@GroupsFragment.requireContext()){
@@ -71,28 +76,41 @@ class GroupsFragment : Fragment() {
 
 
 
-        val groupsDialog = object : AddGroupDialog(this.requireContext(),groupsFiltered,viewModel,this){
 
-        }
 
 
 
 groupsBinding.btnAddGroup.setOnClickListener{
-
+    groupsFiltered.clear()
     viewModel.user.value?.userId?.let { it1 -> viewModel.loadUserGroups(it1) }
-GlobalScope.launch (Dispatchers.Main){
-    viewModel.groupsFiltered.collect { value ->
-        if(value==1){
-            groupsFiltered.clear()
-            viewModel.allGroups.value?.filterNot { viewModel.userGroups.value?.contains(it) == true }
-                ?.let { it1 -> groupsFiltered.addAll(it1.toMutableList()) }
 
-            groupsDialog.notifyAdapter()
+GlobalScope.launch (Dispatchers.Main){
+    context?.let { it1 ->
+        viewModel.groupsFiltered.collect { value ->
+        if(value==1){
+
+            val idsList  = mutableListOf<Int>()
+            val filteredList  = mutableListOf<Group>()
+            for(i in viewModel.userGroups.value!!){
+                idsList.add(i.groupId)
+            }
+            //viewModel.allGroups.value?.filterNot {it.groupId in idsList}
+            //  ?.let { it1 -> groupsFiltered.addAll(it1.toMutableList()) }
+            for(i in viewModel.allGroups.value!!){
+                if(i.groupId !in idsList){
+                    filteredList.add(i)
+                }
+            }
+            groupsFiltered.clear()
+            groupsFiltered.addAll(filteredList)
+            groupsDialog.adapter?.notifyDataSetChanged()
+
             if(!groupsDialog.isShowing){
                 groupsDialog.show()
                 viewModel._groupsFiltered.value=0
             }
         }
+    }
     }
 }
     viewModel.loadGroups("dialog")
