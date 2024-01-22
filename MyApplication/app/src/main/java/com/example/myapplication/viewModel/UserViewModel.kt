@@ -129,6 +129,39 @@ user.value?.let{loadUserGroups(it.userId)}
             }
         )
     }
+
+    fun leaveGroup(groupId: Int,fragment: Fragment){
+        val call = RetrofitInit().userService().removeUserFromGroup(user.value?.token?.token, groupId)
+        call.enqueue(
+            object : Callback<APIResult> {
+                override fun onFailure(call: Call<APIResult>, t: Throwable) {
+                    t.printStackTrace()
+                    Toast.makeText(fragment.requireContext(),"Error joining group!", Toast.LENGTH_LONG).show()
+
+
+                }
+                override fun onResponse(call: Call<APIResult>, response: Response<APIResult>) {
+                    if(response.code() == 403){
+                        Toast.makeText(fragment.requireContext(),"Error joining group!", Toast.LENGTH_LONG).show()
+                    }else{
+                        val result : APIResult? = response.body()
+                        if(result?.code=="200"){
+                            Toast.makeText(fragment.requireContext(),"${result.description}!", Toast.LENGTH_LONG).show()
+                            user.value?.let{loadUserGroups(it.userId)}
+
+                        }else{
+                            Toast.makeText(fragment.requireContext(),"Error joining group!", Toast.LENGTH_LONG).show()
+
+                        }
+
+
+
+                    }
+
+                }
+            }
+        )
+    }
     fun register(username: String,password:String,fragment: Fragment){
         val call = RetrofitInit().userService().register(username, password)
         call.enqueue(

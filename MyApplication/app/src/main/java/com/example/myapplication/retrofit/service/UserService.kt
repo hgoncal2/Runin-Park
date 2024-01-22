@@ -5,6 +5,7 @@ import com.example.myapplication.model.Token
 import com.example.myapplication.model.User
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
@@ -21,6 +22,9 @@ interface UserService {
     fun getUser(@Path("username") username:String): Call<User>
     @POST("groups/{groupId}/members")
     fun addUserToGroup(@Header("auth") token: String?,@Path("groupId") groupId:Int): Call<APIResult>
+
+    @DELETE("groups/{groupId}/members")
+    fun removeUserFromGroup(@Header("auth") token: String?,@Path("groupId") groupId:Int): Call<APIResult>
 
     @PUT("users/{username}")
     fun updateUser(@Header("auth") token: String?,@Body user:User,@Path("username") username:String?): Call<APIResult>

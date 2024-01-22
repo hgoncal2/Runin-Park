@@ -41,6 +41,9 @@ class GroupPageFragment : Fragment() {
         groupPageBinding.btnJoinGroup.setOnClickListener{
             viewModel.selectedGroup.value?.groupId?.let { it1 -> viewModel.joinGroup(it1,this) }
         }
+        groupPageBinding.btnLeaveGroup.setOnClickListener{
+            viewModel.selectedGroup.value?.groupId?.let { it1 -> viewModel.leaveGroup(it1,this) }
+        }
         viewModel.loggedIn.observe(viewLifecycleOwner) {
             if (!it) {
                 groupPageBinding.notLoggedIn.visibility = View.VISIBLE
