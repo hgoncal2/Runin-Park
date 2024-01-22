@@ -136,21 +136,22 @@ user.value?.let{loadUserGroups(it.userId)}
             object : Callback<APIResult> {
                 override fun onFailure(call: Call<APIResult>, t: Throwable) {
                     t.printStackTrace()
-                    Toast.makeText(fragment.requireContext(),"Error joining group!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(fragment.requireContext(),"Error joining group!", Toast.LENGTH_SHORT).show()
 
 
                 }
                 override fun onResponse(call: Call<APIResult>, response: Response<APIResult>) {
                     if(response.code() == 403){
-                        Toast.makeText(fragment.requireContext(),"Error joining group!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(fragment.requireContext(),"Error joining group!", Toast.LENGTH_SHORT).show()
                     }else{
                         val result : APIResult? = response.body()
                         if(result?.code=="200"){
-                            Toast.makeText(fragment.requireContext(),"${result.description}!", Toast.LENGTH_LONG).show()
+                            Toast.makeText(fragment.requireContext(),"${result.description}!", Toast.LENGTH_SHORT).show()
                             user.value?.let{loadUserGroups(it.userId)}
 
                         }else{
-                            Toast.makeText(fragment.requireContext(),"Error joining group!", Toast.LENGTH_LONG).show()
+                            Toast.makeText(fragment.requireContext(),"${result?.description}", Toast.LENGTH_SHORT
+                            ).show()
 
                         }
 
