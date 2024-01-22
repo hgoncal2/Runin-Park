@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.R
 import com.example.myapplication.databinding.FragmentGroupsBinding
 import com.example.myapplication.dialogs.AddGroupDialog
+import com.example.myapplication.dialogs.CreateGroupDialog
 import com.example.myapplication.model.Group
 import com.example.myapplication.ui.adapter.GroupListAdapter
 import com.example.myapplication.viewModel.UserViewModel
@@ -55,6 +56,17 @@ class GroupsFragment : Fragment() {
         groupsBinding.groupsViewList.layoutManager= LinearLayoutManager(this@GroupsFragment.requireContext())
         groupsBinding.groupsViewList.addItemDecoration(DividerItemDecoration(this.context, LinearLayoutManager.VERTICAL))
 
+
+        groupsBinding.btnCreateGroup.setOnClickListener{
+            val createGroupDialog = object : CreateGroupDialog(this.requireContext(),viewModel,this@GroupsFragment){
+
+            }
+            if(!createGroupDialog.isShowing){
+                createGroupDialog.show()
+
+            }
+
+        }
         viewModel.loggedIn.observe(viewLifecycleOwner, Observer {
             if(viewModel.loggedIn.value == false){
 

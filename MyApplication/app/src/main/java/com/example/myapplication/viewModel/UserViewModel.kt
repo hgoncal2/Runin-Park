@@ -167,6 +167,41 @@ user.value?.let{loadUserGroups(it.userId)}
             }
         )
     }
+    fun createGroup(name:String,city : String,fragment: Fragment){
+        val call = RetrofitInit().groupService().createGroup(user.value?.token?.token,name,city)
+        call.enqueue(
+            object : Callback<APIResult> {
+                override fun onFailure(call: Call<APIResult>, t: Throwable) {
+                    t.printStackTrace()
+                    Toast.makeText(fragment.requireContext(),"Error creating group!", Toast.LENGTH_SHORT).show()
+
+
+                }
+                override fun onResponse(call: Call<APIResult>, response: Response<APIResult>) {
+
+                        val result : APIResult? = response.body()
+                        if(result?.code=="200"){
+                            Toast.makeText(fragment.requireContext(),"${result.description}!", Toast.LENGTH_SHORT).show()
+                            user.value?.let{loadUserGroups(it.userId)}
+
+
+
+
+
+                        }else{
+                            Toast.makeText(fragment.requireContext(),"${result?.description}", Toast.LENGTH_SHORT
+                            ).show()
+
+
+
+
+
+                    }
+
+                }
+            }
+        )
+    }
     fun register(username: String,password:String,fragment: Fragment){
         val call = RetrofitInit().userService().register(username, password)
         call.enqueue(

@@ -133,7 +133,7 @@ def getUsers(userId=None):
 				print(request.args)
 				cursor.close()
 				cnx.close()
-				return jsonify(Code="403",Description="Error")
+				return d
 
 			
 @app.route('/users/<userId>/groups',methods=['GET'])
@@ -210,7 +210,7 @@ def getGroups(groupId=None):
 			if groupName is not None:
 				cursor.close()
 				cnx.close()
-				return "groupName_exists",404		
+				return jsonify(Code="403",Description="Group name exists!")		
 			token = request.headers.get("auth")
 			cursor.execute("select UserId from Users where Token = '{}'".format(token))
 			userId = cursor.fetchone()
@@ -229,7 +229,7 @@ def getGroups(groupId=None):
 				cnx.commit()
 				cursor.close()
 				cnx.close()
-				return "", 200
+				return jsonify(Code="200",Description="Group created successfully!")
 		cursor.close()
 		cnx.close()		
 		return "",404
