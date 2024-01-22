@@ -77,7 +77,7 @@ class GroupsFragment : Fragment() {
                 //adicionar observer
             }else{
                 viewModel.user.value?.userId?.let {user ->
-                    viewModel.loadUserGroups(user)
+                    viewModel.userGroups.value?.let {} ?: viewModel.loadUserGroups(user)
                     print("adawd")
                 }
                 groupsBinding.addCreateBtnsLayout.visibility = View.VISIBLE

@@ -36,7 +36,7 @@ class DashBoardGroups : Fragment() {
     ): View? {
 
         dashBoardGroupsBinding= FragmentDashBoardGroupsBinding.inflate(inflater,container,false)
-        viewModel.loadGroups()
+        viewModel.user.value?.let { viewModel.loadUserGroups(it.userId) }
 
         val recycler =dashBoardGroupsBinding.recyclerDashboardGroups
         recycler.layoutManager = LinearLayoutManager(this.requireContext())
@@ -49,10 +49,10 @@ class DashBoardGroups : Fragment() {
         }
 
         recycler.adapter = adapter
-        viewModel.allGroups.observe(viewLifecycleOwner, Observer {
+        viewModel.userGroups.observe(viewLifecycleOwner, Observer {
             if(it != null ){
                 groupList.clear()
-                groupList.addAll(viewModel.allGroups.value?.filter { it.ownerId == viewModel.user.value?.userId } as MutableList<Group>)
+                groupList.addAll(viewModel.userGroups.value?.filter { it.ownerId == viewModel.user.value?.userId } as MutableList<Group>)
                 adapter?.notifyDataSetChanged()
             }
 
