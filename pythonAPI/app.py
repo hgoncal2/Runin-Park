@@ -307,7 +307,17 @@ def getGroupMembers(groupId=None):
 		cursor.execute("select GroupAdmin from GroupMembers where GroupId = '{}' and UserId='{}'".format(groupId,userId))
 		admin = cursor.fetchone()['GroupAdmin']
 		if admin==True:
-			return jsonify(Code="409",Description="Não pode sair do próprio grupo")
+			cursor.execute("select * from GroupMembers where GroupId = '{}' ".format(groupId))
+			alone = cursor.fetchall()
+			print(len(alone))		
+			if len(alone) == 1:
+				cursor.execute("delete from GroupMembers where GroupId = '{}' and UserId='{}'".format(groupId,userId))
+				cnx.commit()
+				cursor.close()
+				cnx.close()				
+				return jsonify(Code="200",Description="Saiu do grupo com sucesso!")
+			else:
+				return jsonify(Code="409",Description="Não pode sair do próprio grupo")
 		print(groupId)
 		print(userId)
 		cursor.execute("delete from GroupMembers where GroupId = '{}' and UserId='{}'".format(groupId,userId))
