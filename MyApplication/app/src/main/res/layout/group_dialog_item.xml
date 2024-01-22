@@ -55,6 +55,8 @@
             android:drawableEnd="@drawable/arrow_right"
             android:gravity="end" />
 
+
+
     </LinearLayout>
 
     <LinearLayout

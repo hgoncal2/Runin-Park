@@ -80,6 +80,7 @@ class DashBoardFragment : Fragment() {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 when(tab?.contentDescription){
                     "dashboard_user_info" -> viewModel.replaceDashboardFragment(this@DashBoardFragment,UserInfoFragment())
+                    "dashboard_groups" -> viewModel.replaceDashboardFragment(this@DashBoardFragment,DashBoardGroups())
                 }
             }
 

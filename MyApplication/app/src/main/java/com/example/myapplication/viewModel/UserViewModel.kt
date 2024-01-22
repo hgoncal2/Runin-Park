@@ -41,6 +41,7 @@ class UserViewModel : ViewModel(){
     var adapterGroups = mutableListOf<Group>()
     var _groupsFiltered = MutableStateFlow(0)
     var groupsFiltered = _groupsFiltered.asStateFlow()
+    var userOwnedGroups = mutableListOf<Group>()
 
     val dateFormatter = SimpleDateFormat("dd/MM/yyyy")
     lateinit var token : Token
@@ -138,7 +139,8 @@ user.value?.let{loadUserGroups(it.userId)}
                 override fun onFailure(call: Call<APIResult>, t: Throwable) {
                     t.printStackTrace()
                     Toast.makeText(fragment.requireContext(),"Error joining group!", Toast.LENGTH_SHORT).show()
-
+                    user.value?.userId?.let { loadUserGroups(it) }
+                    replaceFragment(fragment,GroupsFragment())
 
                 }
                 override fun onResponse(call: Call<APIResult>, response: Response<APIResult>) {
@@ -309,6 +311,7 @@ user.value?.let{loadUserGroups(it.userId)}
         )
 
     }
+
     fun setAllGroups(groups: List<Group>?){
         adapterGroups.clear()
         if (groups != null) {

@@ -306,7 +306,7 @@ def getGroupMembers(groupId=None):
 		userId = cursor.fetchone()['UserId']
 		cursor.execute("select GroupAdmin from GroupMembers where GroupId = '{}' and UserId='{}'".format(groupId,userId))
 		admin = cursor.fetchone()['GroupAdmin']
-		if admin==True:
+		if admin==1:
 			cursor.execute("select * from GroupMembers where GroupId = '{}' ".format(groupId))
 			alone = cursor.fetchall()
 			print(len(alone))		

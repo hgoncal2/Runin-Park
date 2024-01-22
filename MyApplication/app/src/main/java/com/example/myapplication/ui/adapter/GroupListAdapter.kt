@@ -4,22 +4,21 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView.OnItemClickListener
-import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.example.myapplication.ui.GroupPageFragment
 import com.example.myapplication.R
 import com.example.myapplication.model.Group
-import com.example.myapplication.ui.MainActivity
 
-class GroupListAdapter(private val groups: List<Group>,private val context: Context,private val itemClickListener: (group : Group) -> Unit) :
+class GroupListAdapter(private val groups: List<Group>,private val context: Context,private val userId : Int? = null,private val itemClickListener: (group : Group) -> Unit) :
     RecyclerView.Adapter<GroupListAdapter.ViewHolder>() {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val group = groups[position]
 
-        holder.bindView(group,itemClickListener)
+        if (userId != null) {
+            holder.bindView(group,itemClickListener,userId)
+        }else{
+            holder.bindView(group,itemClickListener)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -31,11 +30,12 @@ class GroupListAdapter(private val groups: List<Group>,private val context: Cont
         return groups.size
     }
     class ViewHolder(itemView: View,) : RecyclerView.ViewHolder(itemView) {
-        fun bindView(group: Group,itemClickListener : (group : Group) -> Unit) {
+        fun bindView(group: Group,itemClickListener : (group : Group) -> Unit,userId : Int? = null ) {
 
             val city: TextView = itemView.findViewById(R.id.group_item_city)
            // val id: TextView = itemView.findViewById(R.id.group_item_id)
             val nome: TextView = itemView.findViewById(R.id.group_item_nome)
+            val owner: TextView = itemView.findViewById(R.id.owner)
 
          //   val createdDate: TextView = itemView.findViewById(R.id.group_item_createdDate)
            // val ownerId: TextView = itemView.findViewById(R.id.group_item_ownerId)
@@ -44,6 +44,12 @@ class GroupListAdapter(private val groups: List<Group>,private val context: Cont
             nome.text = "${group.name}"
             itemView.setOnClickListener{
                 itemClickListener(group)
+            }
+
+            userId?.let {
+                if(group.ownerId == it){
+                    owner.visibility = View.VISIBLE
+                }
             }
 
 

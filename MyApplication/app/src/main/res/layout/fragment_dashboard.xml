@@ -65,7 +65,7 @@
                 android:layout_marginEnd="137dp"
                 android:layout_marginBottom="0dp"
                 android:contentDescription="dashboard_groups"
-                android:text="Groups" />
+                android:text="My Groups" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
