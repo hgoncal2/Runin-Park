@@ -18,6 +18,7 @@ import com.example.myapplication.model.Token
 import com.example.myapplication.model.User
 import com.example.myapplication.retrofit.RetrofitInit
 import com.example.myapplication.ui.DashBoardFragment
+import com.example.myapplication.ui.GroupsFragment
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import okhttp3.MultipartBody
@@ -147,6 +148,9 @@ user.value?.let{loadUserGroups(it.userId)}
                         val result : APIResult? = response.body()
                         if(result?.code=="200"){
                             Toast.makeText(fragment.requireContext(),"${result.description}!", Toast.LENGTH_SHORT).show()
+                            if(user.value?.userId == selectedGroup.value?.ownerId){
+                                replaceFragment(fragment,GroupsFragment())
+                            }
                             user.value?.let{loadUserGroups(it.userId)}
 
                         }else{

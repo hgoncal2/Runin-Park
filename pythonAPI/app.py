@@ -315,7 +315,7 @@ def getGroupMembers(groupId=None):
 				cnx.commit()
 				cursor.close()
 				cnx.close()				
-				return jsonify(Code="200",Description="Saiu do grupo com sucesso!")
+				return jsonify(Code="200",Description="Grupo eliminado com sucesso!")
 			else:
 				return jsonify(Code="409",Description="Não pode sair do próprio grupo")
 		print(groupId)
