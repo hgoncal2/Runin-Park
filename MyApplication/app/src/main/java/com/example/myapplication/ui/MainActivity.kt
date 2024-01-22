@@ -64,7 +64,10 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this,"Logged Out Successful!",Toast.LENGTH_LONG).show()
         viewModel.userGroups.value = null
         viewModel.allGroups.value = null
-        replaceFragment(LoginFragment())
+        val int = intent
+        finish()
+        startActivity(int)
+
 
 
     }
