@@ -313,6 +313,8 @@ def getGroupMembers(groupId=None):
 			if len(alone) == 1:
 				cursor.execute("delete from GroupMembers where GroupId = '{}' and UserId='{}'".format(groupId,userId))
 				cnx.commit()
+				cursor.execute("delete from RunGroups where GroupId = '{}' ".format(groupId))
+				cnx.commit()
 				cursor.close()
 				cnx.close()				
 				return jsonify(Code="200",Description="Grupo eliminado com sucesso!")
