@@ -281,7 +281,7 @@ def getGroups(groupId=None):
 			cnx.close()
 			return "",404
 
-@app.route('/groups/<groupId>/members', methods=['GET','POST'])
+@app.route('/groups/<groupId>/members', methods=['GET','POST','DELETE'])
 def getGroupMembers(groupId=None):
 	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
 	cursor=cnx.cursor(dictionary=True)	
@@ -300,7 +300,21 @@ def getGroupMembers(groupId=None):
 		cursor.close()
 		cnx.close()
 		return jsonify(Code="200",Description="Adicionado ao grupo com sucesso!")
-
+	if request.method=='DELETE':
+		token = request.headers.get("auth")
+		cursor.execute("select UserId from Users where Token = '{}'".format(token))
+		userId = cursor.fetchone()['UserId']
+		cursor.execute("select GroupAdmin from GroupMembers where GroupId = '{}' and UserId='{}'".format(groupId,userId))
+		admin = cursor.fetchone()['GroupAdmin']
+		if admin==True:
+			return jsonify(Code="409",Description="Não pode sair do próprio grupo")
+		print(groupId)
+		print(userId)
+		cursor.execute("delete from GroupMembers where GroupId = '{}' and UserId='{}'".format(groupId,userId))
+		cnx.commit()
+		cursor.close()
+		cnx.close()
+		return jsonify(Code="200",Description="Saiu do grupo com sucesso!")
 
 
 
@@ -407,6 +421,7 @@ def getGroupsMembers():
 	cursor.close()
 	cnx.close()
 	return jsonify(groupMembers)
+
 @app.route('/logo')
 def flask_logo():
     return current_app.send_static_file('flask-logo.png')
