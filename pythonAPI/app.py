@@ -140,7 +140,7 @@ def getUsers(userId=None):
 def getUserGroups(userId=None):	
 	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2',charset="utf8")
 	cursor=cnx.cursor(dictionary=True)
-	cursor.execute("select Name,g.GroupId as GroupId,g.CreatedDate as CreatedDate,g.City as City,g.OwnerId as OwnerId p.PathToPhoto as PhotoPath from RunGroups g inner join  GroupMembers gm on g.GroupId=gm.GroupId u left join Photos p on p.PhotoId=g.PhotoId where gm.userId='{}'".format(userId))
+	cursor.execute("select Name,g.GroupId as GroupId,g.CreatedDate as CreatedDate,g.City as City,g.OwnerId as OwnerId, p.PathToPhoto as PhotoPath from RunGroups g inner join  GroupMembers gm on g.GroupId=gm.GroupId left join Photos p on p.PhotoId=g.PhotoId where gm.userId={}".format(userId))
 	groups=cursor.fetchall()
 	cursor.close()
 	cnx.close()
@@ -192,7 +192,7 @@ def getGroups(groupId=None):
 	cursor=cnx.cursor(dictionary=True)
 	if(groupId is None):
 		if request.method=='GET':		
-			cursor.execute("select g.City,g.CreatedData,g.GroupId,g.Name,g.OwnerId p.PathToPhoto as PhotoPath from RunGroups g left join g.PhotoId=p.PhotoId")
+			cursor.execute("select g.City,g.CreatedDate,g.GroupId,g.Name,g.OwnerId,p.PathToPhoto as PhotoPath from RunGroups g left join Photos p on g.PhotoId=p.PhotoId")
 			group=cursor.fetchall()
 			cursor.close()
 			cnx.close()
@@ -499,7 +499,6 @@ def uploadPhotoG(groupId):
 		cnx.close()
 		return jsonify(Path="http://16.170.180.240:5000/static/img/{}.png".format(photoId))
 	return "",403
-
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',debug=True)
