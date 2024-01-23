@@ -65,7 +65,7 @@ class DashBoardFragment : Fragment() {
         viewModel.user.observe(viewLifecycleOwner, Observer {
             it?.let {
                 dashBoardBinding.dashboardUsername.text = it.username
-                viewModel.replaceDashboardFragment(this@DashBoardFragment,UserInfoFragment())
+                viewModel.replaceDashboardFragment(this@DashBoardFragment,UserInfoFragment(),dashBoardBinding.dashboardPlaceholder)
                 it.profilePhoto?.let { pic -> viewModel.loadPic(pic,dashBoardBinding.profilePicture,false,this,R.drawable.user_logged_in) }
 
 
@@ -79,8 +79,9 @@ class DashBoardFragment : Fragment() {
         dashBoardBinding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 when(tab?.contentDescription){
-                    "dashboard_user_info" -> viewModel.replaceDashboardFragment(this@DashBoardFragment,UserInfoFragment())
-                    "dashboard_groups" -> viewModel.replaceDashboardFragment(this@DashBoardFragment,DashBoardGroups())
+                    "dashboard_user_info" -> viewModel.replaceDashboardFragment(this@DashBoardFragment,UserInfoFragment(),dashBoardBinding.dashboardPlaceholder)
+                    "dashboard_groups" -> viewModel.replaceDashboardFragment(this@DashBoardFragment,DashBoardGroups(),dashBoardBinding.dashboardPlaceholder)
+
                 }
             }
 

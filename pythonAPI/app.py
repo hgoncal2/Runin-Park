@@ -346,7 +346,7 @@ def getPosts(groupId=None):
 		return jsonify(posts)			
 	else:
 		if request.method=='GET':
-			cursor.execute("select * from Posts where GroupId='{}'".format(groupId))
+			cursor.execute("select po.PostId, po.Text, po.CreatedDate, po.UserId, po.GroupId, po.PhotoId, p.PathToPhoto as PhotoPath, u.Username from Posts po left join Users u on u.UserId=po.UserId left join Photos p on p.PhotoId=u.PhotoId where po.GroupId='{}'".format(groupId))
 			posts=cursor.fetchall()
 			cursor.close()
 			cnx.close()
@@ -359,7 +359,7 @@ def getPosts(groupId=None):
 			if userId is None:
 				cursor.close()
 				cnx.close()
-				return "token_not_found", 404
+				return jsonify(Code="404",Description="Token not found!")
 			else:
 				text = args.get("text")
 				createdDate=datetime.now()
@@ -368,18 +368,18 @@ def getPosts(groupId=None):
 				if len(query) == 0:
 					cursor.close()
 					cnx.close()
-					return "member_not_in_group",404
+					return jsonify(Code="403",Description="Member not in group!")
 				else:
 					if request.headers.get("auth") == token:					
 						cursor.execute("insert into Posts (Text,CreatedDate,UserId,GroupId) values ('{}','{}','{}','{}')".format(text,createdDate,userId,groupId))					
 						cnx.commit()
 						cursor.close()
 						cnx.close()
-						return "", 200
+						return jsonify(Code="200",Description="Posted succesfully!!")
 					else:
 						cursor.close()
 						cnx.close()
-						return "", 502
+						return jsonify(Code="502",Description="Error!Not authorized")
 
 
 

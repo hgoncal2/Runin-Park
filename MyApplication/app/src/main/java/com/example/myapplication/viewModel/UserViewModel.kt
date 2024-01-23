@@ -2,6 +2,7 @@ package com.example.myapplication.viewModel
 
 import android.content.Context
 import android.view.inputmethod.InputMethodManager
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -14,6 +15,7 @@ import com.example.myapplication.R
 import com.example.myapplication.model.APIResult
 import com.example.myapplication.model.Group
 import com.example.myapplication.model.Photo
+import com.example.myapplication.model.Post
 import com.example.myapplication.model.Token
 import com.example.myapplication.model.User
 import com.example.myapplication.retrofit.RetrofitInit
@@ -36,7 +38,7 @@ class UserViewModel : ViewModel(){
     var loggedIn = MutableLiveData<Boolean>(false)
     var selectedGroup = MutableLiveData<Group>()
     var userGroups = MutableLiveData<List<Group>>()
-
+var groupPosts = MutableLiveData<List<Post>>()
     var allGroups= MutableLiveData<List<Group>>()
     var adapterGroups = mutableListOf<Group>()
     var _groupsFiltered = MutableStateFlow(0)
@@ -290,6 +292,24 @@ user.value?.let{loadUserGroups(it.userId)}
             }
         )
     }
+    fun loadPosts(groupId : Int){
+
+        val call = RetrofitInit().postService().getPosts(groupId)
+        call.enqueue(
+            object : Callback<List<Post>> {
+                override fun onFailure(call: Call<List<Post>>, t: Throwable) {
+                    t.printStackTrace()
+
+                }
+                override fun onResponse(call: Call<List<Post>>, response: Response<List<Post>>) {
+
+                    groupPosts.value = response.body()
+
+
+                }
+            }
+        )
+    }
 
     fun loadUserGroups(userId : Int){
 
@@ -342,10 +362,10 @@ user.value?.let{loadUserGroups(it.userId)}
 
     }
 
-    fun replaceDashboardFragment(frag: Fragment,fragment: Fragment){
+    fun replaceDashboardFragment(frag: Fragment,fragment: Fragment,layout : FrameLayout ){
         val fragmentManager = frag.parentFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.dashboard_placeholder,fragment)
+        fragmentTransaction.replace(layout.id,fragment)
 
         fragmentTransaction.commit()
     }

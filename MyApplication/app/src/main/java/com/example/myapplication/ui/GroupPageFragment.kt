@@ -26,6 +26,7 @@ import com.example.myapplication.databinding.FragmentGroupPageBinding
 import com.example.myapplication.model.Photo
 import com.example.myapplication.retrofit.RetrofitInit
 import com.example.myapplication.viewModel.UserViewModel
+import com.google.android.material.tabs.TabLayout
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.io.IOUtils
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -56,6 +57,8 @@ class GroupPageFragment : Fragment() {
             viewModel.user.value?.userId.let { id -> if(id == viewModel.selectedGroup.value?.ownerId) showPopup(it) }
 
         }
+
+
         viewModel.selectedGroup.observe(viewLifecycleOwner,{
             viewModel.selectedGroup.value?.let {
                 groupPageBinding.groupName.text = it.name
@@ -68,11 +71,40 @@ class GroupPageFragment : Fragment() {
 
             }
             })
+        groupPageBinding.groupPageTab.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                when(tab?.contentDescription){
+                    "group_posts" -> viewModel.replaceDashboardFragment(this@GroupPageFragment,PostFragment(),groupPageBinding.groupPagePlaceholder).also { viewModel.selectedGroup.value?.groupId?.let { it1 ->
+                        viewModel.loadPosts(it1)
+                    } }
+                    "dashboard_groups" -> viewModel.replaceDashboardFragment(this@GroupPageFragment,DashBoardGroups(),groupPageBinding.groupPagePlaceholder)
+
+                }
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                print(tab?.id)
+                print("")
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                print(tab?.id)
+                print("")
+            }
+
+
+        })
+
+
 
 
         groupPageBinding.btnJoinGroup.setOnClickListener{
             viewModel.selectedGroup.value?.groupId?.let { it1 -> viewModel.joinGroup(it1,this) }
         }
+
+
+
+
         groupPageBinding.btnLeaveGroup.setOnClickListener{
             val builder = AlertDialog.Builder(this.requireContext())
             builder.setMessage("Are you sure you want to leave this group?")
@@ -93,6 +125,9 @@ class GroupPageFragment : Fragment() {
             if (!it) {
                 groupPageBinding.notLoggedIn.visibility = View.VISIBLE
             } else {
+                viewModel.replaceDashboardFragment(this@GroupPageFragment,PostFragment(),groupPageBinding.groupPagePlaceholder).also { viewModel.selectedGroup.value?.let { it1 ->
+                    viewModel.loadPosts(it1.groupId)
+                } }
                 if(viewModel.user.value?.userId != viewModel.selectedGroup.value?.ownerId){
                     (groupPageBinding.groupPageTab.getTabAt(2)?.view as LinearLayout).visibility = View.GONE
                 }
@@ -104,6 +139,7 @@ class GroupPageFragment : Fragment() {
                             groupPageBinding.btnLeaveGroup.visibility = View.GONE
                             groupPageBinding.btnJoinGroup.visibility = View.VISIBLE
                             groupPageBinding.btnJoinGroup.setBackgroundColor(Color.parseColor("#34eb40"))
+
                         }else{
                             groupPageBinding.btnLeaveGroup.visibility = View.VISIBLE
                             groupPageBinding.btnLeaveGroup.setBackgroundColor(Color.parseColor("#e81010"))

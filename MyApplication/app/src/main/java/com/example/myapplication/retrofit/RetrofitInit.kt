@@ -2,6 +2,7 @@ package com.example.myapplication.retrofit
 
 import com.example.myapplication.retrofit.service.GroupService
 import com.example.myapplication.retrofit.service.PhotoService
+import com.example.myapplication.retrofit.service.PostService
 import com.example.myapplication.retrofit.service.UserService
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -19,4 +20,6 @@ class RetrofitInit {
     fun userService() = retrofit.create(UserService::class.java)
     fun groupService() = retrofit.create(GroupService::class.java)
     fun photoService() = retrofit.create(PhotoService::class.java)
+    fun postService() = retrofit.create(PostService::class.java)
+
 }
