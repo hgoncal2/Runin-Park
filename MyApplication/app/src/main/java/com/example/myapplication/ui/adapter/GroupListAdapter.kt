@@ -4,8 +4,12 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.example.myapplication.R
 import com.example.myapplication.model.Group
 
@@ -36,6 +40,7 @@ class GroupListAdapter(private val groups: List<Group>,private val context: Cont
            // val id: TextView = itemView.findViewById(R.id.group_item_id)
             val nome: TextView = itemView.findViewById(R.id.group_item_nome)
             val owner: TextView = itemView.findViewById(R.id.owner)
+            val img : ImageView = itemView.findViewById(R.id.group_item_img)
 
          //   val createdDate: TextView = itemView.findViewById(R.id.group_item_createdDate)
            // val ownerId: TextView = itemView.findViewById(R.id.group_item_ownerId)
@@ -51,6 +56,15 @@ class GroupListAdapter(private val groups: List<Group>,private val context: Cont
                     owner.visibility = View.VISIBLE
                 }
             }
+
+            val options: RequestOptions = RequestOptions()
+                .centerCrop()
+                .placeholder(com.example.myapplication.R.drawable.loading_spinning)
+                .error(com.example.myapplication.R.drawable.default_groups)
+                .circleCrop()
+            Glide.with(this.itemView.context).load(group.groupPhoto).diskCacheStrategy(
+                DiskCacheStrategy.ALL).skipMemoryCache(false).apply(options).timeout(6000).into(img)
+
 
 
 

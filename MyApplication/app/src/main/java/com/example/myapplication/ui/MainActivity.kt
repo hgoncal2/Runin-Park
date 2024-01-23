@@ -6,6 +6,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -56,23 +57,37 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun logout(){
-        viewModel.selectedGroup.value = null
-        viewModel.setLoggedIn(false)
-        viewModel.setUser(null)
-        binding.bottomNavView.menu.clear()
-        binding.bottomNavView.inflateMenu(R.menu.bottom_nav)
-        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        Toast.makeText(this,"Logged Out Successful!",Toast.LENGTH_LONG).show()
-        viewModel.userGroups.value = null
-        viewModel.allGroups.value = null
+        val builder = AlertDialog.Builder(this@MainActivity)
+        builder.setMessage("Are you sure you want to log out?")
+            .setCancelable(false)
+            .setPositiveButton("Yes") {_, _ ->
+                viewModel.selectedGroup.value = null
+                viewModel.setLoggedIn(false)
+                viewModel.setUser(null)
+                binding.bottomNavView.menu.clear()
+                binding.bottomNavView.inflateMenu(R.menu.bottom_nav)
+                supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                Toast.makeText(this,"Logged Out Successful!",Toast.LENGTH_LONG).show()
+                viewModel.userGroups.value = null
+                viewModel.allGroups.value = null
 
-        val int = intent
-        finish()
-        startActivity(int)
+                val int = intent
+                finish()
+                startActivity(int)
 
-
-
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                
+                dialog.dismiss()
+            }
+        val alert = builder.create()
+        alert.show()
     }
+
+
+
+
+
 
     private fun login(){
         //replaceFragment(GroupsFragment())

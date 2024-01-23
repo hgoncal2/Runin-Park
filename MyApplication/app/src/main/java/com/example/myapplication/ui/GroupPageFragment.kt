@@ -1,6 +1,7 @@
 package com.example.myapplication.ui
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -52,7 +53,8 @@ class GroupPageFragment : Fragment() {
     ): View {
         groupPageBinding = FragmentGroupPageBinding.inflate(layoutInflater,container,false)
         groupPageBinding.groupPhoto.setOnClickListener{
-            showPopup(it)
+            viewModel.user.value?.userId.let { id -> if(id == viewModel.selectedGroup.value?.ownerId) showPopup(it) }
+
         }
         viewModel.selectedGroup.observe(viewLifecycleOwner,{
             viewModel.selectedGroup.value?.let {
@@ -72,8 +74,21 @@ class GroupPageFragment : Fragment() {
             viewModel.selectedGroup.value?.groupId?.let { it1 -> viewModel.joinGroup(it1,this) }
         }
         groupPageBinding.btnLeaveGroup.setOnClickListener{
-            viewModel.selectedGroup.value?.groupId?.let { it1 -> viewModel.leaveGroup(it1,this) }
+            val builder = AlertDialog.Builder(this.requireContext())
+            builder.setMessage("Are you sure you want to leave this group?")
+                .setCancelable(true)
+                .setPositiveButton("Yes") { _, _ ->
+                    viewModel.selectedGroup.value?.groupId?.let { it1 -> viewModel.leaveGroup(it1,this) }
+                }
+                .setNegativeButton("No") { dialog , _ ->
+                    // Dismiss the dialog
+                    dialog.dismiss()
+                }
+            val alert = builder.create()
+            alert.show()
         }
+
+
         viewModel.loggedIn.observe(viewLifecycleOwner) {
             if (!it) {
                 groupPageBinding.notLoggedIn.visibility = View.VISIBLE
@@ -183,17 +198,17 @@ class GroupPageFragment : Fragment() {
                 }
                 override fun onResponse(call: Call<Photo>, response: Response<Photo>) {
                     if(response.code() == 403){
-                        Toast.makeText(this@GroupPageFragment.context,"Wrong Username or Password!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@GroupPageFragment.context,"You don't have permission!", Toast.LENGTH_LONG).show()
                     }else{
                         response.body().let {
                             viewModel.selectedGroup.value?.groupPhoto=it?.path
                             val options: RequestOptions = RequestOptions()
                                 .centerCrop()
                                 .placeholder(com.example.myapplication.R.drawable.loading_spinning)
-                                .error(com.example.myapplication.R.mipmap.ic_launcher_round)
+                                .error(com.example.myapplication.R.drawable.default_groups)
                                 .circleCrop()
                             Glide.with(this@GroupPageFragment.requireContext()).load(it?.path).diskCacheStrategy(
-                                DiskCacheStrategy.NONE).skipMemoryCache(true).apply(options).timeout(6000).into(groupPageBinding.groupPhoto)
+                                DiskCacheStrategy.ALL).skipMemoryCache(false).apply(options).timeout(6000).into(groupPageBinding.groupPhoto)
 
                         }
 

@@ -4,8 +4,12 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.example.myapplication.R
 import com.example.myapplication.model.Group
 
@@ -32,8 +36,10 @@ class AddGroupAdapter(private val groups: List<Group>, private val context: Cont
             val city: TextView = itemView.findViewById(R.id.group_item_city)
            // val id: TextView = itemView.findViewById(R.id.group_item_id)
             val nome: TextView = itemView.findViewById(R.id.group_item_nome)
+            val img : ImageView = itemView.findViewById(R.id.group_item_img)
 
-         //   val createdDate: TextView = itemView.findViewById(R.id.group_item_createdDate)
+
+            //   val createdDate: TextView = itemView.findViewById(R.id.group_item_createdDate)
            // val ownerId: TextView = itemView.findViewById(R.id.group_item_ownerId)
 
             city.text = "${group.city}"
@@ -41,7 +47,13 @@ class AddGroupAdapter(private val groups: List<Group>, private val context: Cont
             itemView.setOnClickListener{
                 itemClickListener(group)
             }
-
+            val options: RequestOptions = RequestOptions()
+                .centerCrop()
+                .placeholder(com.example.myapplication.R.drawable.loading_spinning)
+                .error(com.example.myapplication.R.drawable.default_groups)
+                .circleCrop()
+            Glide.with(this.itemView.context).load(group.groupPhoto).diskCacheStrategy(
+                DiskCacheStrategy.ALL).skipMemoryCache(false).apply(options).timeout(6000).into(img)
 
 
 
