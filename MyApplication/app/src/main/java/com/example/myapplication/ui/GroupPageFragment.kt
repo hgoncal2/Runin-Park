@@ -29,7 +29,6 @@ class GroupPageFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         groupPageBinding = FragmentGroupPageBinding.inflate(layoutInflater,container,false)
-
         viewModel.loadPic("",groupPageBinding.groupPhoto,true,this,R.drawable.default_groups)
         viewModel.selectedGroup.observe(viewLifecycleOwner,{
             groupPageBinding.groupName.text = it.name

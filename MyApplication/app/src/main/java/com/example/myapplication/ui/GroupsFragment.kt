@@ -49,7 +49,7 @@ class GroupsFragment : Fragment() {
         }
         groupsBinding= FragmentGroupsBinding.inflate(inflater,container,false)
 
-        val adapter = GroupListAdapter(viewModel.adapterGroups,this@GroupsFragment.requireContext()){
+        val adapter = GroupListAdapter(viewModel.adapterGroups,this@GroupsFragment.requireContext(),viewModel.user.value?.userId){
             showGroupPage(it)
         }
         groupsBinding.groupsViewList.adapter=adapter
@@ -155,7 +155,7 @@ GlobalScope.launch (Dispatchers.Main){
 
                 }else{
                     if(groupsBinding.noGroups.visibility == View.VISIBLE) groupsBinding.noGroups.visibility= View.GONE
-                    adapter.notifyDataSetChanged()
+
                 }
 
             }else{
@@ -176,6 +176,7 @@ GlobalScope.launch (Dispatchers.Main){
 
                 }else{
                     if(groupsBinding.noGroups.visibility == View.VISIBLE) groupsBinding.noGroups.visibility= View.GONE
+
                     adapter.notifyDataSetChanged()
                 }
 
