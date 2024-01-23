@@ -13,6 +13,6 @@ data class Group(
     val name: String,
     @SerializedName("OwnerId")
     val ownerId: Int,
-    @SerializedName("GroupPhotoPath")
+    @SerializedName("PhotoPath")
     var groupPhoto : String?
 )

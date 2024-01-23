@@ -56,6 +56,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun logout(){
+        viewModel.selectedGroup.value = null
         viewModel.setLoggedIn(false)
         viewModel.setUser(null)
         binding.bottomNavView.menu.clear()
@@ -64,6 +65,7 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this,"Logged Out Successful!",Toast.LENGTH_LONG).show()
         viewModel.userGroups.value = null
         viewModel.allGroups.value = null
+
         val int = intent
         finish()
         startActivity(int)
@@ -81,6 +83,7 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavView.inflateMenu(R.menu.loggedin_bottom_nav)
        viewModel.allGroups.value=null
         replaceFragment(DashBoardFragment())
+
 
     }
     companion object{

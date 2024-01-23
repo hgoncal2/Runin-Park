@@ -364,12 +364,21 @@ user.value?.let{loadUserGroups(it.userId)}
             DiskCacheStrategy.NONE).skipMemoryCache(cache).apply(options).timeout(10000).into(imageView)
 
     }
-    fun uploadPhoto(file : File,view: ImageView){
+    fun uploadPhoto(file : File,view: ImageView,type : String = "user",groupId: Int,fragment: Fragment){
 
-        val call = RetrofitInit().photoService().uploadPhoto(
+        val call =type.let {
+            if(it == "user"){
+                RetrofitInit().photoService().uploadPhoto(
 
-            image = MultipartBody.Part.createFormData("image",file.name,file.asRequestBody()),user.value?.token?.token
-        )
+                    image = MultipartBody.Part.createFormData("image",file.name,file.asRequestBody()),user.value?.token?.token
+                )
+            }else{
+                RetrofitInit().photoService().uploadGroupPhoto(
+
+                    image = MultipartBody.Part.createFormData("image",file.name,file.asRequestBody()),user.value?.token?.token,groupId
+                )
+            }
+        }
         call.enqueue(
             object : Callback<Photo> {
                 override fun onFailure(call: Call<Photo>, t: Throwable) {
@@ -385,18 +394,26 @@ user.value?.let{loadUserGroups(it.userId)}
                 override fun onResponse(call: Call<Photo>, response: Response<Photo>) {
                     if (response.code() == 403) {
                         Toast.makeText(
-                            DashBoardFragment().requireContext(),
-                            "Error uploading pictutre!",
+                            fragment.requireContext(),
+                            "Error uploading picture!",
                             Toast.LENGTH_LONG
                         ).show()
                     } else {
-                        response.body().let {
-                            user.value?.profilePhoto = it?.path
+                        response.body().let {photo ->
+                            type.let {
+                                if(it == "user"){
+                                    user.value?.profilePhoto = photo?.path
+                                }else{
+                                    selectedGroup.value?.groupPhoto = photo?.path
+                                }
+                            }
+
+
                             val options: RequestOptions = RequestOptions()
                                 .centerCrop()
                                 .placeholder(com.example.myapplication.R.drawable.loading_spinning)
                                 .error(com.example.myapplication.R.mipmap.ic_launcher_round)
-                            Glide.with(DashBoardFragment().requireContext()).load(it?.path).diskCacheStrategy(
+                            Glide.with(DashBoardFragment().requireContext()).load(photo?.path).diskCacheStrategy(
                                 DiskCacheStrategy.NONE).skipMemoryCache(true).apply(options).timeout(6000).into(view)
 
                         }
