@@ -88,7 +88,7 @@ class DashBoardFragment : Fragment() {
                 when(tab?.contentDescription){
                     "dashboard_user_info" -> viewModel.replaceDashboardFragment(this@DashBoardFragment,UserInfoFragment(),dashBoardBinding.dashboardPlaceholder)
                     "dashboard_groups" -> viewModel.replaceDashboardFragment(this@DashBoardFragment,DashBoardGroups(),dashBoardBinding.dashboardPlaceholder)
-
+                    "dashboard_posts" -> viewModel.replaceDashboardFragment(this@DashBoardFragment,MyPostsFragment(),dashBoardBinding.dashboardPlaceholder)
                 }
             }
 

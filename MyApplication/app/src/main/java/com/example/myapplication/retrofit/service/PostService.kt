@@ -23,4 +23,7 @@ interface PostService {
     @GET("groups/{groupId}/posts")
     fun getPosts(@Path("groupId") groupId:Int): Call<List<Post>>
 
+    @GET("users/{userId}/posts")
+    fun getUserPosts(@Path("userId") userId:Int): Call<List<Post>>
+
 }

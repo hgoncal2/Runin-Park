@@ -38,12 +38,13 @@ class UserViewModel : ViewModel(){
     var loggedIn = MutableLiveData<Boolean>(false)
     var selectedGroup = MutableLiveData<Group>()
     var userGroups = MutableLiveData<List<Group>>()
-var groupPosts = MutableLiveData<List<Post>>()
+    var groupPosts = MutableLiveData<List<Post>>()
     var allGroups= MutableLiveData<List<Group>>()
     var adapterGroups = mutableListOf<Group>()
     var _groupsFiltered = MutableStateFlow(0)
     var groupsFiltered = _groupsFiltered.asStateFlow()
     var userOwnedGroups = mutableListOf<Group>()
+    var userPosts = MutableLiveData<List<Post>>()
 
     val dateFormatter = SimpleDateFormat("dd/MM/yyyy")
     lateinit var token : Token
@@ -304,6 +305,25 @@ user.value?.let{loadUserGroups(it.userId)}
                 override fun onResponse(call: Call<List<Post>>, response: Response<List<Post>>) {
 
                     groupPosts.value = response.body()
+
+
+                }
+            }
+        )
+    }
+
+    fun loadUserPosts(userId : Int){
+
+        val call = RetrofitInit().postService().getUserPosts(userId)
+        call.enqueue(
+            object : Callback<List<Post>> {
+                override fun onFailure(call: Call<List<Post>>, t: Throwable) {
+                    t.printStackTrace()
+
+                }
+                override fun onResponse(call: Call<List<Post>>, response: Response<List<Post>>) {
+
+                    userPosts.value = response.body()
 
 
                 }
