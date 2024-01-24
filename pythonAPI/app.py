@@ -372,7 +372,7 @@ def getPosts(groupId=None):
 				else:
 					if request.headers.get("auth") == token:
 						if request.files!=None:
-							photoId=uploadPhotoP()
+							photoId=uploadPhotoP(request)
 							cursor.execute("insert into Posts (Text,CreatedDate,UserId,GroupId,PhotoId) values ('{}','{}','{}','{}')".format(text,createdDate,userId,groupId,photoId))	
 						else:
 							cursor.execute("insert into Posts (Text,CreatedDate,UserId,GroupId) values ('{}','{}','{}','{}')".format(text,createdDate,userId,groupId))				
@@ -504,7 +504,8 @@ def uploadPhotoG(groupId):
 		return jsonify(Path="http://16.170.180.240:5000/static/img/{}.png".format(photoId))
 	return "",403
 
-def uploadPhotoP(postId):
+def uploadPhotoP(request):
+	print(request)
 	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
 	cursor=cnx.cursor(dictionary=True)
 	path = os.path.realpath('.')
@@ -515,8 +516,6 @@ def uploadPhotoP(postId):
 	request.files["image"].save(path+"/static/img/{}.png".format(photoId))
 	pathPhoto="http://16.170.180.240:5000/static/img/{}.png".format(photoId)
 	cursor.execute("update Photos set PathToPhoto = '{}' where PhotoId = {}".format(pathPhoto,photoId))
-	cnx.commit()
-	cursor.execute("update Posts set PhotoId = {} where PostId = {}".format(photoId,postId))
 	cnx.commit()
 	cursor.close()
 	cnx.close()
