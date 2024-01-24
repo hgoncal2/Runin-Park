@@ -346,7 +346,7 @@ def getPosts(groupId=None):
 		return jsonify(posts)			
 	else:
 		if request.method=='GET':
-			cursor.execute("select po.PostId, po.Text, po.CreatedDate, po.UserId, po.GroupId, po.PhotoId, p.PathToPhoto as PhotoPath, u.Username from Posts po left join Users u on u.UserId=po.UserId left join Photos p on p.PhotoId=u.PhotoId where po.GroupId='{}' order by po.CreatedDate desc".format(groupId))
+			cursor.execute("select po.PostId, po.Text, po.CreatedDate, po.UserId, po.GroupId, po.PhotoId, p.PathToPhoto as UserPhotoPath, ph.PathToPhoto as PostPhotoPath, u.Username from Posts po left join Users u on u.UserId=po.UserId left join Photos p on p.PhotoId=u.PhotoId left join Photos ph on ph.PhotoId=p.PhotoId where po.GroupId='{}' order by po.CreatedDate desc".format(groupId))
 			posts=cursor.fetchall()
 			cursor.close()
 			cnx.close()
