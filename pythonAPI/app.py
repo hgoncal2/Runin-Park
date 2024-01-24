@@ -500,5 +500,31 @@ def uploadPhotoG(groupId):
 		return jsonify(Path="http://16.170.180.240:5000/static/img/{}.png".format(photoId))
 	return "",403
 
+@app.route('/photos/<postId>', methods=['POST'])
+def uploadPhotoP(postId):
+	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
+	cursor=cnx.cursor(dictionary=True)
+	path = os.path.realpath('.')
+	token = request.headers.get("auth")
+	cursor.execute("select UserId from Users where token = '{}'".format(token))
+	userId=cursor.fetchone()['UserId']
+	cursor.execute("select UserId from Posts where PostId={}".format(postId))
+	ownerId=cursor.fetchone()['UserId']
+	if userId==ownerId:
+		cursor.execute("insert into Photos (PathToPhoto) values ('')")
+		cnx.commit()
+		cursor.execute("select PhotoId from Photos order by PhotoId desc limit 1")
+		photoId=cursor.fetchone()['PhotoId']
+		request.files["image"].save(path+"/static/img/{}.png".format(photoId))
+		pathPhoto="http://16.170.180.240:5000/static/img/{}.png".format(photoId)
+		cursor.execute("update Photos set PathToPhoto = '{}' where PhotoId = {}".format(pathPhoto,photoId))
+		cnx.commit()
+		cursor.execute("update Posts set PhotoId = {} where PostId = {}".format(photoId,postId))
+		cnx.commit()
+		cursor.close()
+		cnx.close()
+		return jsonify(Path="http://16.170.180.240:5000/static/img/{}.png".format(photoId))
+	return jsonify(Code="400",Description="Sem permissão!")
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0',debug=True)
