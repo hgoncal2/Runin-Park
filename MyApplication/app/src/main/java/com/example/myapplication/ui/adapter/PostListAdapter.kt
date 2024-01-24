@@ -1,6 +1,7 @@
 package com.example.myapplication.ui.adapter
 
 import android.content.Context
+import android.icu.text.SimpleDateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,10 +39,11 @@ class PostListAdapter(private val posts: List<Post>,private val context: Context
 
             val date: TextView = itemView.findViewById(R.id.post_item_createdDate)
             val img: ImageView = itemView.findViewById(R.id.post_item_img)
+            val imgPost: ImageView = itemView.findViewById(R.id.post_item_photo)
         val text: TextView = itemView.findViewById(R.id.post_item_text)
          val user: TextView = itemView.findViewById(R.id.post_item_user)
 
-            date.text = post.createdDate.toString()
+            date.text = SimpleDateFormat("dd/MM/YYYY HH:mm:ss").format(post.createdDate);
             if(userId == post.userId){
                 user.text = "Me"
             }else{
@@ -58,6 +60,14 @@ class PostListAdapter(private val posts: List<Post>,private val context: Context
                 DiskCacheStrategy.ALL).skipMemoryCache(false).apply(options).timeout(6000).into(img)
          //   val createdDate: TextView = itemView.findViewById(R.id.group_item_createdDate)
            // val ownerId: TextView = itemView.findViewById(R.id.group_item_ownerId)
+            if(post.postPhoto != null){
+                val options: RequestOptions = RequestOptions()
+                    .centerCrop()
+                Glide.with(this.itemView.context).load(post.postPhoto).diskCacheStrategy(
+                    DiskCacheStrategy.ALL).skipMemoryCache(false).apply(options).timeout(6000).into(imgPost).also { imgPost.visibility=View.VISIBLE }
+            }else{
+                imgPost.visibility=View.GONE
+            }
 
 /*
             itemView.setOnClickListener{

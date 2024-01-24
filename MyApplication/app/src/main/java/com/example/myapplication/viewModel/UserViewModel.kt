@@ -310,9 +310,20 @@ user.value?.let{loadUserGroups(it.userId)}
             }
         )
     }
-    fun createPost(groupId : Int,text : String? = null){
+    fun createPost(groupId: Int, text: String? = null, file: File? =null){
 
-        val call = RetrofitInit().postService().createPost(user.value?.token?.token,groupId,text)
+        val call = file.let {
+
+            if(it != null){
+                RetrofitInit().postService().createPost(
+
+                    image = file?.asRequestBody()
+                        ?.let { MultipartBody.Part.createFormData("image", file.name, it) },user.value?.token?.token, groupId,text
+                )
+            }else{
+                RetrofitInit().postService().createPostNoImg(user.value?.token?.token, groupId,text)
+            }
+        }
         call.enqueue(
             object : Callback<APIResult> {
                 override fun onFailure(call: Call<APIResult>, t: Throwable) {

@@ -346,7 +346,7 @@ def getPosts(groupId=None):
 		return jsonify(posts)			
 	else:
 		if request.method=='GET':
-			cursor.execute("select po.PostId, po.Text, po.CreatedDate, po.UserId, po.GroupId, po.PhotoId, p.PathToPhoto as UserPhotoPath, ph.PathToPhoto as PostPhotoPath, u.Username from Posts po left join Users u on u.UserId=po.UserId left join Photos p on p.PhotoId=u.PhotoId left join Photos ph on ph.PhotoId=p.PhotoId where po.GroupId='{}' order by po.CreatedDate desc".format(groupId))
+			cursor.execute("select po.PostId, po.Text, po.CreatedDate, po.UserId, po.GroupId, po.PhotoId, p.PathToPhoto as UserPhotoPath, ph.PathToPhoto as PostPhotoPath, u.Username from Posts po left join Users u on u.UserId=po.UserId left join Photos p on p.PhotoId=u.PhotoId left join Photos ph on ph.PhotoId=po.PhotoId where po.GroupId='{}' order by po.CreatedDate desc".format(groupId))
 			posts=cursor.fetchall()
 			cursor.close()
 			cnx.close()
@@ -371,9 +371,11 @@ def getPosts(groupId=None):
 					return jsonify(Code="403",Description="Member not in group!")
 				else:
 					if request.headers.get("auth") == token:
-						if request.files!=None:
+						
+						if  len(request.files)>0:
+							print(len(request.files))
 							photoId=uploadPhotoP(request)
-							cursor.execute("insert into Posts (Text,CreatedDate,UserId,GroupId,PhotoId) values ('{}','{}','{}','{}')".format(text,createdDate,userId,groupId,photoId))	
+							cursor.execute("insert into Posts (Text,CreatedDate,UserId,GroupId,PhotoId) values ('{}','{}','{}','{}','{}')".format(text,createdDate,userId,groupId,photoId))	
 						else:
 							cursor.execute("insert into Posts (Text,CreatedDate,UserId,GroupId) values ('{}','{}','{}','{}')".format(text,createdDate,userId,groupId))				
 						cnx.commit()
@@ -507,6 +509,7 @@ def uploadPhotoG(groupId):
 def uploadPhotoP(request):
 	print(request)
 	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
+	print(request.files)
 	cursor=cnx.cursor(dictionary=True)
 	path = os.path.realpath('.')
 	cursor.execute("insert into Photos (PathToPhoto) values ('')")

@@ -10,7 +10,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class RetrofitInit {
-    private val gson: Gson = GsonBuilder().setLenient().setDateFormat("dd-MM-yyyy").create()
+    private val gson: Gson = GsonBuilder().setLenient().setDateFormat("dd-MM-yyyy HH:mm:ss").create()
     private val host = "http://16.170.180.240:5000"
     private val retrofit = Retrofit.Builder()
         .baseUrl(host)

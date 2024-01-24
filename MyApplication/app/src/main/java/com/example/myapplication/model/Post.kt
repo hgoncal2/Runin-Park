@@ -14,9 +14,10 @@ data class Post(
     val userId: Int,
     @SerializedName("GroupId")
     val groupId: Int,
-
-    @SerializedName("PhotoPath")
+    @SerializedName("UserPhotoPath")
     var profilePhoto : String?,
+    @SerializedName("PostPhotoPath")
+    var postPhoto : String?,
     @SerializedName("Username")
     var username : String?
 )

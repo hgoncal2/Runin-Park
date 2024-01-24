@@ -36,7 +36,7 @@ class PostFragment : Fragment() {
    private lateinit var postFragmentBinding : FragmentPostBinding
     private var postsList = mutableListOf<Post>()
     private val viewModel: UserViewModel by activityViewModels()
-    private lateinit var  imgUri : Uri
+    private  var  imgUri : Uri? = null
     private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         // Callback is invoked after the user selects a media item or closes the
         // photo picker.
@@ -80,11 +80,12 @@ class PostFragment : Fragment() {
 
         }
         postFragmentBinding.btnSubmitPost.setOnClickListener{
-            viewModel.createPost(viewModel.selectedGroup.value?.groupId!!,postFragmentBinding.postTextFrag.text.toString())
+            viewModel.createPost(viewModel.selectedGroup.value?.groupId!!,postFragmentBinding.postTextFrag.text.toString(),changeImage(imgUri))
             postFragmentBinding.postTextFrag.setText("")
-            if(imgUri != null){
-                changeImage(imgUri)
-            }
+            postFragmentBinding.postImage.setImageResource(0)
+            postFragmentBinding.postImage.visibility=View.GONE
+            imgUri=null
+
         }
         viewModel.userGroups.observe(viewLifecycleOwner, Observer {
             viewModel.selectedGroup.value?.let {_ ->
@@ -109,10 +110,12 @@ class PostFragment : Fragment() {
         postFragmentBinding.postImage.visibility=View.VISIBLE
         imgUri = uri
     }
-    private fun changeImage(uri: Uri){
+    private fun changeImage(uri: Uri?) : File?{
 
 
-
+if(uri == null){
+    return null
+}
         val imgUri = uri
         val path = imgUri.path
 
@@ -125,12 +128,8 @@ class PostFragment : Fragment() {
         val file = File(this.requireContext().cacheDir, "dwadw")
         val outputStream = FileOutputStream(file)
         IOUtils.copy(inputStream, outputStream)
-        viewModel.selectedGroup.value?.groupId?.let { it1 ->
-            uploadPhoto(file)
 
-
-
-        }
+        return file
 
 
 }

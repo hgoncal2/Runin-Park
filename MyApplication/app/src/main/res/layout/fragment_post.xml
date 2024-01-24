@@ -37,15 +37,17 @@
                 <ImageView
                     android:id="@+id/post_image"
                     android:layout_width="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:cropToPadding="false"
-                    android:scaleType="fitXY"
-                    android:minHeight="400dp"
-                    android:minWidth="400dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_margin="5dp"
+                    android:adjustViewBounds="true"
+                    android:cropToPadding="false"
                     android:isScrollContainer="false"
+                    android:maxWidth="350dp"
+                    android:maxHeight="350dp"
+                    android:minWidth="400dp"
+                    android:minHeight="400dp"
+                    android:scaleType="fitXY"
                     android:visibility="gone" />
 
                 <Button
