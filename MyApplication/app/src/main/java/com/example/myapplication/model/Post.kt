@@ -20,6 +20,6 @@ data class Post(
     var postPhoto : String?,
     @SerializedName("Username")
     var username : String?,
-    @SerializedName("GroupName")
+    @SerializedName("Name")
     var groupName : String?
 )

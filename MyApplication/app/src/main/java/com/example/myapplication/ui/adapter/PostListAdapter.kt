@@ -40,8 +40,9 @@ class PostListAdapter(private val posts: List<Post>,private val context: Context
             val date: TextView = itemView.findViewById(R.id.post_item_createdDate)
             val img: ImageView = itemView.findViewById(R.id.post_item_img)
             val imgPost: ImageView = itemView.findViewById(R.id.post_item_photo)
-        val text: TextView = itemView.findViewById(R.id.post_item_text)
-         val user: TextView = itemView.findViewById(R.id.post_item_user)
+            val text: TextView = itemView.findViewById(R.id.post_item_text)
+            val user: TextView = itemView.findViewById(R.id.post_item_user)
+            val groupName: TextView = itemView.findViewById(R.id.post_item_group_name)
 
             date.text = SimpleDateFormat("dd/MM/YYYY HH:mm:ss").format(post.createdDate);
             if(userId == post.userId){
@@ -49,7 +50,13 @@ class PostListAdapter(private val posts: List<Post>,private val context: Context
             }else{
                 user.text = post.username
             }
-    text.text = post.text
+            text.text = post.text
+            if(post.groupName==null){
+                groupName.visibility=View.GONE
+            }else{
+                groupName.visibility=View.VISIBLE
+                groupName.text=post.groupName
+            }
 
             val options: RequestOptions = RequestOptions()
                 .centerCrop()
