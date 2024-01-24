@@ -149,8 +149,8 @@ def getUserGroups(userId=None):
 @app.route('/users/<userId>/posts',methods=['GET'])
 def getUserPosts(userId=None):	
 	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2',charset="utf8")
-	cursor=cnx.cursor()
-	cursor.execute("select * from Posts where UserId='{}'".format(userId))
+	cursor=cnx.cursor(dictionary=True)
+	cursor.execute("select po.PostId, po.Text, po.CreatedDate, po.UserId, po.GroupId, po.PhotoId, ph.PathToPhoto PostPhotoPath, g.Name, u.Username, f.PathToPhoto UserPhotoPath from Posts po left join Photos ph on ph.PhotoId=po.PhotoId left join RunGroups g on g.GroupId=po.GroupId left join Users u on u.UserId=po.UserId left join Photos f on f.PhotoId=u.PhotoId where po.UserId='{}' order by PostId desc".format(userId))
 	groups=cursor.fetchall()
 	cursor.close()
 	cnx.close()
