@@ -310,6 +310,25 @@ user.value?.let{loadUserGroups(it.userId)}
             }
         )
     }
+    fun createPost(groupId : Int,text : String? = null){
+
+        val call = RetrofitInit().postService().createPost(user.value?.token?.token,groupId,text)
+        call.enqueue(
+            object : Callback<APIResult> {
+                override fun onFailure(call: Call<APIResult>, t: Throwable) {
+                    t.printStackTrace()
+
+                }
+                override fun onResponse(call: Call<APIResult>, response: Response<APIResult>) {
+
+                    selectedGroup.value?.groupId?.let { loadPosts(it) }
+
+
+                }
+            }
+        )
+    }
+
 
     fun loadUserGroups(userId : Int){
 

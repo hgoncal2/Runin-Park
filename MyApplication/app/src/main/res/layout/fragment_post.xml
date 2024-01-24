@@ -1,49 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.PostFragment">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent" >
 
         <LinearLayout
-            android:id="@+id/group_post"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:isScrollContainer="false"
+            android:nestedScrollingEnabled="false"
             android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/post_text_frag"
+            <LinearLayout
+                android:id="@+id/group_post"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:background="#D5D0D0"
-                android:ems="10"
-                android:hint="Write something..."
-                android:inputType="textMultiLine"
-                android:minHeight="48dp" />
+                android:orientation="vertical">
 
-            <Button
-                android:id="@+id/button"
-                android:layout_width="wrap_content"
+                <EditText
+                    android:id="@+id/post_text_frag"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:background="#D5D0D0"
+                    android:ems="10"
+                    android:hint="Write something..."
+                    android:inputType="textMultiLine"
+                    android:minHeight="48dp" />
+
+                <ImageView
+                    android:id="@+id/post_image"
+                    android:layout_width="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:cropToPadding="false"
+                    android:scaleType="fitXY"
+                    android:minHeight="400dp"
+                    android:minWidth="400dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:isScrollContainer="false"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/btn_submit_post"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="0dp"
+                    android:text="Post" />
+
+                <Button
+                    android:id="@+id/btn_sel_foto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Button" />
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/posts_view_list"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_margin="0dp"
-                android:text="Post" />
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:visibility="visible"
+                tools:listitem="@layout/post_item" />
         </LinearLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/posts_view_list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="5dp"
-            android:visibility="visible"
-            tools:listitem="@layout/post_item" />
-    </LinearLayout>
+    </ScrollView>
 
 </FrameLayout>

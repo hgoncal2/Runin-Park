@@ -15,7 +15,7 @@ interface PhotoService {
     @POST("photos/users")
 
     @Multipart
-    fun uploadPhoto(@Part image: MultipartBody.Part?, @Header("auth") token: String?): Call<Photo>
+    fun uploadPhoto(@Part image: MultipartBody.Part?, @Header("auth") token: String?): Call<Photo>«
 
     @POST("photos/{groupId}")
     @Multipart

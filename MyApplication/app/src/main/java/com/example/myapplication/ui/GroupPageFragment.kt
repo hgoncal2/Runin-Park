@@ -1,12 +1,11 @@
 package com.example.myapplication.ui
 
-import android.app.Activity
 import android.app.AlertDialog
-import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -14,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.Toast
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -46,6 +46,16 @@ import java.io.FileOutputStream
 class GroupPageFragment : Fragment() {
     private val viewModel: UserViewModel by activityViewModels()
     private lateinit var groupPageBinding: FragmentGroupPageBinding
+    private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        // Callback is invoked after the user selects a media item or closes the
+        // photo picker.
+        if (uri != null) {
+            Log.d("PhotoPicker", "Selected URI: $uri")
+            changeImage(uri)
+        } else {
+            Log.d("PhotoPicker", "No media selected")
+        }
+    }
 
 
     override fun onCreateView(
@@ -169,31 +179,21 @@ class GroupPageFragment : Fragment() {
         return groupPageBinding.root
     }
 
-    private val changeImage =
-        registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()
-        ) {
-            if (it.resultCode == Activity.RESULT_OK) {
-                val data = it.data
-                val imgUri = data?.data
-                val path = imgUri?.path
+    private fun changeImage(uri: Uri){
+        val imgUri = uri
+        val path = imgUri?.path
+        val path2 = Environment.getExternalStorageDirectory().path
+        val parcelFileDescriptor = imgUri?.let { it1 ->
+            this.requireContext().contentResolver.openFileDescriptor(
+                it1, "r", null)
 
-                val path2 = Environment.getExternalStorageDirectory().path
-                val myJpgPath = "/mnt/sdcard/Download/foto.jpg"
-                val parcelFileDescriptor = imgUri?.let { it1 ->
-                    this.requireContext().contentResolver.openFileDescriptor(
-                        it1, "r", null)
-                }
-                val inputStream = FileInputStream(parcelFileDescriptor?.fileDescriptor)
-                val file = File(this.requireContext().cacheDir, "dwadw")
-                val outputStream = FileOutputStream(file)
-                IOUtils.copy(inputStream, outputStream)
-                viewModel.selectedGroup.value?.groupId?.let { it1 ->
-                    uploadPhoto(file)
-
-                }
-
-            }}
+        }
+        val inputStream = FileInputStream(parcelFileDescriptor?.fileDescriptor)
+        val file = File(this.requireContext().cacheDir, "dwadw")
+        val outputStream = FileOutputStream(file)
+        IOUtils.copy(inputStream, outputStream)
+        uploadPhoto(file)
+    }
 
     private fun showPopup(view: View) {
         val popup = PopupMenu(this@GroupPageFragment.requireContext(), view)
@@ -203,8 +203,8 @@ class GroupPageFragment : Fragment() {
 
             when (item!!.itemId) {
                 R.id.view_profile -> {
-                    val pickImg = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
-                    changeImage.launch(pickImg)
+                    pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+
                 }
 
             }

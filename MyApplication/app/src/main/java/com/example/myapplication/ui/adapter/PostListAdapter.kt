@@ -13,7 +13,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.myapplication.R
 import com.example.myapplication.model.Post
 
-class PostListAdapter(private val posts: List<Post>, private val context: Context, private val userId : Int? = null, private val itemClickListener: (post : Post) -> Unit) :
+class PostListAdapter(private val posts: List<Post>,private val context: Context, private val userId : Int? = null, private val itemClickListener: (post : Post) -> Unit) :
     RecyclerView.Adapter<PostListAdapter.ViewHolder>() {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val post = posts[position]
@@ -33,8 +33,8 @@ class PostListAdapter(private val posts: List<Post>, private val context: Contex
     override fun getItemCount(): Int {
         return posts.size
     }
-    class ViewHolder(itemView: View,) : RecyclerView.ViewHolder(itemView) {
-        fun bindView(post: Post,itemClickListener : (post : Post) -> Unit,userId : Int? = null ) {
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        fun bindView(post: Post,itemClickListener : (post : Post) -> Unit,userId : Int? = null) {
 
             val date: TextView = itemView.findViewById(R.id.post_item_createdDate)
             val img: ImageView = itemView.findViewById(R.id.post_item_img)
@@ -42,8 +42,13 @@ class PostListAdapter(private val posts: List<Post>, private val context: Contex
          val user: TextView = itemView.findViewById(R.id.post_item_user)
 
             date.text = post.createdDate.toString()
-            text.text = post.text
-            user.text = post.username
+            if(userId == post.userId){
+                user.text = "Me"
+            }else{
+                user.text = post.username
+            }
+    text.text = post.text
+
             val options: RequestOptions = RequestOptions()
                 .centerCrop()
                 .placeholder(com.example.myapplication.R.drawable.loading_spinning)
