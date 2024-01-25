@@ -3,23 +3,18 @@ package com.example.myapplication.ui
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
-import android.text.Editable
 import android.text.InputType
-import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.core.widget.doAfterTextChanged
-import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.example.myapplication.databinding.FragmentUserInfoBinding
 import com.example.myapplication.model.User
 import com.example.myapplication.viewModel.UserViewModel
-import java.text.SimpleDateFormat
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -107,11 +102,53 @@ class UserInfoFragment : Fragment() {
         }
         userInfoBinding.save.setOnClickListener{
             newUser=viewModel.user.value!!
-            newUser.birthDate=viewModel.dateFormatter.parse(userInfoBinding.birthDate.text.toString())
-            newUser.name=userInfoBinding.name.text.toString()
-            newUser.lastName=userInfoBinding.lastName.text.toString()
-            newUser.weight=userInfoBinding.weight.text.toString().toDouble()
-            newUser.height=userInfoBinding.height.text.toString().toDouble()
+
+            userInfoBinding.birthDate.text?.let {
+                if(it.isNotEmpty()){
+                    try{
+                        newUser.birthDate=viewModel.dateFormatter.parse(it.toString())
+                    }catch (e: java.text.ParseException){
+                        Toast.makeText(this@UserInfoFragment.requireContext(),"Por favor insira uma data válida!",Toast.LENGTH_SHORT).show()
+                    }
+
+                }
+            }
+          //  newUser.birthDate=viewModel.dateFormatter.parse(userInfoBinding.birthDate.text.toString())
+            userInfoBinding.name.text.let {
+                if(it.isNotEmpty() && it.isNotBlank()){
+                    newUser.name=it.toString()
+                }
+            }
+            //newUser.name=userInfoBinding.name.text.toString()
+            userInfoBinding.lastName.text.let {
+                if(it.isNotEmpty() && it.isNotBlank()){
+                    newUser.lastName=it.toString()
+                }
+            }
+            //newUser.lastName=userInfoBinding.lastName.text.toString()
+            userInfoBinding.weight.text.let{
+                if(it.isNotEmpty() && it.isNotBlank()){
+                    if(it.contains(',')){
+                        newUser.weight = it.toString().replace(',','.').toDoubleOrNull()
+                    }else{
+                        newUser.weight = it.toString().toDoubleOrNull()
+                    }
+
+                    newUser.weight?.let {  } ?: Toast.makeText(this@UserInfoFragment.requireContext(),"Por favor insira um peso válido!",Toast.LENGTH_SHORT).show()
+                }
+            }
+           // newUser.weight=userInfoBinding.weight.text.toString().toDoubleOrNull()
+            //newUser.weight?.let {  } ?: Toast.makeText(this@UserInfoFragment.requireContext(),"Por favor insira um peso válido!",Toast.LENGTH_SHORT).show()
+            userInfoBinding.height.text.let{
+                if (it != null) {
+                    if(it.isNotEmpty() && it.isNotBlank()){
+                        newUser.height = it.toString().toDoubleOrNull()
+                        newUser.height?.let {  } ?: Toast.makeText(this@UserInfoFragment.requireContext(),"Por favor insira uma altura válida!",Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+           // newUser.height=userInfoBinding.height.text.toString().toDoubleOrNull()
+            //newUser.height?.let{ } ?: Toast.makeText(this@UserInfoFragment.requireContext(),"Por favor insira uma altura válida!",Toast.LENGTH_SHORT).show()
             newUser.address=userInfoBinding.address.text.toString()
 viewModel.updateUser(newUser,this)
 

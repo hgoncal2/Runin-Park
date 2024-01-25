@@ -9,4 +9,17 @@
         android:id="@+id/recycler_dashboard_groups"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/no_groups_created"
+        android:layout_width="match_parent"
+        android:layout_height="600dp"
+        android:layout_gravity="top"
+        android:layout_margin="0dp"
+        android:background="#FFFFFF"
+        android:gravity="center_horizontal|top"
+        android:paddingTop="100dp"
+        android:text="You have no created groups"
+        android:textSize="30sp"
+        android:visibility="gone" />
 </FrameLayout>

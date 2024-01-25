@@ -111,6 +111,10 @@ def getUsers(userId=None):
 			print(token)		
 			if(token == token2):
 				print(request.json)
+				for value in request.json:
+					print(value)
+					if(request.json[value]==None or request.json[value]=="None"):
+						request.json[value]="NULL"
 				name=request.json["Name"]
 				lastName=request.json["LastName"]
 				weight=request.json["Weight"]
@@ -123,17 +127,19 @@ def getUsers(userId=None):
 					str+="{} = '{}'".format(i.capitalize(),request.args.get(i))
 					if(i != list(request.args)[-1]):
 						str+=","
-				cursor.execute("update Users set Name='{}',LastName='{}',Weight={},BirthDate=STR_TO_DATE('{}', '%d-%m-%Y'),Address='{}',Height={} where Username = '{}'".format(name,lastName,weight,birthDate,address,height,userId))
+				cursor.execute("update Users set Name='{}',LastName='{}',Weight={},Address='{}',Height={} where Username = '{}'".format(name,lastName,weight,address,height,userId))
+				if(request.json["BirthDate"]!="NULL"):
+					cursor.execute("update Users set BirthDate=STR_TO_DATE('{}', '%d-%m-%Y %H:%i') where Username = '{}'".format(birthDate,userId))
 				cnx.commit()
 				cursor.close()
 				cnx.close()
-				return jsonify(Code="200",Description="Conta criada com sucesso")
+				return jsonify(Code="200",Description="Conta atualizada com sucesso")
 
 			else:
 				print(request.args)
 				cursor.close()
 				cnx.close()
-				return d
+				return jsonify(Code="404",Description="Erro ao atualizar conta!")
 
 			
 @app.route('/users/<userId>/groups',methods=['GET'])

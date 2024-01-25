@@ -80,11 +80,16 @@ class PostFragment : Fragment() {
 
         }
         postFragmentBinding.btnSubmitPost.setOnClickListener{
-            viewModel.createPost(viewModel.selectedGroup.value?.groupId!!,postFragmentBinding.postTextFrag.text.toString(),changeImage(imgUri))
-            postFragmentBinding.postTextFrag.setText("")
-            postFragmentBinding.postImage.setImageResource(0)
-            postFragmentBinding.postImage.visibility=View.GONE
-            imgUri=null
+            if(postFragmentBinding.postTextFrag.text.isNotEmpty() && postFragmentBinding.postTextFrag.text.isNotBlank()){
+                viewModel.createPost(viewModel.selectedGroup.value?.groupId!!,postFragmentBinding.postTextFrag.text.toString(),changeImage(imgUri))
+                postFragmentBinding.postTextFrag.setText("")
+                postFragmentBinding.postImage.setImageResource(0)
+                postFragmentBinding.postImage.visibility=View.GONE
+                imgUri=null
+            }else{
+                Toast.makeText(this@PostFragment.requireContext(),"Por favor insira um texto válido!",Toast.LENGTH_SHORT).show()
+            }
+
 
         }
         viewModel.userGroups.observe(viewLifecycleOwner, Observer {

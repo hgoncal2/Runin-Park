@@ -257,7 +257,7 @@ user.value?.let{loadUserGroups(it.userId)}
                             Toast.makeText(fragment.requireContext(),"${result.description}!", Toast.LENGTH_LONG).show()
                             setUser(user)
                         }else{
-                            Toast.makeText(fragment.requireContext(),"Error!", Toast.LENGTH_LONG).show()
+                            Toast.makeText(fragment.requireContext(),"${result?.description}", Toast.LENGTH_LONG).show()
 
                         }
 

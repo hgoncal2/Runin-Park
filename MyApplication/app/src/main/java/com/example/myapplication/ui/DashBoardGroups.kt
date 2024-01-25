@@ -46,10 +46,16 @@ class DashBoardGroups : Fragment() {
 
         recycler.adapter = adapter
         viewModel.userGroups.observe(viewLifecycleOwner, Observer {
-            if(it != null ){
+            if(!viewModel.userGroups.value?.filter { it.ownerId == viewModel.user.value?.userId }.isNullOrEmpty() ){
+                dashBoardGroupsBinding.noGroupsCreated.visibility = View.GONE
                 groupList.clear()
                 groupList.addAll(viewModel.userGroups.value?.filter { it.ownerId == viewModel.user.value?.userId } as MutableList<Group>)
                 adapter?.notifyDataSetChanged()
+
+            }else{
+
+                    dashBoardGroupsBinding.noGroupsCreated.visibility = View.VISIBLE
+
             }
 
 

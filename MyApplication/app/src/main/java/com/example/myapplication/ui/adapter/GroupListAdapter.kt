@@ -54,6 +54,8 @@ class GroupListAdapter(private val groups: List<Group>,private val context: Cont
             userId?.let {
                 if(group.ownerId == it){
                     owner.visibility = View.VISIBLE
+                }else{
+                    owner.visibility = View.GONE
                 }
             }
 

@@ -1,18 +1,15 @@
 package com.example.myapplication.ui
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.myapplication.R
-import com.example.myapplication.databinding.FragmentDashBoardGroupsBinding
 import com.example.myapplication.databinding.FragmentMyPostsBinding
-import com.example.myapplication.model.Group
 import com.example.myapplication.model.Post
 import com.example.myapplication.ui.adapter.PostListAdapter
 import com.example.myapplication.viewModel.UserViewModel

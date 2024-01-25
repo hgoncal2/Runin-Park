@@ -32,7 +32,9 @@
                     android:ems="10"
                     android:hint="Write something..."
                     android:inputType="textMultiLine"
-                    android:minHeight="48dp" />
+                    android:minHeight="48dp"
+                    android:paddingLeft="10dp"
+                    android:textAlignment="textStart" />
 
                 <ImageView
                     android:id="@+id/post_image"
@@ -50,19 +52,31 @@
                     android:scaleType="fitXY"
                     android:visibility="gone" />
 
-                <Button
-                    android:id="@+id/btn_submit_post"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="0dp"
-                    android:text="Post" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
-                <Button
-                    android:id="@+id/btn_sel_foto"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Button" />
+                    <Button
+                        android:id="@+id/btn_submit_post"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_margin="0dp"
+                        android:text="Post" />
+
+                    <ImageButton
+                        android:id="@+id/btn_sel_foto"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="20dp"
+                        android:background="#FFFFFF"
+                        android:src="@drawable/add_img"
+                        android:text="Button" />
+                </LinearLayout>
+
 
             </LinearLayout>
 

@@ -67,7 +67,7 @@ class GroupPageFragment : Fragment() {
             viewModel.user.value?.userId.let { id -> if(id == viewModel.selectedGroup.value?.ownerId) showPopup(it) }
 
         }
-
+        viewModel.groupPosts.value=null
 
         viewModel.selectedGroup.observe(viewLifecycleOwner,{
             viewModel.selectedGroup.value?.let {

@@ -55,7 +55,7 @@ class PostListAdapter(private val posts: List<Post>,private val context: Context
                 groupName.visibility=View.GONE
             }else{
                 groupName.visibility=View.VISIBLE
-                groupName.text=post.groupName
+                groupName.text="Grupo: ${post.groupName}"
             }
 
             val options: RequestOptions = RequestOptions()
