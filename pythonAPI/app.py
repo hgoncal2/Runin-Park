@@ -292,7 +292,9 @@ def getGroupMembers(groupId=None):
 	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
 	cursor=cnx.cursor(dictionary=True)	
 	if request.method=='GET':	
-		cursor.execute("select u.Username from GroupMembers g inner join Users u on g.UserId = u.UserId where g.GroupId='{}'".format(groupId))
+		#cursor.execute("select u.UserId,u.Username,u.Name,u.LastName,u.BirthDate,u.CreatedDate,u.Weight,u.Height,u.Address,u.PhotoId,p.PathToPhoto PhotoPath from Users u left join Photos p on p.PhotoId=u.PhotoId where u.Username = '{}'".format(userId))
+		cursor.execute("select u.UserId,u.Username,u.Name,u.LastName,u.BirthDate,u.CreatedDate,u.Weight,u.Height,u.Address,u.PhotoId,p.PathToPhoto PhotoPath from GroupMembers g inner join Users u on g.UserId = u.UserId left join Photos p on p.PhotoId=u.PhotoId where g.GroupId='{}'".format(groupId))
+		#cursor.execute("select u.Username from GroupMembers g inner join Users u on g.UserId = u.UserId where g.GroupId='{}'".format(groupId))
 		groupMembersId=cursor.fetchall()
 		cursor.close()
 		cnx.close()

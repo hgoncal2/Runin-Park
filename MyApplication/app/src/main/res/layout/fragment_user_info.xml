@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="0dp"
-            android:text="Weight(Kg) "
+            android:text="Weight(kg) "
             android:textSize="12sp"
             app:layout_constraintBottom_toTopOf="@+id/textView7"
             app:layout_constraintEnd_toEndOf="parent"
@@ -84,7 +84,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="0dp"
-            android:text="Height"
+            android:text="Height(m)"
 
             android:textSize="12sp"
             app:layout_constraintBottom_toTopOf="@+id/textView8"

@@ -88,8 +88,9 @@ class GroupPageFragment : Fragment() {
                     "group_posts" -> viewModel.replaceDashboardFragment(this@GroupPageFragment,PostFragment(),groupPageBinding.groupPagePlaceholder).also { viewModel.selectedGroup.value?.groupId?.let { it1 ->
                         viewModel.loadPosts(it1)
                     } }
-                    "dashboard_groups" -> viewModel.replaceDashboardFragment(this@GroupPageFragment,DashBoardGroups(),groupPageBinding.groupPagePlaceholder)
-
+                    "group_members" -> viewModel.replaceDashboardFragment(this@GroupPageFragment,GroupMembersFragment(),groupPageBinding.groupPagePlaceholder).also { viewModel.selectedGroup.value?.groupId?.let { it1 ->
+                        viewModel.loadGroupMembers(it1)
+                    } }
                 }
             }
 

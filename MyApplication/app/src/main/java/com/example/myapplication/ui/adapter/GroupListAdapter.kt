@@ -36,11 +36,11 @@ class GroupListAdapter(private val groups: List<Group>,private val context: Cont
     class ViewHolder(itemView: View,) : RecyclerView.ViewHolder(itemView) {
         fun bindView(group: Group,itemClickListener : (group : Group) -> Unit,userId : Int? = null ) {
 
-            val city: TextView = itemView.findViewById(R.id.group_item_city)
+            val city: TextView = itemView.findViewById(R.id.member_item_name)
            // val id: TextView = itemView.findViewById(R.id.group_item_id)
-            val nome: TextView = itemView.findViewById(R.id.group_item_nome)
+            val nome: TextView = itemView.findViewById(R.id.member_item_username)
             val owner: TextView = itemView.findViewById(R.id.owner)
-            val img : ImageView = itemView.findViewById(R.id.group_item_img)
+            val img : ImageView = itemView.findViewById(R.id.member_item_img)
 
          //   val createdDate: TextView = itemView.findViewById(R.id.group_item_createdDate)
            // val ownerId: TextView = itemView.findViewById(R.id.group_item_ownerId)

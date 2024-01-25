@@ -37,8 +37,10 @@ class UserViewModel : ViewModel(){
     var user = MutableLiveData<User?>()
     var loggedIn = MutableLiveData<Boolean>(false)
     var selectedGroup = MutableLiveData<Group>()
+    var selectedUser = MutableLiveData<User>()
     var userGroups = MutableLiveData<List<Group>>()
     var groupPosts = MutableLiveData<List<Post>>()
+    var groupMembers = MutableLiveData<List<User>>()
     var allGroups= MutableLiveData<List<Group>>()
     var adapterGroups = mutableListOf<Group>()
     var _groupsFiltered = MutableStateFlow(0)
@@ -305,6 +307,24 @@ user.value?.let{loadUserGroups(it.userId)}
                 override fun onResponse(call: Call<List<Post>>, response: Response<List<Post>>) {
 
                     groupPosts.value = response.body()
+
+
+                }
+            }
+        )
+    }
+    fun loadGroupMembers(groupId : Int){
+
+        val call = RetrofitInit().groupService().getGroupMembers(groupId)
+        call.enqueue(
+            object : Callback<List<User>> {
+                override fun onFailure(call: Call<List<User>>, t: Throwable) {
+                    t.printStackTrace()
+
+                }
+                override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
+
+                    groupMembers.value = response.body()
 
 
                 }

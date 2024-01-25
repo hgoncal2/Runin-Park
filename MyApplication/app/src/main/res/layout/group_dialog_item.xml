@@ -12,7 +12,7 @@
 
         <ImageView
 
-            android:id="@+id/group_item_img"
+            android:id="@+id/member_item_img"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:layout_marginTop="5dp"
@@ -27,7 +27,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/group_item_nome"
+                android:id="@+id/member_item_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="start"
@@ -35,7 +35,7 @@
                 tools:text="nome" />
 
             <TextView
-                android:id="@+id/group_item_city"
+                android:id="@+id/member_item_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="start"
@@ -46,7 +46,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/textView10"
+            android:id="@+id/member_item_exclude"
             android:layout_width="51dp"
             android:layout_height="55dp"
             android:layout_gravity="center"
