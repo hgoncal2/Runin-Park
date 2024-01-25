@@ -335,8 +335,22 @@ def getGroupMembers(groupId=None):
 		return jsonify(Code="200",Description="Saiu do grupo com sucesso!")
 
 
-
-
+@app.route('/groups/<groupId>/members/<userId>', methods=['DELETE'])
+def delGroupMember(groupId=None,userId=None):
+	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
+	cursor=cnx.cursor(dictionary=True)
+	token = request.headers.get("auth")
+	cursor.execute("select UserId from Users where Token = '{}'".format(token))
+	adminId = cursor.fetchone()['UserId']
+	cursor.execute("select GroupAdmin from GroupMembers where GroupId = '{}' and UserId='{}'".format(groupId,userId))
+	ownerId = cursor.fetchone()['GroupAdmin']
+	if adminId==ownerId:
+			cursor.execute("delete from GroupMembers where GroupId = '{}' and UserId='{}'".format(groupId,userId))
+			cnx.commit()
+			cursor.close()
+			cnx.close()
+			return jsonify(Code="200",Description="Removeu o utilizador com sucesso!")
+	return jsonify(code="400",Description="Alguma coisa não correu bem!")
 
 
 @app.route('/groups/<groupId>/posts', methods=['GET','POST'])
