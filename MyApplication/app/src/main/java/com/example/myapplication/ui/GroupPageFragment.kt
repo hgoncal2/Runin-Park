@@ -26,6 +26,7 @@ import com.example.myapplication.databinding.FragmentGroupPageBinding
 import com.example.myapplication.model.Photo
 import com.example.myapplication.retrofit.RetrofitInit
 import com.example.myapplication.viewModel.UserViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.io.IOUtils
 import okhttp3.MultipartBody
@@ -178,6 +179,11 @@ class GroupPageFragment : Fragment() {
         // Inflate the layout for this fragment
         return groupPageBinding.root
     }
+    override fun onResume() {
+        activity?.findViewById<BottomNavigationView>(R.id.bottomNavView)?.menu?.getItem(1)?.setChecked(true)
+
+        super.onResume()
+    }
 
     private fun changeImage(uri: Uri){
         val imgUri = uri
@@ -255,4 +261,5 @@ class GroupPageFragment : Fragment() {
         )
     }
 }
+
 
