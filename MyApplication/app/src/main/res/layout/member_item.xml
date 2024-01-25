@@ -46,26 +46,25 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/owner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="10dp"
-            android:layout_marginRight="20dp"
-            android:layout_weight="1"
-            android:drawableEnd="@drawable/owner"
-            android:gravity="end"
-            android:visibility="gone" />
-
-        <TextView
             android:id="@+id/member_item_exclude"
             android:layout_width="51dp"
             android:layout_height="55dp"
             android:layout_gravity="center"
             android:layout_marginRight="20dp"
             android:layout_weight="1"
-            android:drawableEnd="@drawable/arrow_right"
-            android:gravity="end" />
+            android:drawableEnd="@drawable/delete"
+            android:gravity="end"
+            android:visibility="gone" />
+        <TextView
+            android:id="@+id/member_item_owner"
+            android:layout_width="51dp"
+            android:layout_height="55dp"
+            android:layout_gravity="center"
+            android:layout_marginRight="20dp"
+            android:layout_weight="1"
+            android:drawableEnd="@drawable/owner"
+            android:gravity="end"
+            android:visibility="gone" />
 
     </LinearLayout>
 

@@ -2,6 +2,7 @@ package com.example.myapplication.retrofit.service
 
 import com.example.myapplication.model.APIResult
 import com.example.myapplication.model.Group
+import com.example.myapplication.model.User
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -18,6 +19,9 @@ interface GroupService {
 
     @GET("users/{userId}/groups")
     fun getUserGroups(@Path("userId") userId:Int): Call<List<Group>>
+
+    @GET("groups/{groupId}/members")
+    fun getGroupMembers(@Path("groupId") groupId:Int): Call<List<User>>
 
 
     @POST("groups")
