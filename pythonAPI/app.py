@@ -417,21 +417,31 @@ def delPosts(groupId=None,postId=None):
 	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
 	cursor=cnx.cursor(dictionary=True)
 	token = request.headers.get("auth")
-	if request.method=='DELETE':
-		cursor.execute("select OwnerId from RunGroups where GroupId = '{}'".format(groupId))
-		owner=cursor.fetchone()['OwnerId']
-		cursor.execute("select Token from Users where UserId = '{}'".format(owner))
-		ownerToken = cursor.fetchone()
-		if request.headers.get("auth") == token or request.headers.get("auth") == ownerToken:
+	cursor.execute("select UserId from Users where Token = '{}'".format(token))
+	userId = cursor.fetchone()['UserId']
+	cursor.execute("select OwnerId from RunGroups where GroupId = '{}'".format(groupId))
+	groupOwner=cursor.fetchone()['OwnerId']
+	cursor.execute("select UserId from Posts where PostId = '{}'".format(postId))
+	postOwner=cursor.fetchone()['UserId']
+	if userId == postOwner or userId == groupOwner:
+
+		if request.method=='DELETE':
+			cursor.execute("select PhotoId from Posts where PostId='{}'".format(postId))			
+			photoId=cursor.fetchone()['PhotoId']						
 			cursor.execute("delete from Posts where PostId='{}'".format(postId))			
+			cnx.commit()
+			cursor.execute("delete from Photos where PhotoId='{}'".format(photoId))			
 			cnx.commit()
 			cursor.close()
 			cnx.close()
-			return "", 200
-		else:
-			return "no_permission",404
-	if request.method=='PUT':
-		return 1
+			return jsonify(Code="200",Description="Post eliminado com sucesso!")
+				
+		if request.method=='PUT':
+			return 1
+	else:
+			cursor.close()
+			cnx.close()
+			return jsonify(Code="403",Description="Sem Permissão!")		
 	
 @app.route('/users/<userId>/posts/<postId>', methods=['PUT','DELETE'])
 def delUserPosts(userId=None,postId=None):
