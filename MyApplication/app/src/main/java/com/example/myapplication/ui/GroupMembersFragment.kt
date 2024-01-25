@@ -43,6 +43,12 @@ class GroupMembersFragment : Fragment() {
                 if(desc == "profile"){
                     viewModel.selectedUser.value=user.also { viewModel.replaceFragment(this,UserProfileFragment()) }
                 }
+            if(desc == "exclude"){
+                viewModel.selectedGroup.value?.groupId?.let { viewModel.user.value?.token?.let { it1 ->
+                    viewModel.removeUserFromGroup(
+                        it1,it,user.userId,this)
+                } }
+            }
 
         }
         groupMembersFragmentBinding.groupMembersView.adapter=adapter

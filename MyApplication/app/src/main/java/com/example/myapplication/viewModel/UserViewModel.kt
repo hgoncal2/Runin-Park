@@ -332,6 +332,34 @@ user.value?.let{loadUserGroups(it.userId)}
         )
     }
 
+    fun removeUserFromGroup(token:Token,groupId : Int,userId : Int,fragment: Fragment){
+
+        val call = RetrofitInit().groupService().removeUserFromGroup(token.token,groupId,userId)
+        call.enqueue(
+            object : Callback<APIResult> {
+                override fun onFailure(call: Call<APIResult>, t: Throwable) {
+                    t.printStackTrace()
+
+                }
+                override fun onResponse(call: Call<APIResult>, response: Response<APIResult>) {
+                    val result = response.body()
+                    if(result?.code=="200"){
+                        Toast.makeText(fragment.requireContext(),"${result.description}!", Toast.LENGTH_LONG).show()
+                        loadGroupMembers(groupId)
+
+                    }else{
+                        Toast.makeText(fragment.requireContext(),"${result?.description}", Toast.LENGTH_LONG).show()
+
+                    }
+
+
+
+                }
+            }
+        )
+    }
+
+
     fun loadUserPosts(userId : Int){
 
         val call = RetrofitInit().postService().getUserPosts(userId)
