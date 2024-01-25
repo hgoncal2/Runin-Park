@@ -343,10 +343,10 @@ def delGroupMember(groupId=None,userId=None):
 	cursor=cnx.cursor(dictionary=True)
 	token = request.headers.get("auth")
 	cursor.execute("select UserId from Users where Token = '{}'".format(token))
-	adminId = cursor.fetchone()['UserId']
-	cursor.execute("select GroupAdmin from GroupMembers where GroupId = '{}' and UserId='{}'".format(groupId,userId))
-	ownerId = cursor.fetchone()['GroupAdmin']
-	if adminId==ownerId:
+	ownerId = cursor.fetchone()['UserId']
+	cursor.execute("select GroupAdmin from GroupMembers where GroupId = '{}' and UserId='{}'".format(groupId,ownerId))
+	owner = cursor.fetchone()['GroupAdmin']
+	if owner==1:
 			cursor.execute("delete from GroupMembers where GroupId = '{}' and UserId='{}'".format(groupId,userId))
 			cnx.commit()
 			cursor.close()
