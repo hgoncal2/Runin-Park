@@ -42,11 +42,20 @@ class MyPostsFragment : Fragment() {
         dashBoardPostsBinding.myPostsView.addItemDecoration(DividerItemDecoration(this.context, LinearLayoutManager.VERTICAL))
         viewModel.user.value?.let { viewModel.loadUserPosts(it.userId) }
         viewModel.userPosts.observe(viewLifecycleOwner, Observer {
-            postsList.clear()
-            postsList.addAll(it)
-            adapter.notifyDataSetChanged()
+            if(!it.isNullOrEmpty() ){
+                dashBoardPostsBinding.noPostsCreated.visibility = View.GONE
+                postsList.clear()
+                postsList.addAll(it)
+                adapter.notifyDataSetChanged()
+            }else{
+
+                dashBoardPostsBinding.noPostsCreated.visibility = View.VISIBLE
+
+            }
+
 
         })
+
 
 
 

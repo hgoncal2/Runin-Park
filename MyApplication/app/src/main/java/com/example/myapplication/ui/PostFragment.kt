@@ -80,7 +80,7 @@ class PostFragment : Fragment() {
 
         }
         postFragmentBinding.btnSubmitPost.setOnClickListener{
-            if(postFragmentBinding.postTextFrag.text.isNotEmpty() && postFragmentBinding.postTextFrag.text.isNotBlank()){
+            if((postFragmentBinding.postTextFrag.text.isNotEmpty() && postFragmentBinding.postTextFrag.text.isNotBlank()) || imgUri!=null){
                 viewModel.createPost(viewModel.selectedGroup.value?.groupId!!,postFragmentBinding.postTextFrag.text.toString(),changeImage(imgUri))
                 postFragmentBinding.postTextFrag.setText("")
                 postFragmentBinding.postImage.setImageResource(0)
