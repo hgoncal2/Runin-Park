@@ -58,6 +58,17 @@ def login():
 		cnx.close()
 		return "",403
 
+@app.route('/users/<token>',methods=['GET'])
+def getUser(token=None):
+	args = request.args
+	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2',charset="utf8")
+	cursor=cnx.cursor(dictionary=True)
+	if(request.method=="GET"):
+		cursor.execute("select u.UserId,u.Username,u.Name,u.LastName,u.BirthDate,u.CreatedDate,u.Weight,u.Height,u.Address,u.PhotoId,p.PathToPhoto PhotoPath from Users u left join Photos p on p.PhotoId=u.PhotoId where u.Token = '{}'".format(token))
+		conta=cursor.fetchone()
+		cursor.close()
+		cnx.close()
+		return jsonify(conta)
 
 @app.route('/register',methods=['POST'])
 def register():
@@ -555,6 +566,26 @@ def uploadPhotoP(request):
 	cursor.close()
 	cnx.close()
 	return photoId
+
+@app.route('/groups/<groupId>/runs/<runId>', methods=['PUT','DELETE'])
+@app.route('/groups/<groupId>/runs', methods=['GET'])
+def getRuns(groupId=None,runId=None):
+	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
+	cursor=cnx.cursor(dictionary=True)
+	if(runId is None):		
+		cursor.execute("select * from Run where GroupId='{}'".format(groupId))
+		runs=cursor.fetchall()
+		cursor.close()
+		cnx.close()
+		return jsonify(runs)			
+	else:
+		if request.method=='POST':
+			args = request.args
+			distance = args.get("distance")
+			time = args.get("time")
+			score = distance/time
+		#if userId == postOwner or userId == groupOwner:	
+	return 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',debug=True)
