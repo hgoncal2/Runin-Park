@@ -21,6 +21,7 @@ import com.example.myapplication.model.User
 import com.example.myapplication.retrofit.RetrofitInit
 import com.example.myapplication.ui.DashBoardFragment
 import com.example.myapplication.ui.GroupsFragment
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import okhttp3.MultipartBody
@@ -31,7 +32,9 @@ import retrofit2.Response
 import java.io.File
 import java.text.SimpleDateFormat
 
-class UserViewModel : ViewModel(){
+
+
+class UserViewModel() : ViewModel(){
 
 
     var user = MutableLiveData<User?>()
@@ -44,6 +47,7 @@ class UserViewModel : ViewModel(){
     var allGroups= MutableLiveData<List<Group>>()
     var adapterGroups = mutableListOf<Group>()
     var _groupsFiltered = MutableStateFlow(0)
+    lateinit var savedToken : Flow<Token>
     var groupsFiltered = _groupsFiltered.asStateFlow()
     var userOwnedGroups = mutableListOf<Group>()
     var userPosts = MutableLiveData<List<Post>>()
@@ -53,7 +57,10 @@ class UserViewModel : ViewModel(){
 
 
 
+
+
     fun setUser(newUser: User?){
+
         user.value = newUser
     }
 
@@ -104,6 +111,30 @@ class UserViewModel : ViewModel(){
         )
     }
 
+     fun getUserWithToken(token: String,context: Context?=null){
+        val call = RetrofitInit().userService().getUserWithToken(token)
+        call.enqueue(
+            object : Callback<User> {
+                override fun onFailure(call: Call<User>, t: Throwable) {
+                    t.printStackTrace()
+                    getUserWithToken(token)
+                }
+                override fun onResponse(call: Call<User>, response: Response<User>) {
+                    response.body()?.let {
+                        it.token=Token(token)
+                        Toast.makeText(context,"User autenticado com sucesso!",Toast.LENGTH_SHORT)
+                        setUser(it)
+                        setLoggedIn(true)
+
+                    }
+
+
+
+                }
+            }
+        )
+    }
+
     fun joinGroup(groupId: Int,fragment: Fragment){
         val call = RetrofitInit().userService().addUserToGroup(user.value?.token?.token, groupId)
         call.enqueue(
@@ -136,6 +167,7 @@ user.value?.let{loadUserGroups(it.userId)}
             }
         )
     }
+
 
     fun leaveGroup(groupId: Int,fragment: Fragment){
         val call = RetrofitInit().userService().removeUserFromGroup(user.value?.token?.token, groupId)
@@ -208,6 +240,7 @@ user.value?.let{loadUserGroups(it.userId)}
                 }
             }
         )
+
     }
     fun register(username: String,password:String,fragment: Fragment){
         val call = RetrofitInit().userService().register(username, password)
@@ -346,6 +379,40 @@ user.value?.let{loadUserGroups(it.userId)}
                     if(result?.code=="200"){
                         Toast.makeText(fragment.requireContext(),"${result.description}!", Toast.LENGTH_LONG).show()
                         loadGroupMembers(groupId)
+
+                    }else{
+                        Toast.makeText(fragment.requireContext(),"${result?.description}", Toast.LENGTH_LONG).show()
+
+                    }
+
+
+
+                }
+            }
+        )
+    }
+
+    fun deletePost(token:Token,groupId : Int,postId : Int,fragment: Fragment,desc : String,userId: Int?=null){
+
+        val call = RetrofitInit().postService().deletePost(token.token,groupId,postId)
+        call.enqueue(
+            object : Callback<APIResult> {
+                override fun onFailure(call: Call<APIResult>, t: Throwable) {
+                    t.printStackTrace()
+
+                }
+                override fun onResponse(call: Call<APIResult>, response: Response<APIResult>) {
+                    val result = response.body()
+                    if(result?.code=="200"){
+                        Toast.makeText(fragment.requireContext(),"${result.description}!", Toast.LENGTH_LONG).show()
+                        if(desc == "group"){
+                            loadPosts(groupId)
+                        } else{
+                            if (userId != null) {
+                                loadUserPosts(userId)
+                            }
+                        }
+
 
                     }else{
                         Toast.makeText(fragment.requireContext(),"${result?.description}", Toast.LENGTH_LONG).show()

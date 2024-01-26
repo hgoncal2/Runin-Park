@@ -71,6 +71,7 @@ class DashBoardFragment : Fragment() {
         }
         viewModel.user.observe(viewLifecycleOwner, Observer {
             it?.let {
+
                 dashBoardBinding.dashboardUsername.text = it.username
                 viewModel.replaceDashboardFragment(this@DashBoardFragment,UserInfoFragment(),dashBoardBinding.dashboardPlaceholder)
                 it.profilePhoto?.let { pic -> viewModel.loadPic(pic,dashBoardBinding.profilePicture,false,this,R.drawable.user_logged_in) }

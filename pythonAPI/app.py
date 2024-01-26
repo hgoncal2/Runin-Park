@@ -58,7 +58,7 @@ def login():
 		cnx.close()
 		return "",403
 
-@app.route('/users/<token>',methods=['GET'])
+@app.route('/users/auth/<token>',methods=['GET'])
 def getUser(token=None):
 	args = request.args
 	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2',charset="utf8")

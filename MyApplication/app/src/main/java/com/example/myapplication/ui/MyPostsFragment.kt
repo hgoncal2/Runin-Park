@@ -35,7 +35,9 @@ class MyPostsFragment : Fragment() {
         dashBoardPostsBinding= FragmentMyPostsBinding.inflate(inflater,container,false)
 
         val adapter = PostListAdapter(postsList,this@MyPostsFragment.requireContext(),viewModel.user.value?.userId){
-
+                post -> viewModel.deletePost(
+            viewModel.user.value!!.token!!,post.groupId,post.postId,this,"profile",post.userId
+        )
         }
         dashBoardPostsBinding.myPostsView.adapter=adapter
         dashBoardPostsBinding.myPostsView.layoutManager= LinearLayoutManager(this@MyPostsFragment.requireContext())

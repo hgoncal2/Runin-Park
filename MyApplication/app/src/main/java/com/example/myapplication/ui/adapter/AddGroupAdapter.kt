@@ -13,10 +13,15 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.myapplication.R
 import com.example.myapplication.model.Group
 
-class AddGroupAdapter(private val groups: List<Group>, private val context: Context, private val itemClickListener: (group : Group) -> Unit) :
+class AddGroupAdapter(private val groups: List<Group>, private val context: Context,private val userId : Int? = null, private val itemClickListener: (group : Group) -> Unit) :
     RecyclerView.Adapter<AddGroupAdapter.ViewHolder>() {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val group = groups[position]
+        if (userId != null) {
+            holder.bindView(group,itemClickListener,userId)
+        }else{
+            holder.bindView(group,itemClickListener)
+        }
 
 
         holder.bindView(group,itemClickListener)
@@ -31,7 +36,7 @@ class AddGroupAdapter(private val groups: List<Group>, private val context: Cont
         return groups.size
     }
     class ViewHolder(itemView: View,) : RecyclerView.ViewHolder(itemView) {
-        fun bindView(group: Group,itemClickListener : (group : Group) -> Unit) {
+        fun bindView(group: Group,itemClickListener : (group : Group) -> Unit,userId: Int?=null) {
 
             val city: TextView = itemView.findViewById(R.id.member_item_name)
            // val id: TextView = itemView.findViewById(R.id.group_item_id)
@@ -47,6 +52,7 @@ class AddGroupAdapter(private val groups: List<Group>, private val context: Cont
             itemView.setOnClickListener{
                 itemClickListener(group)
             }
+
             val options: RequestOptions = RequestOptions()
                 .centerCrop()
                 .placeholder(com.example.myapplication.R.drawable.loading_spinning)

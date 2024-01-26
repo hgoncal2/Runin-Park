@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.databinding.FragmentDashBoardGroupsBinding
 import com.example.myapplication.model.Group
-import com.example.myapplication.ui.adapter.AddGroupAdapter
+import com.example.myapplication.ui.adapter.GroupListAdapter
 import com.example.myapplication.viewModel.UserViewModel
 
 
@@ -38,7 +38,9 @@ class DashBoardGroups : Fragment() {
         recycler.layoutManager = LinearLayoutManager(this.requireContext())
         recycler.addItemDecoration(DividerItemDecoration(this.requireContext(), LinearLayoutManager.VERTICAL))
 
-        val adapter = AddGroupAdapter(groupList,this.requireContext()){
+        val adapter = GroupListAdapter(groupList,this.requireContext(),
+            viewModel.user.value?.userId
+        ){
 
             viewModel.selectedGroup.value = it
             viewModel.replaceFragment(this, GroupPageFragment())

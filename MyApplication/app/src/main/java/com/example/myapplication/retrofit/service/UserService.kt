@@ -20,6 +20,8 @@ interface UserService {
                  @Query("password") password: String?): Call<Token>
     @GET("users/{username}")
     fun getUser(@Path("username") username:String): Call<User>
+    @GET("users/auth/{token}")
+    fun getUserWithToken(@Path("token") token:String): Call<User>
     @POST("groups/{groupId}/members")
     fun addUserToGroup(@Header("auth") token: String?,@Path("groupId") groupId:Int): Call<APIResult>
 

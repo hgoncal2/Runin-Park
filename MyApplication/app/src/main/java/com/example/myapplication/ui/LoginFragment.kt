@@ -45,6 +45,8 @@ class LoginFragment : Fragment() {
         }
 
 
+
+
         loginBinding.registerAccount.setOnClickListener{
             viewModel.replaceFragment(this,RegisterFragment(),"register")
 

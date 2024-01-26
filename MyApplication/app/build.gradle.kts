@@ -48,7 +48,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.9.2")
     implementation("io.github.vicmikhailau:MaskedEditText:5.0.1")
     //after text changed
-
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("com.google.firebase:firebase-crashlytics-buildtools:2.9.9")
     implementation("com.github.bumptech.glide:glide:4.14.2")
     annotationProcessor("com.github.bumptech.glide:compiler:4.14.2")

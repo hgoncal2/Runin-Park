@@ -61,8 +61,10 @@ class PostFragment : Fragment() {
         // Inflate the layout for this fragment
 
 
-        val adapter = PostListAdapter(postsList,this@PostFragment.requireContext(),viewModel.user.value?.userId){
-
+        val adapter = PostListAdapter(postsList,this@PostFragment.requireContext(),viewModel.user.value?.userId,viewModel.selectedGroup.value?.ownerId){
+          post -> viewModel.deletePost(
+            viewModel.user.value!!.token!!,post.groupId,post.postId,this,"group"
+          )
         }
         postFragmentBinding.postsViewList.adapter=adapter
         postFragmentBinding.postsViewList.layoutManager= LinearLayoutManager(this@PostFragment.requireContext())

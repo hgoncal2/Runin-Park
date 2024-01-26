@@ -1,6 +1,7 @@
 package com.example.myapplication.ui
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -13,6 +14,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import com.example.myapplication.R
 import com.example.myapplication.databinding.ActivityMainBinding
+import com.example.myapplication.model.Token
 import com.example.myapplication.viewModel.UserViewModel
 
 
@@ -20,11 +22,17 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private val viewModel: UserViewModel by viewModels()
+    private lateinit var sharedPreferences: SharedPreferences
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
+         sharedPreferences=this.getSharedPreferences("token", MODE_PRIVATE)
+
         super.onCreate(savedInstanceState)
         binding= ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
 
 
 
@@ -35,12 +43,13 @@ class MainActivity : AppCompatActivity() {
         viewModel.loggedIn.observe(this, Observer {
             if(it==true ){
                 login()
+
             }else{
+                getUserToken()?.let { viewModel.getUserWithToken(it,this@MainActivity) }
                 replaceFragment(LoginFragment())
 
             }
         })
-
         binding.bottomNavView.setOnItemSelectedListener {
 
             when(it.itemId){
@@ -56,11 +65,21 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    private fun getUserToken() : String?{
+                return sharedPreferences.getString("token",null)
+    }
+
+    private fun saveUserToken(token: Token?){
+        sharedPreferences.edit().putString("token",token?.token).apply()
+
+    }
+
     private fun logout(){
         val builder = AlertDialog.Builder(this@MainActivity)
         builder.setMessage("Are you sure you want to log out?")
             .setCancelable(false)
             .setPositiveButton("Yes") {_, _ ->
+                saveUserToken(null)
                 viewModel.selectedGroup.value = null
                 viewModel.setLoggedIn(false)
                 viewModel.setUser(null)
@@ -70,6 +89,7 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this,"Logged Out Successful!",Toast.LENGTH_LONG).show()
                 viewModel.userGroups.value = null
                 viewModel.allGroups.value = null
+
 
                 val int = intent
                 finish()
@@ -92,7 +112,7 @@ class MainActivity : AppCompatActivity() {
     private fun login(){
         //replaceFragment(GroupsFragment())
 
-
+saveUserToken(viewModel.user.value?.token)
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         binding.bottomNavView.menu.clear()
         binding.bottomNavView.inflateMenu(R.menu.loggedin_bottom_nav)
