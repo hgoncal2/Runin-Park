@@ -91,6 +91,9 @@ class GroupPageFragment : Fragment() {
                     "group_members" -> viewModel.replaceDashboardFragment(this@GroupPageFragment,GroupMembersFragment(),groupPageBinding.groupPagePlaceholder).also { viewModel.selectedGroup.value?.groupId?.let { it1 ->
                         viewModel.loadGroupMembers(it1)
                     } }
+                    "group_runs" -> viewModel.replaceDashboardFragment(this@GroupPageFragment,GroupRunsFragment(),groupPageBinding.groupPagePlaceholder).also { viewModel.selectedGroup.value?.groupId?.let { it1 ->
+                        //viewModel.loadGroupRuns(it1)
+                    } }
                 }
             }
 

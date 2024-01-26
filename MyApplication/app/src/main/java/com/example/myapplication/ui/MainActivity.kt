@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.CheckBox
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -45,7 +46,7 @@ class MainActivity : AppCompatActivity() {
                 login()
 
             }else{
-                getUserToken()?.let { viewModel.getUserWithToken(it,this@MainActivity) }
+                getUserToken()?.let { token -> viewModel.getUserWithToken(token,this@MainActivity) }
                 replaceFragment(LoginFragment())
 
             }
@@ -111,8 +112,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun login(){
         //replaceFragment(GroupsFragment())
+if(findViewById<CheckBox>(R.id.remember).isChecked){ saveUserToken(viewModel.user.value?.token) }
 
-saveUserToken(viewModel.user.value?.token)
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         binding.bottomNavView.menu.clear()
         binding.bottomNavView.inflateMenu(R.menu.loggedin_bottom_nav)
