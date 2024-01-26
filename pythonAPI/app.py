@@ -60,7 +60,6 @@ def login():
 
 @app.route('/users/auth/<token>',methods=['GET'])
 def getUser(token=None):
-	args = request.args
 	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2',charset="utf8")
 	cursor=cnx.cursor(dictionary=True)
 	if(request.method=="GET"):
@@ -567,25 +566,42 @@ def uploadPhotoP(request):
 	cnx.close()
 	return photoId
 
-@app.route('/groups/<groupId>/runs/<runId>', methods=['PUT','DELETE'])
-@app.route('/groups/<groupId>/runs', methods=['GET'])
+
+
+
+@app.route('/groups/<groupId>/runs', methods=['GET','POST'])
+@app.route('/groups/<groupId>/runs/<runId>', methods=['DELETE'])
 def getRuns(groupId=None,runId=None):
 	cnx = mysql.connector.connect(user='root', password='Teste123!',host='16.170.180.240',port='3306',  database='app2')
 	cursor=cnx.cursor(dictionary=True)
-	if(runId is None):		
-		cursor.execute("select * from Run where GroupId='{}'".format(groupId))
-		runs=cursor.fetchall()
-		cursor.close()
-		cnx.close()
-		return jsonify(runs)			
-	else:
+	if(runId is None):	
+		if request.method=='GET':
+			cursor.execute("select r.RunId, r.Distance, r.CreatedDate, r.UserId, r.groupId, pr.PathToPhoto as PhotoPath, pu.PathToPhoto UserPhotoPath, u.Username from Run r left join Photos pr on pr.PhotoId=r.PhotoId left join Users u on u.UserId=r.UserId left join Photos pu on u.PhotoId=pu.PhotoId where GroupId='{}'".format(groupId))
+			runs=cursor.fetchall()
+			cursor.close()
+			cnx.close()
+			return jsonify(runs)				
 		if request.method=='POST':
 			args = request.args
 			distance = args.get("distance")
 			time = args.get("time")
-			score = distance/time
-		#if userId == postOwner or userId == groupOwner:	
-	return 200
+			createdDate=datetime.now()
+			token = request.headers.get("auth")
+			cursor.execute("select UserId from Users where Token='{}'".format(token))
+			userId=cursor.fetchone()['UserId']
+			#hh, mm , ss = map(int, time.split(':'))
+			#totalTime=(hh*60)+mm+(ss/60)
+			#score = distance/totalTime/10
+			if  len(request.files)>0:
+				photoId=uploadPhotoP(request)
+				cursor.execute("insert into Run (Distance,Time,CreatedDate,UserId,GroupId,PhotoId) values ('{}','{}','{}','{}','{}','{}')".format(distance,time,createdDate,userId,groupId,photoId))	
+			else:
+				cursor.execute("insert into Run (Distance,Time,CreatedDate,UserId,GroupId) values ('{}','{}','{}','{}','{}')".format(distance,time,createdDate,userId,groupId))	
+			cnx.commit()
+			cursor.close()			
+			cnx.close()
+			return jsonify(Code="200",Description="Corrida inserida com sucesso!")
+	return jsonify(Code="400",Description="Something went wrong!")
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',debug=True)
