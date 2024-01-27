@@ -15,6 +15,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import com.example.myapplication.R
 import com.example.myapplication.databinding.ActivityMainBinding
+import com.example.myapplication.fragmentAboutUs
 import com.example.myapplication.model.Token
 import com.example.myapplication.viewModel.UserViewModel
 
@@ -59,6 +60,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.item_dashboard -> replaceFragment(DashBoardFragment())
                 R.id.item_my_groups -> replaceFragment(GroupsFragment())
                 R.id.item_logout -> logout()
+                R.id.item_about -> replaceFragment(AboutUsFragment())
             }
 
             true

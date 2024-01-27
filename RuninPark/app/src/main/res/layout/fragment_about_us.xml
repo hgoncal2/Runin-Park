@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:textAlignment="textEnd"
+    tools:context=".ui.AboutUsFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="180dp"
+            android:layout_height="170dp"
+            android:layout_weight="0"
+            app:srcCompat="@mipmap/anonymous_hugo" />
+
+        <TextView
+            android:id="@+id/textView16"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="0"
+            android:gravity="center"
+            android:text="Hugo Gonçalves\nAluno 23327"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="167dp"
+        android:layout_margin="20dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textView17"
+            android:layout_width="170dp"
+            android:layout_height="170dp"
+            android:layout_gravity="center"
+            android:layout_weight="0"
+            android:gravity="center"
+            android:text="Daniel Santos\nAluno 23298"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="fill_parent"
+            android:layout_height="170dp"
+            android:layout_gravity="end"
+            android:layout_weight="0"
+            app:srcCompat="@mipmap/anonymous2" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView13"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="bottom"
+        android:layout_margin="50dp"
+        android:gravity="bottom|center"
+        android:text="Esta aplicação foi desenvolvida no âmbito da cadeira de Desenvolvimento de Aplicações Móveis, do curso de Licenciatura de Engenharia Informática, do Instituto Politécnico de Tomar, pelos alunos Daniel Santos e Hugo Gonçalves."
+        android:textDirection="ltr"
+        android:textSize="20sp" />
+
+</LinearLayout>
