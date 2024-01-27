@@ -15,7 +15,8 @@ import com.example.myapplication.viewModel.UserViewModel
 
 
 abstract class AddGroupDialog(context: Context,private var groupList : List<Group>,private val viewModel: UserViewModel,private val frag: Fragment): Dialog(context) {
-     var adapter: AddGroupAdapter? = null
+    //Inicia a variável adapter que irá ser usada para a recycler view dos grupos
+    var adapter: AddGroupAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState ?: Bundle())
@@ -25,24 +26,16 @@ abstract class AddGroupDialog(context: Context,private var groupList : List<Grou
 
 
         setContentView(view)
-
-
+        //Permite cancelar o dialog clicando fora da view deste
         setCanceledOnTouchOutside(true)
-
-setOnDismissListener{
-    cancel()
-}
-        setOnCancelListener {
-            cancel()
-        }
         setCancelable(true)
-        // Set up the RecyclerView in the dialog
+        //Configuração da recycler view
         val recycler = view.findViewById<RecyclerView>(R.id.add_group_recycler_view)
         recycler.layoutManager = LinearLayoutManager(frag.requireContext())
         recycler.addItemDecoration(DividerItemDecoration(frag.requireContext(), LinearLayoutManager.VERTICAL))
 
 
-
+        //Click listener a cada item da recycler view,para saber qual grupo foi selecionado
          adapter = AddGroupAdapter(groupList,context){
             cancel()
             viewModel.selectedGroup.value = it

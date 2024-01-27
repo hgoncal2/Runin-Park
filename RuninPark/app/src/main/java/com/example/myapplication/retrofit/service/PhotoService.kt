@@ -11,12 +11,11 @@ import retrofit2.http.Path
 
 interface PhotoService {
 
-
+//Dá upload da foto de perfil do utilizador
     @POST("photos/users")
-
     @Multipart
     fun uploadPhoto(@Part image: MultipartBody.Part?, @Header("auth") token: String?): Call<Photo>
-
+//Dá upload da foto do grupo
     @POST("photos/{groupId}")
     @Multipart
     fun uploadGroupPhoto(@Part image: MultipartBody.Part?, @Header("auth") token: String?, @Path("groupId") groupId: Int): Call<Photo>

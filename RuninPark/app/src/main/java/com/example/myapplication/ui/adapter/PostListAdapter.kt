@@ -13,10 +13,14 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.example.myapplication.R
 import com.example.myapplication.model.Post
-
+/* Este adapter,juntamente com vários outros usados, usa um item click listener que pode ser acedido
+pelas classes que inicializam uma instância deste.Este método foi inspirado por esta thread:
+https://stackoverflow.com/questions/49969278/recyclerview-item-click-listener-the-right-way
+*/
 class PostListAdapter(private val posts: List<Post>,private val context: Context, private val userId : Int? = null,private val ownerId : Int? = null,private val itemClickListener: (post : Post) -> Unit) :
     RecyclerView.Adapter<PostListAdapter.ViewHolder>() {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        //Associa um post a uma posição do array de posts
         val post = posts[position]
 
         if (userId != null && ownerId != null) {
@@ -58,6 +62,9 @@ class PostListAdapter(private val posts: List<Post>,private val context: Context
                 user.text = post.username
             }
             text.text = post.text
+            //Nome do grupo será "null" se este adapter for usada na recycler view
+            //de um grupo. Se for usado para ver os posts de um utilizador,
+            //terá um nome de grupo associado,e esse será mostrado
             if(post.groupName==null){
                 groupName.visibility=View.GONE
             }else{
@@ -75,8 +82,7 @@ class PostListAdapter(private val posts: List<Post>,private val context: Context
                 .circleCrop()
             Glide.with(this.itemView.context).load(post.profilePhoto).diskCacheStrategy(
                 DiskCacheStrategy.ALL).skipMemoryCache(false).apply(options).timeout(6000).into(img)
-         //   val createdDate: TextView = itemView.findViewById(R.id.group_item_createdDate)
-           // val ownerId: TextView = itemView.findViewById(R.id.group_item_ownerId)
+            //Se o post não conter foto,a view que a iria conter é eliminada
             if(post.postPhoto != null){
                 val options: RequestOptions = RequestOptions()
                     .centerCrop()

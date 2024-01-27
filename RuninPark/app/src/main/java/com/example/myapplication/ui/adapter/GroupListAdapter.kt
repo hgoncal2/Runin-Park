@@ -12,11 +12,16 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.example.myapplication.R
 import com.example.myapplication.model.Group
-
+/* Este adapter,juntamente com vários outros usados, usa um item click listener que pode ser acedido
+pelas classes que inicializam uma instância deste.Este método foi inspirado por esta thread:
+https://stackoverflow.com/questions/49969278/recyclerview-item-click-listener-the-right-way
+*/
 class GroupListAdapter(private val groups: List<Group>,private val context: Context,private val userId : Int? = null,private val itemClickListener: (group : Group) -> Unit) :
     RecyclerView.Adapter<GroupListAdapter.ViewHolder>() {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        //Associa um grupo a uma posição do array de grupos
         val group = groups[position]
+        //Passa o ID do utilizador como argumento se este existir
 
         if (userId != null) {
             holder.bindView(group,itemClickListener,userId)
@@ -37,20 +42,19 @@ class GroupListAdapter(private val groups: List<Group>,private val context: Cont
         fun bindView(group: Group,itemClickListener : (group : Group) -> Unit,userId : Int? = null ) {
 
             val city: TextView = itemView.findViewById(R.id.member_item_name)
-           // val id: TextView = itemView.findViewById(R.id.group_item_id)
             val nome: TextView = itemView.findViewById(R.id.member_item_username)
             val owner: TextView = itemView.findViewById(R.id.owner)
             val img : ImageView = itemView.findViewById(R.id.member_item_img)
 
-         //   val createdDate: TextView = itemView.findViewById(R.id.group_item_createdDate)
-           // val ownerId: TextView = itemView.findViewById(R.id.group_item_ownerId)
-
+            //Atribui valores dos campos às respetivas views
             city.text = "${group.city}"
             nome.text = "${group.name}"
+            //Passa um grupo como valor do item click listener,de modo a ser acedido pela classe
+            //que inicializa uma instância deste adapter
             itemView.setOnClickListener{
                 itemClickListener(group)
             }
-
+            //Se user for dono do grupo,adiciona ícone que o indica
             userId?.let {
                 if(group.ownerId == it){
                     owner.visibility = View.VISIBLE
@@ -58,6 +62,7 @@ class GroupListAdapter(private val groups: List<Group>,private val context: Cont
                     owner.visibility = View.GONE
                 }
             }
+            //Usado GLIDE para inserir a fotografia do grupo
 
             val options: RequestOptions = RequestOptions()
                 .centerCrop()

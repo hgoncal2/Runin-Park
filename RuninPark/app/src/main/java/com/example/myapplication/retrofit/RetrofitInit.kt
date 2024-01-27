@@ -11,8 +11,11 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class RetrofitInit {
+    //Serializar de json
     private val gson: Gson = GsonBuilder().serializeNulls().setLenient().setDateFormat("dd-MM-yyyy HH:mm:ss").create()
+    //Endereço IP público da API
     private val host = "http://16.170.180.240:5000"
+    //Constrói o objeto retrofit
     private val retrofit = Retrofit.Builder()
         .baseUrl(host)
         .addConverterFactory(GsonConverterFactory.create(gson))

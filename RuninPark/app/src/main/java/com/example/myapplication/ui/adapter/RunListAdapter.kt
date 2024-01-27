@@ -43,7 +43,7 @@ class RunListAdapter(private val runs: List<Run>, private val context: Context, 
             val distance: TextView = itemView.findViewById(R.id.run_item_distance)
             val time: TextView = itemView.findViewById(R.id.run_item_time)
             val user: TextView = itemView.findViewById(R.id.run_item_user)
-          //  val groupName: TextView = itemView.findViewById(R.id.post_item_group_name)
+
             val delete: TextView = itemView.findViewById(R.id.run_item_delete)
             val score: TextView = itemView.findViewById(R.id.run_item_score_value)
 
@@ -56,11 +56,15 @@ class RunListAdapter(private val runs: List<Run>, private val context: Context, 
             date.text = SimpleDateFormat("dd/MM/YYYY HH:mm:ss").format(run.createdDate);
             distance.text = "Distância: ${run.distance} KMs"
             time.text = "Tempo: ${run.time} Horas"
+            //De momento não é possível apagar corridas,mas poderá ser no futuro
+            /*
             if(run.userId == userId ){
-           //     delete.visibility = View.VISIBLE
+                delete.visibility = View.VISIBLE
             }else{
-           //     delete.visibility = View.GONE
+                delete.visibility = View.GONE
             }
+
+             */
             score.text = run.rating.toString()
             val options: RequestOptions = RequestOptions()
                 .centerCrop()
@@ -79,21 +83,7 @@ class RunListAdapter(private val runs: List<Run>, private val context: Context, 
             }else{
                 imgPost.visibility=View.GONE
             }
-/*
-            itemView.setOnClickListener{
-                itemClickListener(post)
-            }
 
-            userId?.let {
-                if(post.userId == it){
-                   // owner.visibility = View.VISIBLE
-                }
-            }
-
-
-
-
-*/
 
 
 
