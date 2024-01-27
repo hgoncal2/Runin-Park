@@ -23,7 +23,7 @@
                 android:orientation="vertical">
 
                 <ImageView
-                    android:id="@+id/post_item_img"
+                    android:id="@+id/run_item_img"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="start"

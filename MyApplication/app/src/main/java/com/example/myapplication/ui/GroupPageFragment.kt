@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
@@ -92,10 +91,11 @@ class GroupPageFragment : Fragment() {
                         viewModel.loadGroupMembers(it1)
                     } }
                     "group_runs" -> viewModel.replaceDashboardFragment(this@GroupPageFragment,GroupRunsFragment(),groupPageBinding.groupPagePlaceholder).also { viewModel.selectedGroup.value?.groupId?.let { it1 ->
-                        //viewModel.loadGroupRuns(it1)
+                        viewModel.loadRuns(it1)
                     } }
                 }
             }
+
 
             override fun onTabReselected(tab: TabLayout.Tab?) {
                 print(tab?.id)
@@ -143,9 +143,7 @@ class GroupPageFragment : Fragment() {
                 viewModel.replaceDashboardFragment(this@GroupPageFragment,PostFragment(),groupPageBinding.groupPagePlaceholder).also { viewModel.selectedGroup.value?.let { it1 ->
                     viewModel.loadPosts(it1.groupId)
                 } }
-                if(viewModel.user.value?.userId != viewModel.selectedGroup.value?.ownerId){
-                    (groupPageBinding.groupPageTab.getTabAt(2)?.view as LinearLayout).visibility = View.GONE
-                }
+
 
                 groupPageBinding.notLoggedIn.visibility = View.GONE
                 viewModel.userGroups.observe(viewLifecycleOwner, Observer {

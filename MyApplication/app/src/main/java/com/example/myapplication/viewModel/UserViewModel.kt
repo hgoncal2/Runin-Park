@@ -495,7 +495,7 @@ user.value?.let{loadUserGroups(it.userId)}
         )
     }
 
-    fun createRun(groupId: Int, file: File? =null,distance:Double,hour:Int,minute:Int,second:Int){
+    fun createRun(groupId: Int, file: File? =null,distance:Double,hour:Int,minute:Int,second:Int,fragment: Fragment){
 
         val call = file.let {
 
@@ -516,8 +516,18 @@ user.value?.let{loadUserGroups(it.userId)}
 
                 }
                 override fun onResponse(call: Call<APIResult>, response: Response<APIResult>) {
+                    val result = response.body()
+                    if(result?.code=="200"){
+                        Toast.makeText(fragment.requireContext(),"${result.description}!", Toast.LENGTH_LONG).show()
+                        selectedGroup.value?.groupId?.let { loadRuns(it) }
 
-                    selectedGroup.value?.groupId?.let { loadRuns(it) }
+
+                    }else{
+                        Toast.makeText(fragment.requireContext(),"${result?.description}", Toast.LENGTH_LONG).show()
+
+                    }
+
+
 
 
                 }

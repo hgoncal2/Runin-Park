@@ -38,7 +38,7 @@ class PostListAdapter(private val posts: List<Post>,private val context: Context
         fun bindView(post: Post,itemClickListener : (post : Post) -> Unit,userId : Int? = null,ownerId : Int? = null) {
 
             val date: TextView = itemView.findViewById(R.id.post_item_createdDate)
-            val img: ImageView = itemView.findViewById(R.id.post_item_img)
+            val img: ImageView = itemView.findViewById(R.id.run_item_img)
             val imgPost: ImageView = itemView.findViewById(R.id.post_item_photo)
             val text: TextView = itemView.findViewById(R.id.post_item_text)
             val user: TextView = itemView.findViewById(R.id.post_item_user)

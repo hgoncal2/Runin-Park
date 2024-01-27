@@ -1,6 +1,7 @@
 package com.example.myapplication.dialogs
 import android.app.Dialog
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.Button
@@ -13,6 +14,7 @@ import com.example.myapplication.viewModel.UserViewModel
 
 abstract class CreateRunDialog(context: Context, private val viewModel: UserViewModel): Dialog(context) {
 
+    private var imguri : Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState ?: Bundle())
@@ -44,13 +46,18 @@ setOnDismissListener{
         val img = view.findViewById<ImageView>(R.id.run_img_dlg)
         val selImg = view.findViewById<ImageButton>(R.id.btn_sel_foto_run)
 
-        createRunBtn.setOnClickListener{
-            viewModel.createRun(viewModel.selectedGroup.value!!.groupId,null,distance.text.toString().toDouble(),hours.text.toString().toInt(),minutes.text.toString().toInt(),seconds.text.toString().toInt())
-            cancel()
+
+
+
+
+            fun teste(imgU : Uri?){
+                imguri = imgU
+
+            }
         }
 
 
-       }
+
 
 
 
