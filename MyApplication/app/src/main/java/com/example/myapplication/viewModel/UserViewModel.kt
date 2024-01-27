@@ -16,6 +16,7 @@ import com.example.myapplication.model.APIResult
 import com.example.myapplication.model.Group
 import com.example.myapplication.model.Photo
 import com.example.myapplication.model.Post
+import com.example.myapplication.model.Run
 import com.example.myapplication.model.Token
 import com.example.myapplication.model.User
 import com.example.myapplication.retrofit.RetrofitInit
@@ -43,6 +44,7 @@ class UserViewModel() : ViewModel(){
     var selectedUser = MutableLiveData<User>()
     var userGroups = MutableLiveData<List<Group>>()
     var groupPosts = MutableLiveData<List<Post>>()
+    var groupRuns = MutableLiveData<List<Run>>()
     var groupMembers = MutableLiveData<List<User>>()
     var allGroups= MutableLiveData<List<Group>>()
     var adapterGroups = mutableListOf<Group>()
@@ -346,6 +348,24 @@ user.value?.let{loadUserGroups(it.userId)}
             }
         )
     }
+    fun loadRuns(groupId : Int){
+
+        val call = RetrofitInit().runService().getRuns(groupId)
+        call.enqueue(
+            object : Callback<List<Run>> {
+                override fun onFailure(call: Call<List<Run>>, t: Throwable) {
+                    t.printStackTrace()
+
+                }
+                override fun onResponse(call: Call<List<Run>>, response: Response<List<Run>>) {
+
+                    groupRuns.value = response.body()
+
+
+                }
+            }
+        )
+    }
     fun loadGroupMembers(groupId : Int){
 
         val call = RetrofitInit().groupService().getGroupMembers(groupId)
@@ -468,6 +488,36 @@ user.value?.let{loadUserGroups(it.userId)}
                 override fun onResponse(call: Call<APIResult>, response: Response<APIResult>) {
 
                     selectedGroup.value?.groupId?.let { loadPosts(it) }
+
+
+                }
+            }
+        )
+    }
+
+    fun createRun(groupId: Int, file: File? =null,distance:Double,hour:Int,minute:Int,second:Int){
+
+        val call = file.let {
+
+            if(it != null){
+                RetrofitInit().runService().createRun(
+
+                    image = file?.asRequestBody()
+                        ?.let { MultipartBody.Part.createFormData("image", file.name, it) },user.value?.token?.token, groupId,distance,hour,minute,second
+                )
+            }else{
+                RetrofitInit().runService().createRunNoImg(user.value?.token?.token, groupId,distance,hour,minute,second)
+            }
+        }
+        call.enqueue(
+            object : Callback<APIResult> {
+                override fun onFailure(call: Call<APIResult>, t: Throwable) {
+                    t.printStackTrace()
+
+                }
+                override fun onResponse(call: Call<APIResult>, response: Response<APIResult>) {
+
+                    selectedGroup.value?.groupId?.let { loadRuns(it) }
 
 
                 }
