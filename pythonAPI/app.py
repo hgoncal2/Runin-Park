@@ -5,17 +5,19 @@ import base64
 import os
 from uuid import uuid4
 from passlib.hash import sha256_crypt
-from datetime import datetime,date
+from datetime import datetime,date,timedelta
 from flask.json.provider import DefaultJSONProvider
 from flask import current_app
 
 class UpdatedJSONProvider(DefaultJSONProvider):
-    def default(self, o):
-        if isinstance(o, datetime):
-            return o.strftime('%d-%m-%Y %H:%M:%S')
-        elif isinstance(o, date):
-            return o.strftime('%d-%m-%Y')
-        return super().default(o)
+	def default(self, o):
+		if isinstance(o, datetime):
+			return o.strftime('%d-%m-%Y %H:%M:%S')
+		elif isinstance(o, date):
+			return o.strftime('%d-%m-%Y')
+		elif isinstance(o, timedelta):
+			return str(o)
+		return super().default(o)
 
 app = Flask(__name__)
 app.json.ensure_ascii = False
@@ -576,7 +578,7 @@ def getRuns(groupId=None,runId=None):
 	cursor=cnx.cursor(dictionary=True)
 	if(runId is None):	
 		if request.method=='GET':
-			cursor.execute("select r.RunId, r.Distance, r.CreatedDate, r.UserId, r.groupId, pr.PathToPhoto as PhotoPath, pu.PathToPhoto UserPhotoPath, u.Username from Run r left join Photos pr on pr.PhotoId=r.PhotoId left join Users u on u.UserId=r.UserId left join Photos pu on u.PhotoId=pu.PhotoId where GroupId='{}'".format(groupId))
+			cursor.execute("select r.RunId, r.Distance, r.CreatedDate, r.UserId, r.GroupId, r.Rating, r.Time, pr.PathToPhoto as PhotoPath, pu.PathToPhoto UserPhotoPath, u.Username from Run r left join Photos pr on pr.PhotoId=r.PhotoId left join Users u on u.UserId=r.UserId left join Photos pu on u.PhotoId=pu.PhotoId where GroupId='{}' order by Rating Desc".format(groupId))
 			runs=cursor.fetchall()
 			cursor.close()
 			cnx.close()
@@ -584,19 +586,21 @@ def getRuns(groupId=None,runId=None):
 		if request.method=='POST':
 			args = request.args
 			distance = args.get("distance")
-			time = args.get("time")
+			hours = args.get("hours")
+			minutes = args.get("minutes")
+			seconds = args.get("seconds")
+			totalTime=(int(hours)*60)+int(minutes)+(int(seconds)/60)
+			time = hours+':'+minutes+':'+seconds
+			rating = (float(distance))*1000/totalTime/10.0
 			createdDate=datetime.now()
 			token = request.headers.get("auth")
 			cursor.execute("select UserId from Users where Token='{}'".format(token))
-			userId=cursor.fetchone()['UserId']
-			#hh, mm , ss = map(int, time.split(':'))
-			#totalTime=(hh*60)+mm+(ss/60)
-			#score = distance/totalTime/10
+			userId=cursor.fetchone()['UserId']			
 			if  len(request.files)>0:
 				photoId=uploadPhotoP(request)
-				cursor.execute("insert into Run (Distance,Time,CreatedDate,UserId,GroupId,PhotoId) values ('{}','{}','{}','{}','{}','{}')".format(distance,time,createdDate,userId,groupId,photoId))	
+				cursor.execute("insert into Run (Distance,Time,CreatedDate,UserId,GroupId,Rating,PhotoId) values ('{}','{}','{}','{}','{}','{}','{}')".format(distance,time,createdDate,userId,groupId,rating,photoId))	
 			else:
-				cursor.execute("insert into Run (Distance,Time,CreatedDate,UserId,GroupId) values ('{}','{}','{}','{}','{}')".format(distance,time,createdDate,userId,groupId))	
+				cursor.execute("insert into Run (Distance,Time,CreatedDate,UserId,GroupId,Rating) values ('{}','{}','{}','{}','{}','{}')".format(distance,time,createdDate,userId,groupId,rating))	
 			cnx.commit()
 			cursor.close()			
 			cnx.close()
