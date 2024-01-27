@@ -115,8 +115,8 @@
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:contentDescription="group_admin"
-                android:text="Administration" />
+                android:contentDescription="group_runs"
+                android:text="Runs" />
         </com.google.android.material.tabs.TabLayout>
 
         <FrameLayout
