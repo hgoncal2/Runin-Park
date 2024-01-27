@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Runin\' Park</string>
+    <string name="RuninPark">Runin\' Park</string>
     <string name="name">Name</string>
     <string name="welcome_to_runin_park">Welcome to Runin\' Park!</string>
     <!-- TODO: Remove or change this placeholder text -->
