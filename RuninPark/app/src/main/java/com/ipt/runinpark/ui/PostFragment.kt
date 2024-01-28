@@ -15,13 +15,13 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.io.IOUtils
 import com.ipt.runinpark.databinding.FragmentPostBinding
 import com.ipt.runinpark.model.Photo
 import com.ipt.runinpark.model.Post
 import com.ipt.runinpark.retrofit.RetrofitInit
 import com.ipt.runinpark.ui.adapter.PostListAdapter
 import com.ipt.runinpark.viewModel.UserViewModel
-import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.io.IOUtils
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Call
@@ -154,12 +154,12 @@ if(uri == null){
             object : Callback<Photo> {
                 override fun onFailure(call: Call<Photo>, t: Throwable) {
                     t.printStackTrace()
-                    Toast.makeText(this@PostFragment.context,"Error Uploading Image!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@PostFragment.context,"Erro ao carregar imagem!", Toast.LENGTH_LONG).show()
 
                 }
                 override fun onResponse(call: Call<Photo>, response: Response<Photo>) {
                     if(response.code() == 403){
-                        Toast.makeText(this@PostFragment.context,"You don't have permission!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@PostFragment.context,"Não tem permissão!", Toast.LENGTH_LONG).show()
                     }else{
                         response.body().let {
                             viewModel.selectedGroup.value?.groupPhoto=it?.path

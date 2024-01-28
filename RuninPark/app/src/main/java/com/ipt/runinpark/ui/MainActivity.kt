@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity() {
     //Limpa grande parte das variáveis que pertencem a cada utilizador
     private fun logout(){
         val builder = AlertDialog.Builder(this@MainActivity)
-        builder.setMessage("Are you sure you want to log out?")
+        builder.setMessage("Tem a certeza que quer dar log out?")
             .setCancelable(false)
             .setPositiveButton("Yes") {_, _ ->
                 saveUserToken(null)
@@ -119,7 +119,7 @@ class MainActivity : AppCompatActivity() {
                 binding.bottomNavView.menu.clear()
                 binding.bottomNavView.inflateMenu(R.menu.bottom_nav)
                 supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                Toast.makeText(this,"Logged Out Successful!",Toast.LENGTH_LONG).show()
+                Toast.makeText(this,"Log out com sucesso!",Toast.LENGTH_LONG).show()
                 viewModel.userGroups.value = null
                 viewModel.allGroups.value = null
                 //Dá reset à activity

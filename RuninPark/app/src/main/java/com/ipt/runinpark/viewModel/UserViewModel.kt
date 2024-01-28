@@ -72,15 +72,15 @@ class UserViewModel() : ViewModel(){
             object : Callback<Token> {
                 override fun onFailure(call: Call<Token>, t: Throwable) {
                     t.printStackTrace()
-                    Toast.makeText(context,"Error Logging In",Toast.LENGTH_LONG).show()
+                    Toast.makeText(context,"Erro a dar login",Toast.LENGTH_LONG).show()
 
                 }
                 override fun onResponse(call: Call<Token>, response: Response<Token>) {
                     if(response.code() == 403  ){
-                        Toast.makeText(context,"Wrong Username or Password!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context,"Username ou password errada!", Toast.LENGTH_LONG).show()
                     }else{
                         token= response.body()!!
-                        Toast.makeText(context,"Welcome ${username}!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context,"Bem-Vindo ${username}!", Toast.LENGTH_LONG).show()
 
                         getUser(username)
                     }
@@ -143,13 +143,13 @@ class UserViewModel() : ViewModel(){
             object : Callback<APIResult> {
                 override fun onFailure(call: Call<APIResult>, t: Throwable) {
                     t.printStackTrace()
-                    Toast.makeText(fragment.requireContext(),"Error joining group!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(fragment.requireContext(),"Erro ao juntar-se a grupo!", Toast.LENGTH_LONG).show()
 
 
                 }
                 override fun onResponse(call: Call<APIResult>, response: Response<APIResult>) {
                     if(response.code() == 403){
-                        Toast.makeText(fragment.requireContext(),"Error joining group!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(fragment.requireContext(),"Erro ao juntar-se a grupo!", Toast.LENGTH_LONG).show()
                     }else{
                         val result : APIResult? = response.body()
                         if(result?.code=="200"){
@@ -157,7 +157,7 @@ class UserViewModel() : ViewModel(){
 user.value?.let{loadUserGroups(it.userId)}
 
                         }else{
-                            Toast.makeText(fragment.requireContext(),"Error joining group!", Toast.LENGTH_LONG).show()
+                            Toast.makeText(fragment.requireContext(),"Erro ao juntar-se a grupo!", Toast.LENGTH_LONG).show()
 
                         }
 
@@ -177,14 +177,14 @@ user.value?.let{loadUserGroups(it.userId)}
             object : Callback<APIResult> {
                 override fun onFailure(call: Call<APIResult>, t: Throwable) {
                     t.printStackTrace()
-                    Toast.makeText(fragment.requireContext(),"Error joining group!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(fragment.requireContext(),"Erro ao juntar-se a grupo!", Toast.LENGTH_SHORT).show()
                     user.value?.userId?.let { loadUserGroups(it) }
                     replaceFragment(fragment,GroupsFragment())
 
                 }
                 override fun onResponse(call: Call<APIResult>, response: Response<APIResult>) {
                     if(response.code() == 403){
-                        Toast.makeText(fragment.requireContext(),"Error joining group!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(fragment.requireContext(),"Erro ao juntar-se a grupo!", Toast.LENGTH_SHORT).show()
                     }else{
                         val result : APIResult? = response.body()
                         if(result?.code=="200"){
@@ -214,7 +214,7 @@ user.value?.let{loadUserGroups(it.userId)}
             object : Callback<APIResult> {
                 override fun onFailure(call: Call<APIResult>, t: Throwable) {
                     t.printStackTrace()
-                    Toast.makeText(fragment.requireContext(),"Error creating group!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(fragment.requireContext(),"Error ao criar grupo!", Toast.LENGTH_SHORT).show()
 
 
                 }
@@ -250,20 +250,20 @@ user.value?.let{loadUserGroups(it.userId)}
             object : Callback<APIResult> {
                 override fun onFailure(call: Call<APIResult>, t: Throwable) {
                     t.printStackTrace()
-                    Toast.makeText(fragment.requireContext(),"Login", Toast.LENGTH_LONG).show()
+                    Toast.makeText(fragment.requireContext(),"Entrar", Toast.LENGTH_LONG).show()
 
 
                 }
                 override fun onResponse(call: Call<APIResult>, response: Response<APIResult>) {
                     if(response.code() == 403){
-                        Toast.makeText(fragment.requireContext(),"Wrong Username or Password!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(fragment.requireContext(),"Username ou password errada!", Toast.LENGTH_LONG).show()
                     }else{
                         val result : APIResult? = response.body()
                         if(result?.code=="200"){
                             Toast.makeText(fragment.requireContext(),"${result.description}!", Toast.LENGTH_LONG).show()
                             removeFragment(fragment)
                         }else{
-                            Toast.makeText(fragment.requireContext(),"Error!", Toast.LENGTH_LONG).show()
+                            Toast.makeText(fragment.requireContext(),"Erro!", Toast.LENGTH_LONG).show()
 
                         }
 
@@ -281,13 +281,13 @@ user.value?.let{loadUserGroups(it.userId)}
             object : Callback<APIResult> {
                 override fun onFailure(call: Call<APIResult>, t: Throwable) {
                     t.printStackTrace()
-                    Toast.makeText(fragment.requireContext(),"Login", Toast.LENGTH_LONG).show()
+                    Toast.makeText(fragment.requireContext(),"Entrar", Toast.LENGTH_LONG).show()
 
 
                 }
                 override fun onResponse(call: Call<APIResult>, response: Response<APIResult>) {
                     if(response.code() == 403){
-                        Toast.makeText(fragment.requireContext(),"Wrong Username or Password!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(fragment.requireContext(),"Username ou password errada!", Toast.LENGTH_LONG).show()
                     }else{
                         val result : APIResult? = response.body()
                         if(result?.code=="200"){
