@@ -2,16 +2,16 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="Log In"
+    <item android:title="@string/login"
         android:id="@+id/item_login"
         android:icon="@drawable/round_account_circle_24"
         />
-    <item android:title="Groups"
+    <item android:title="@string/groups"
 
         android:id="@+id/item_groups"
         android:icon="@drawable/baseline_groups_24"
         />
-    <item android:title="About"
+    <item android:title="@string/about"
         android:id="@+id/item_about"
         android:icon="@drawable/about"
 

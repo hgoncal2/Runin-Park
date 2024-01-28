@@ -28,7 +28,7 @@
             android:layout_gravity="center"
             android:layout_weight="0"
             android:gravity="center"
-            android:text="Hugo Gonçalves\nAluno 23327"
+            android:text="@string/hugo_gon_alves_naluno_23327"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -47,7 +47,7 @@
             android:layout_gravity="center"
             android:layout_weight="0"
             android:gravity="center"
-            android:text="Daniel Santos\nAluno 23298"
+            android:text="@string/daniel_santos_naluno_23298"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -68,7 +68,7 @@
         android:layout_gravity="bottom"
         android:layout_margin="50dp"
         android:gravity="bottom|center"
-        android:text="Esta aplicação foi desenvolvida no âmbito da cadeira de Desenvolvimento de Aplicações Móveis, do curso de Licenciatura de Engenharia Informática, do Instituto Politécnico de Tomar, pelos alunos Daniel Santos e Hugo Gonçalves."
+        android:text="@string/about_us_long_text"
         android:textDirection="ltr"
         android:textSize="20sp" />
 

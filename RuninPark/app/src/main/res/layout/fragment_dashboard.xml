@@ -55,7 +55,7 @@
                 android:layout_marginStart="0dp"
                 android:layout_marginBottom="0dp"
                 android:contentDescription="dashboard_user_info"
-                android:text="User Info" />
+                android:text="@string/user_info" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
@@ -65,7 +65,7 @@
                 android:layout_marginEnd="137dp"
                 android:layout_marginBottom="0dp"
                 android:contentDescription="dashboard_groups"
-                android:text="My Groups" />
+                android:text="@string/my_groups" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
@@ -75,7 +75,7 @@
                 android:layout_marginEnd="0dp"
                 android:layout_marginBottom="0dp"
                 android:contentDescription="dashboard_posts"
-                android:text="Posts" />
+                android:text="@string/posts" />
         </com.google.android.material.tabs.TabLayout>
 
         <FrameLayout

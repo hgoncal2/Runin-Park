@@ -4,15 +4,23 @@ plugins {
 }
 
 android {
-    namespace = "com.example.myapplication"
+    signingConfigs {
+        create("config") {
+            storeFile = file("C:\\Users\\hugo2\\runinPark.jks")
+            storePassword = "hugo2023"
+            keyAlias = "keyR"
+            keyPassword = "hugo2023"
+        }
+    }
+    namespace = "com.ipt.runinpark"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.myapplication"
+        applicationId = "com.ipt.runinpark"
         minSdk = 24
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 3
+        versionName = "3.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -21,6 +29,7 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("config")
         }
     }
     compileOptions {

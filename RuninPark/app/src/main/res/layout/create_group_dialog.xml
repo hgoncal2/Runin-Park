@@ -25,7 +25,7 @@
                 android:layout_height="133dp"
                 android:gravity="center"
                 android:padding="10dp"
-                android:text="Create group"
+                android:text="@string/create_group"
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold"
@@ -42,14 +42,14 @@
                     android:id="@+id/textView9"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Name" />
+                    android:text="@string/group_name" />
 
                 <EditText
                     android:id="@+id/group_name_dialog"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:hint="Group Name"
+                    android:hint="@string/group_name"
                     android:inputType="text"
                     android:minHeight="48dp" />
 
@@ -58,14 +58,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
-                    android:text="City" />
+                    android:text="@string/group_city" />
 
                 <EditText
                     android:id="@+id/group_city_dialog"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:hint="Group City"
+                    android:hint="@string/group_city"
                     android:inputType="text"
                     android:minHeight="48dp" />
 
@@ -74,7 +74,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:text="Create Group" />
+                    android:text="@string/create_group_btn" />
             </LinearLayout>
 
         </LinearLayout>

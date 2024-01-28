@@ -45,7 +45,7 @@
             android:layout_weight="0"
             android:paddingTop="5dp"
             android:paddingBottom="20dp"
-            android:text="sefesefssf"
+            android:text="@string/nome_falso"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -56,7 +56,7 @@
             android:layout_marginTop="4dp"
             android:gravity="center"
             android:paddingTop="0dp"
-            android:text="Name"
+            android:text="@string/name"
             android:textSize="16sp" />
 
         <EditText
@@ -79,7 +79,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:paddingTop="0dp"
-            android:text="Last Name"
+            android:text="@string/last_name"
             android:textSize="16sp" />
 
         <EditText
@@ -102,7 +102,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:paddingTop="0dp"
-            android:text="Birth Date"
+            android:text="@string/birth_date"
             android:textSize="16sp" />
 
         <com.vicmikhailau.maskededittext.MaskedEditText
@@ -127,7 +127,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:paddingTop="0dp"
-            android:text="Weight(kg) "
+            android:text="@string/weight_kg"
             android:textSize="16sp" />
 
         <EditText
@@ -152,7 +152,7 @@
 
             android:gravity="center"
             android:paddingTop="0dp"
-            android:text="Height(m)"
+            android:text="@string/height_m"
             android:textSize="16sp" />
 
         <EditText
@@ -176,7 +176,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:paddingTop="0dp"
-            android:text="Address"
+            android:text="@string/address"
             android:textSize="16sp" />
 
         <EditText
