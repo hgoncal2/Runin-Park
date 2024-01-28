@@ -9,6 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.ipt.runinpark.databinding.FragmentGroupMembersBinding
 import com.ipt.runinpark.model.User
 import com.ipt.runinpark.ui.adapter.MembersListAdapter
@@ -59,6 +60,11 @@ class GroupMembersFragment : Fragment() {
         })
 
         return groupMembersFragmentBinding.root
+    }
+    override fun onResume() {
+        //Dá foco no item da dashboard na navigation bar
+        activity?.findViewById<BottomNavigationView>(com.ipt.runinpark.R.id.bottomNavView)?.menu?.getItem(1)?.setChecked(true)
+        super.onResume()
     }
 
 

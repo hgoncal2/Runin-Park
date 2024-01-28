@@ -7,7 +7,7 @@
         android:icon="@drawable/user_logged_in"
 
         />
-    <item android:title="@string/my_groups"
+    <item android:title="@string/my_groups_nav"
 
         android:id="@+id/item_my_groups"
         android:icon="@drawable/my_groups"

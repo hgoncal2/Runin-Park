@@ -12,6 +12,8 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.ipt.runinpark.R
 import com.ipt.runinpark.databinding.FragmentUserInfoBinding
 import com.ipt.runinpark.model.User
 import com.ipt.runinpark.viewModel.UserViewModel
@@ -152,6 +154,10 @@ viewModel.updateUser(newUser,this)
 
         }
         return userInfoBinding.root
+    }
+    override fun onResume() {
+        activity?.findViewById<BottomNavigationView>(R.id.bottomNavView)?.menu?.getItem(0)?.setChecked(true)
+        super.onResume()
     }
 
     //carrega a informação de um User

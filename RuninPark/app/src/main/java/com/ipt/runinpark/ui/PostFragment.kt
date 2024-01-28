@@ -15,7 +15,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.io.IOUtils
+import com.ipt.runinpark.R
 import com.ipt.runinpark.databinding.FragmentPostBinding
 import com.ipt.runinpark.model.Photo
 import com.ipt.runinpark.model.Post
@@ -140,6 +142,10 @@ if(uri == null){
 
 
 }
+    override fun onResume() {
+        activity?.findViewById<BottomNavigationView>(R.id.bottomNavView)?.menu?.getItem(1)?.setChecked(true)
+        super.onResume()
+    }
     //dá upload na foto
     private fun uploadPhoto(file : File){
 

@@ -7,10 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.ipt.runinpark.databinding.FragmentLoginBinding
 import com.ipt.runinpark.model.Token
 import com.ipt.runinpark.viewModel.UserViewModel
-import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 // TODO: Rename parameter arguments, choose names that match

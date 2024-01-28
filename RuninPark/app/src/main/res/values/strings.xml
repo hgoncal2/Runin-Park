@@ -53,4 +53,6 @@
     <string name="dashboard">DashBoard</string>
     <string name="logout">Logout</string>
     <string name="carregar_foto">Carregar Foto</string>
+    <string name="my_groups_nav">Os meus grupos</string>
+    <string name="add_group">Adicionar grupo</string>
 </resources>

@@ -10,6 +10,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.ipt.runinpark.R
 import com.ipt.runinpark.databinding.FragmentGroupsBinding
 import com.ipt.runinpark.dialogs.AddGroupDialog
@@ -17,7 +18,6 @@ import com.ipt.runinpark.dialogs.CreateGroupDialog
 import com.ipt.runinpark.model.Group
 import com.ipt.runinpark.ui.adapter.GroupListAdapter
 import com.ipt.runinpark.viewModel.UserViewModel
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch

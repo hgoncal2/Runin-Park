@@ -10,6 +10,7 @@ import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.ipt.runinpark.R
 import com.ipt.runinpark.databinding.FragmentUserProfileBinding
 import com.ipt.runinpark.viewModel.UserViewModel
@@ -49,6 +50,10 @@ class UserProfileFragment : Fragment() {
         })
 
         return userProfileFragmentBinding.root
+    }
+    override fun onResume() {
+        activity?.findViewById<BottomNavigationView>(R.id.bottomNavView)?.menu?.getItem(1)?.setChecked(true)
+        super.onResume()
     }
     //carrega a foto de perfil do user
     private fun loadProfilePic(path: String, imageView: ImageView, cache: Boolean){

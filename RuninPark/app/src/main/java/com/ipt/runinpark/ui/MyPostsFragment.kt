@@ -9,6 +9,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.ipt.runinpark.R
 import com.ipt.runinpark.databinding.FragmentMyPostsBinding
 import com.ipt.runinpark.model.Post
 import com.ipt.runinpark.ui.adapter.PostListAdapter
@@ -64,6 +66,10 @@ class MyPostsFragment : Fragment() {
 
 
         return dashBoardPostsBinding.root
+    }
+    override fun onResume() {
+        activity?.findViewById<BottomNavigationView>(R.id.bottomNavView)?.menu?.getItem(0)?.setChecked(true)
+        super.onResume()
     }
 
 

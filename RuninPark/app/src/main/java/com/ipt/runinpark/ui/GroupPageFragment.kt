@@ -19,14 +19,14 @@ import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.tabs.TabLayout
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.io.IOUtils
 import com.ipt.runinpark.R
 import com.ipt.runinpark.databinding.FragmentGroupPageBinding
 import com.ipt.runinpark.model.Photo
 import com.ipt.runinpark.retrofit.RetrofitInit
 import com.ipt.runinpark.viewModel.UserViewModel
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.tabs.TabLayout
-import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.io.IOUtils
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Call

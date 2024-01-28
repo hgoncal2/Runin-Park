@@ -20,13 +20,14 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.io.IOUtils
 import com.ipt.runinpark.R
 import com.ipt.runinpark.databinding.FragmentGroupRunsBinding
 import com.ipt.runinpark.dialogs.CreateRunDialog
 import com.ipt.runinpark.model.Run
 import com.ipt.runinpark.ui.adapter.RunListAdapter
 import com.ipt.runinpark.viewModel.UserViewModel
-import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.io.IOUtils
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -142,6 +143,10 @@ class GroupRunsFragment : Fragment() {
             }
         }
         return groupRunsBinding.root
+    }
+    override fun onResume() {
+        activity?.findViewById<BottomNavigationView>(R.id.bottomNavView)?.menu?.getItem(1)?.setChecked(true)
+        super.onResume()
     }
     private fun changeImage(uri: Uri?) : File?{
         if(uri == null){

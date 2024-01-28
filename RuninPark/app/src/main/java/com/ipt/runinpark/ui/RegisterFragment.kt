@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.ipt.runinpark.R
 import com.ipt.runinpark.databinding.FragmentRegisterBinding
 import com.ipt.runinpark.viewModel.UserViewModel
 
@@ -30,6 +32,9 @@ class RegisterFragment : Fragment() {
 
         return registerBinding.root
     }
-
+    override fun onResume() {
+        activity?.findViewById<BottomNavigationView>(R.id.bottomNavView)?.menu?.getItem(0)?.setChecked(true)
+        super.onResume()
+    }
 
 }
