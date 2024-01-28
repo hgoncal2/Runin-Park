@@ -42,15 +42,19 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
 
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+
+    //Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.3.0")
+    //Gson
     implementation("com.squareup.retrofit2:converter-gson:2.3.0")
     implementation("androidx.fragment:fragment-ktx:1.3.2")
+    //OKHTTP
     implementation("com.squareup.okhttp3:okhttp:4.9.2")
+    //MaskedEditText
     implementation("io.github.vicmikhailau:MaskedEditText:5.0.1")
-    //after text changed
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
-    implementation("com.google.firebase:firebase-crashlytics-buildtools:2.9.9")
+    //Glide
     implementation("com.github.bumptech.glide:glide:4.14.2")
+    implementation("com.google.firebase:firebase-crashlytics-buildtools:2.9.9")
     annotationProcessor("com.github.bumptech.glide:compiler:4.14.2")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
