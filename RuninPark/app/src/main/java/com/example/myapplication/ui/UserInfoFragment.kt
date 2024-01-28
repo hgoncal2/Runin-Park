@@ -16,16 +16,7 @@ import com.example.myapplication.databinding.FragmentUserInfoBinding
 import com.example.myapplication.model.User
 import com.example.myapplication.viewModel.UserViewModel
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [UserInfoFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class UserInfoFragment : Fragment() {
     private lateinit var newUser: User
     private lateinit var userInfoBinding: FragmentUserInfoBinding
@@ -39,9 +30,9 @@ class UserInfoFragment : Fragment() {
     ): View? {
 
         userInfoBinding = FragmentUserInfoBinding.inflate(inflater,container,false)
-        // Inflate the layout for this fragment
 
         loadUserInfo()
+        //impede o User de inserir dados nos campos
         userInfoBinding.name.keyListener = null;
         userInfoBinding.lastName.keyListener = null;
         userInfoBinding.birthDate.keyListener = null;
@@ -49,24 +40,25 @@ class UserInfoFragment : Fragment() {
         userInfoBinding.height.keyListener = null;
         userInfoBinding.address.keyListener = null;
 
-
+        //permite o User alterar ou inserir dados no campo 'name'
         userInfoBinding.editName.setOnClickListener{
             userInfoBinding.name.inputType = InputType.TYPE_CLASS_TEXT
 
             userInfoBinding.name.setSelection(userInfoBinding.name.text.length)
             viewModel.showKeyboard(this)
             userInfoBinding.name.requestFocus()
-
-
         }
+
+        //permite o User alterar ou inserir dados no campo 'lastName'
         userInfoBinding.editLastName.setOnClickListener{
             userInfoBinding.lastName.inputType = InputType.TYPE_CLASS_TEXT
 
             userInfoBinding.lastName.setSelection(userInfoBinding.lastName.text.length)
             viewModel.showKeyboard(this)
             userInfoBinding.lastName.requestFocus()
-
         }
+
+        //permite o User alterar ou inserir dados no campo 'birthDate'
         userInfoBinding.editBirthDate.setOnClickListener{
             userInfoBinding.birthDate.inputType = InputType.TYPE_CLASS_DATETIME
 
@@ -76,30 +68,33 @@ class UserInfoFragment : Fragment() {
             userInfoBinding.birthDate.focusable= View.FOCUSABLE
         }
 
-
+        //permite o User alterar ou inserir dados no campo 'weight'
         userInfoBinding.editWeight.setOnClickListener{
             userInfoBinding.weight.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
 
             userInfoBinding.weight.text?.let { it1 -> userInfoBinding.weight.setSelection(it1.length) }
             viewModel.showKeyboard(this)
             userInfoBinding.weight.requestFocus()
-
         }
+
+        //permite o User alterar ou inserir dados no campo 'height'
         userInfoBinding.editHeight.setOnClickListener{
             userInfoBinding.height.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
 
             userInfoBinding.height.text?.let { it1 -> userInfoBinding.height.setSelection(it1.length) }
             viewModel.showKeyboard(this)
             userInfoBinding.height.requestFocus()
-
         }
 
+        //permite o User alterar ou inserir dados no campo 'address'
         userInfoBinding.editAddress.setOnClickListener{
             userInfoBinding.address.inputType = InputType.TYPE_CLASS_TEXT
             userInfoBinding.address.text?.let { it1 -> userInfoBinding.address.setSelection(it1.length) }
             viewModel.showKeyboard(this)
             userInfoBinding.address.requestFocus()
         }
+
+        //guarda as alterações feitas pelo User
         userInfoBinding.save.setOnClickListener{
             newUser=viewModel.user.value!!
 
@@ -159,6 +154,7 @@ viewModel.updateUser(newUser,this)
         return userInfoBinding.root
     }
 
+    //carrega a informação de um User
     @SuppressLint("SetTextI18n")
     private fun loadUserInfo(){
         viewModel.user.observe(viewLifecycleOwner, Observer {

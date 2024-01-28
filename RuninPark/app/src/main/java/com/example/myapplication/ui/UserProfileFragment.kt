@@ -24,6 +24,7 @@ class UserProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         userProfileFragmentBinding = FragmentUserProfileBinding.inflate(inflater,container,false)
+        //impede o User de inserir dados nos campos
         userProfileFragmentBinding.profileName.keyListener = null;
         userProfileFragmentBinding.profileLastName.keyListener = null;
         userProfileFragmentBinding.profileBirthDate.keyListener = null;
@@ -35,7 +36,6 @@ class UserProfileFragment : Fragment() {
             viewModel.selectedUser.value?.let {
                 it.let {
                     it.username?.let { v -> userProfileFragmentBinding.profileUsername.setText(v) } ?: userProfileFragmentBinding.profileUsername.setText("")
-
                     it.name?.let { v -> userProfileFragmentBinding.profileName.setText(v) } ?: userProfileFragmentBinding.profileName.setText("")
                     it.lastName?.let{v -> userProfileFragmentBinding.profileLastName.setText(v)} ?: userProfileFragmentBinding.profileLastName.setText("")
                     it.birthDate?.let{v -> userProfileFragmentBinding.profileBirthDate.setText(viewModel.dateFormatter.format(v))} ?: userProfileFragmentBinding.profileBirthDate.setText("")
@@ -47,9 +47,10 @@ class UserProfileFragment : Fragment() {
 
             }
         })
-        // Inflate the layout for this fragment
+
         return userProfileFragmentBinding.root
     }
+    //carrega a foto de perfil do user
     private fun loadProfilePic(path: String, imageView: ImageView, cache: Boolean){
         val options: RequestOptions = RequestOptions()
             .centerCrop()

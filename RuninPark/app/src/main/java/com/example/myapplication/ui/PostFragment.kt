@@ -38,8 +38,6 @@ class PostFragment : Fragment() {
     private val viewModel: UserViewModel by activityViewModels()
     private  var  imgUri : Uri? = null
     private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-        // Callback is invoked after the user selects a media item or closes the
-        // photo picker.
         if (uri != null) {
             Log.d("PhotoPicker", "Selected URI: $uri")
             //changeImage(uri)
@@ -58,7 +56,6 @@ class PostFragment : Fragment() {
     ): View {
 
         postFragmentBinding = FragmentPostBinding.inflate(inflater,container,false)
-        // Inflate the layout for this fragment
 
 
         val adapter = PostListAdapter(postsList,this@PostFragment.requireContext(),viewModel.user.value?.userId,viewModel.selectedGroup.value?.ownerId){
@@ -76,11 +73,13 @@ class PostFragment : Fragment() {
                 adapter.notifyDataSetChanged()
             }
         })
+        //selecionar uma foto para o post ao clicar
         postFragmentBinding.btnSelFoto.setOnClickListener{
 
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
 
         }
+        //publicar o post
         postFragmentBinding.btnSubmitPost.setOnClickListener{
             if((postFragmentBinding.postTextFrag.text.isNotEmpty() && postFragmentBinding.postTextFrag.text.isNotBlank()) || imgUri!=null){
                 viewModel.createPost(viewModel.selectedGroup.value?.groupId!!,postFragmentBinding.postTextFrag.text.toString(),changeImage(imgUri))
@@ -112,6 +111,7 @@ class PostFragment : Fragment() {
         return postFragmentBinding.root
     }
 
+    //adiciona uma foto ao post
     private fun addImage(uri: Uri){
         postFragmentBinding.postImage.setImageURI(uri)
         postFragmentBinding.postImage.visibility=View.VISIBLE
@@ -140,6 +140,7 @@ if(uri == null){
 
 
 }
+    //dá upload na foto
     private fun uploadPhoto(file : File){
 
         val call = viewModel.selectedGroup.value?.groupId?.let {
