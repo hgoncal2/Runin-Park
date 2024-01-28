@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
@@ -35,26 +34,16 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [DashBoardFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class DashBoardFragment : Fragment() {
-    // TODO: Rename and change types of parameters
+
     private val viewModel: UserViewModel by activityViewModels()
     private lateinit var dashBoardBinding: FragmentDashboardBinding
+    //Callback para activity de escolher imagem da galeria
     private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-        // Callback is invoked after the user selects a media item or closes the
-        // photo picker.
+        //se for escolhida uma imagem
         if (uri != null) {
             changeImage(uri)
-        } else {
         }
     }
 
@@ -63,19 +52,21 @@ class DashBoardFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         dashBoardBinding= FragmentDashboardBinding.inflate(inflater,container,false)
+        //Dar load da foto de perfil por defeito
         getProfilePicture()
         dashBoardBinding.profilePicture.setOnClickListener{
+            //Popup de carregar nova fotografia
             showPopup(it)
         }
+
+        //Observa mudanças no objeto User
         viewModel.user.observe(viewLifecycleOwner, Observer {
             it?.let {
-
                 dashBoardBinding.dashboardUsername.text = it.username
                 viewModel.replaceDashboardFragment(this@DashBoardFragment,UserInfoFragment(),dashBoardBinding.dashboardPlaceholder)
                 it.profilePhoto?.let { pic -> viewModel.loadPic(pic,dashBoardBinding.profilePicture,false,this,R.drawable.user_logged_in) }
-
 
             }
 
@@ -83,7 +74,7 @@ class DashBoardFragment : Fragment() {
 
         })
 
-
+        //Saber qual tab item da tab foi escolhido
         dashBoardBinding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 when(tab?.contentDescription){
@@ -94,13 +85,11 @@ class DashBoardFragment : Fragment() {
             }
 
             override fun onTabReselected(tab: TabLayout.Tab?) {
-                print(tab?.id)
-                print("")
+
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
-                print(tab?.id)
-                print("")
+
             }
 
 
@@ -111,18 +100,18 @@ class DashBoardFragment : Fragment() {
     }
 
     override fun onResume() {
+        //Dá foco no item da dashboard na navigation bar
         activity?.findViewById<BottomNavigationView>(com.example.myapplication.R.id.bottomNavView)?.menu?.getItem(0)?.setChecked(true)
-
         super.onResume()
     }
+    //Converte a imagem selecionada pelo uilizador num objeto do tipo File,e de seguida feito upload para API
     private fun changeImage(uri: Uri){
         val imgUri = uri
-        val path = imgUri?.path
+        val path = imgUri.path
         val path2 = Environment.getExternalStorageDirectory().path
         val parcelFileDescriptor = imgUri?.let { it1 ->
             this.requireContext().contentResolver.openFileDescriptor(
                 it1, "r", null)
-
         }
         val inputStream = FileInputStream(parcelFileDescriptor?.fileDescriptor)
         val file = File(this.requireContext().cacheDir, "dwadw")
@@ -130,39 +119,21 @@ class DashBoardFragment : Fragment() {
         IOUtils.copy(inputStream, outputStream)
         uploadPhoto(file)
     }
-
+//Mostra o popup que permite ao utilizador "carregar foto"
     private fun showPopup(view: View) {
         val popup = PopupMenu(this@DashBoardFragment.requireContext(), view)
         popup.inflate(R.menu.profile_popup_menu)
-
         popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item: MenuItem? ->
-
             when (item!!.itemId) {
                 R.id.view_profile -> {
                     pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-
-
                 }
-
             }
-
             true
         })
-
-
-
         popup.show()
     }
-    override fun onHiddenChanged(hidden: Boolean) {
-        if(!hidden){
-            activity?.findViewById<BottomNavigationView>(com.example.myapplication.R.id.bottomNavView)?.menu?.getItem(0)?.setChecked(true)
-
-
-        }
-
-    }
-
-
+    /*
     private fun loadProfilePic(path: String,imageView: ImageView,cache: Boolean){
         val options: RequestOptions = RequestOptions()
             .centerCrop()
@@ -173,6 +144,9 @@ class DashBoardFragment : Fragment() {
             DiskCacheStrategy.NONE).skipMemoryCache(cache).apply(options).timeout(10000).into(imageView)
 
     }
+    */
+
+    //Função que faz upload da foto de perfil para a API
     private fun uploadPhoto(file : File){
 
         val call = RetrofitInit().photoService().uploadPhoto(
@@ -183,12 +157,13 @@ class DashBoardFragment : Fragment() {
             object : Callback<Photo> {
                 override fun onFailure(call: Call<Photo>, t: Throwable) {
                     t.printStackTrace()
-                    Toast.makeText(this@DashBoardFragment.context,"Error Uploading Image!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@DashBoardFragment.context,"Erro ao carregar imagem!", Toast.LENGTH_LONG).show()
 
                 }
                 override fun onResponse(call: Call<Photo>, response: Response<Photo>) {
+                    //Valida se o utilizador tem permissões para mudar foto de perfil
                     if(response.code() == 403){
-                        Toast.makeText(this@DashBoardFragment.context,"Wrong Username or Password!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@DashBoardFragment.context,"Erro ao carregar imagem!Não autorizado!", Toast.LENGTH_LONG).show()
                     }else{
                         response.body().let {
                             viewModel.user.value?.profilePhoto=it?.path
@@ -208,6 +183,7 @@ class DashBoardFragment : Fragment() {
             }
         )
     }
+    //Insere a foto de perfil por defeito na view correspondente
     private fun getProfilePicture(){
         val options: RequestOptions = RequestOptions()
             .centerCrop()

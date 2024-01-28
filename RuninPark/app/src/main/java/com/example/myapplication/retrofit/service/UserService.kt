@@ -18,10 +18,12 @@ interface UserService {
     @POST("login")
     fun login(@Query("username") username: String?,
                  @Query("password") password: String?): Call<Token>
-    //Devolve um utilizador
-    @GET("users/{username}")
+
+//Remove utilizador de um grupo
     @DELETE("groups/{groupId}/members")
     fun removeUserFromGroup(@Header("auth") token: String?,@Path("groupId") groupId:Int): Call<APIResult>
+    //Devolve um utilizador
+    @GET("users/{username}")
     fun getUser(@Path("username") username:String): Call<User>
     //Devolve um utilizador,dado um token
     @GET("users/auth/{token}")

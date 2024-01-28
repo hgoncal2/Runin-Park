@@ -15,11 +15,6 @@ import com.example.myapplication.ui.adapter.GroupListAdapter
 import com.example.myapplication.viewModel.UserViewModel
 
 
-/**
- * A simple [Fragment] subclass.
- * Use the [DashBoardGroups.newInstance] factory method to
- * create an instance of this fragment.
- */
 class DashBoardGroups : Fragment() {
     private val viewModel: UserViewModel by activityViewModels()
 
@@ -29,33 +24,38 @@ class DashBoardGroups : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         dashBoardGroupsBinding= FragmentDashBoardGroupsBinding.inflate(inflater,container,false)
+        //Carrega gruppos de um utilizador
         viewModel.user.value?.let { viewModel.loadUserGroups(it.userId) }
 
         val recycler =dashBoardGroupsBinding.recyclerDashboardGroups
         recycler.layoutManager = LinearLayoutManager(this.requireContext())
         recycler.addItemDecoration(DividerItemDecoration(this.requireContext(), LinearLayoutManager.VERTICAL))
-
+        //cria adapter com um lista local
         val adapter = GroupListAdapter(groupList,this.requireContext(),
             viewModel.user.value?.userId
         ){
-
+//Vai para a página de um grupo
             viewModel.selectedGroup.value = it
             viewModel.replaceFragment(this, GroupPageFragment())
         }
 
         recycler.adapter = adapter
         viewModel.userGroups.observe(viewLifecycleOwner, Observer {
+            //filtra grupos de um utilizador para mostrar apenas aqueles criados por este
             if(!viewModel.userGroups.value?.filter { it.ownerId == viewModel.user.value?.userId }.isNullOrEmpty() ){
+                //Desaparece aviso que o utilizador não tem grupos criados
                 dashBoardGroupsBinding.noGroupsCreated.visibility = View.GONE
+                //lista local é limpa
                 groupList.clear()
+                //e consequentemente adiciona-se a essa lista os grupos pretendidos
                 groupList.addAll(viewModel.userGroups.value?.filter { it.ownerId == viewModel.user.value?.userId } as MutableList<Group>)
+                //E avisa-se o adapter que o data set mudou,para ele dar refresh
                 adapter?.notifyDataSetChanged()
-
             }else{
-
+                    //Mostra aviso que o utilizador não tem grupos criados
                     dashBoardGroupsBinding.noGroupsCreated.visibility = View.VISIBLE
 
             }

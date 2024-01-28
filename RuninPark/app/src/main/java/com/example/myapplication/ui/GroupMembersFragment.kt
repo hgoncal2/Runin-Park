@@ -14,16 +14,7 @@ import com.example.myapplication.model.User
 import com.example.myapplication.ui.adapter.MembersListAdapter
 import com.example.myapplication.viewModel.UserViewModel
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [GroupMembersFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class GroupMembersFragment : Fragment() {
     private lateinit var groupMembersFragmentBinding: FragmentGroupMembersBinding
     private var groupMembers = mutableListOf<User>()
@@ -35,9 +26,12 @@ class GroupMembersFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
+    ): View {
+
         groupMembersFragmentBinding = FragmentGroupMembersBinding.inflate(inflater,container,false)
+        //Existe um click listener para duas possibilidades:
+        //1 - É clicado na foto de perfil de um utilizador,que deverá redirecionar para a página de perfil desse utilizador
+        //2- é clicado no item de excluir um utilizador,e consequentemente esse utilizador deverá ser excluido do grupo
         val adapter = MembersListAdapter(groupMembers,this@GroupMembersFragment.requireContext(),viewModel.selectedGroup.value?.ownerId,viewModel.user.value?.userId){
             user,desc ->
                 if(desc == "profile"){
@@ -53,7 +47,9 @@ class GroupMembersFragment : Fragment() {
         }
         groupMembersFragmentBinding.groupMembersView.adapter=adapter
         groupMembersFragmentBinding.groupMembersView.layoutManager= LinearLayoutManager(this@GroupMembersFragment.requireContext())
+       //Adiciona linha horizontal que separa cada item da lista
         groupMembersFragmentBinding.groupMembersView.addItemDecoration(DividerItemDecoration(this.context, LinearLayoutManager.VERTICAL))
+       //Se os membros do grupo mudarem,é atualizada a lista
         viewModel.groupMembers.observe(viewLifecycleOwner, Observer {
             viewModel.groupMembers.value?.let {
                 groupMembers.clear()

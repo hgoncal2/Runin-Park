@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -38,22 +37,17 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 
 
-/**
- * A simple [Fragment] subclass.
- * Use the [GroupPageFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+
 class GroupPageFragment : Fragment() {
     private val viewModel: UserViewModel by activityViewModels()
     private lateinit var groupPageBinding: FragmentGroupPageBinding
+    //Callback para activity de escolher imagem da galeria
     private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-        // Callback is invoked after the user selects a media item or closes the
-        // photo picker.
         if (uri != null) {
-            Log.d("PhotoPicker", "Selected URI: $uri")
+
             changeImage(uri)
         } else {
-            Log.d("PhotoPicker", "No media selected")
+
         }
     }
 
@@ -63,16 +57,20 @@ class GroupPageFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         groupPageBinding = FragmentGroupPageBinding.inflate(layoutInflater,container,false)
+        //Mostra o popup que permite ao utilizador "carregar foto"
+        //Este popup só é mostrado ao owner do grupo
         groupPageBinding.groupPhoto.setOnClickListener{
             viewModel.user.value?.userId.let { id -> if(id == viewModel.selectedGroup.value?.ownerId) showPopup(it) }
-
         }
+        //Dá reset ao posts de um grupo.
         viewModel.groupPosts.value=null
 
+        //Preenche campos que identificam um grupo nas respetivas views
         viewModel.selectedGroup.observe(viewLifecycleOwner,{
             viewModel.selectedGroup.value?.let {
                 groupPageBinding.groupName.text = it.name
                 groupPageBinding.groupCity.text = it.city
+                //Se não tiver foto de perfil,carrega a por defeito
                 viewModel.selectedGroup.value?.groupPhoto?.let {
                     viewModel.loadPic(it,groupPageBinding.groupPhoto,true,this, R.drawable.default_groups)
 
@@ -98,8 +96,7 @@ class GroupPageFragment : Fragment() {
 
 
             override fun onTabReselected(tab: TabLayout.Tab?) {
-                print(tab?.id)
-                print("")
+
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
@@ -112,17 +109,17 @@ class GroupPageFragment : Fragment() {
 
 
 
-
+//Permite ao utilizador juntar se a um grupo
         groupPageBinding.btnJoinGroup.setOnClickListener{
             viewModel.selectedGroup.value?.groupId?.let { it1 -> viewModel.joinGroup(it1,this) }
         }
 
 
 
-
+//Permite ao utilizador sair de um grupo,com mensagem de confirmação
         groupPageBinding.btnLeaveGroup.setOnClickListener{
             val builder = AlertDialog.Builder(this.requireContext())
-            builder.setMessage("Are you sure you want to leave this group?")
+            builder.setMessage("Tem a certeza  que deseja sair do grupo?")
                 .setCancelable(true)
                 .setPositiveButton("Yes") { _, _ ->
                     viewModel.selectedGroup.value?.groupId?.let { it1 -> viewModel.leaveGroup(it1,this) }
@@ -138,6 +135,7 @@ class GroupPageFragment : Fragment() {
 
         viewModel.loggedIn.observe(viewLifecycleOwner) {
             if (!it) {
+                //Se o utilizador não tiver autenticado,restringe visibiliade do grupo
                 groupPageBinding.notLoggedIn.visibility = View.VISIBLE
             } else {
                 viewModel.replaceDashboardFragment(this@GroupPageFragment,PostFragment(),groupPageBinding.groupPagePlaceholder).also { viewModel.selectedGroup.value?.let { it1 ->
