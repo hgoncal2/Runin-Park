@@ -234,7 +234,7 @@ def getGroups(groupId=None):
 			if groupName is not None:
 				cursor.close()
 				cnx.close()
-				return jsonify(Code="403",Description="Group name exists!")		
+				return jsonify(Code="403",Description="Nome do grupo já existe!")		
 			token = request.headers.get("auth")
 			cursor.execute("select UserId from Users where Token = '{}'".format(token))
 			userId = cursor.fetchone()
@@ -255,7 +255,7 @@ def getGroups(groupId=None):
 				cnx.commit()
 				cursor.close()
 				cnx.close()
-				return jsonify(Code="200",Description="Group created successfully!")
+				return jsonify(Code="200",Description="Grupo criado com sucesso!")
 		cursor.close()
 		cnx.close()		
 		return "",404
@@ -429,11 +429,11 @@ def getPosts(groupId=None):
 						cnx.commit()
 						cursor.close()
 						cnx.close()
-						return jsonify(Code="200",Description="Posted succesfully!!")
+						return jsonify(Code="200",Description="Post criado com sucesso!")
 					else:
 						cursor.close()
 						cnx.close()
-						return jsonify(Code="502",Description="Error!Not authorized")
+						return jsonify(Code="502",Description="Sem autorização!")
 
 
 
@@ -621,7 +621,7 @@ def getRuns(groupId=None,runId=None):
 			cursor.close()			
 			cnx.close()
 			return jsonify(Code="200",Description="Corrida inserida com sucesso!")
-	return jsonify(Code="400",Description="Something went wrong!")
+	return jsonify(Code="400",Description="Alguma coisa correu mal!")
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',debug=True)
