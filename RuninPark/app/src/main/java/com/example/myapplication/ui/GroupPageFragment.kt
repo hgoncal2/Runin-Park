@@ -138,19 +138,20 @@ class GroupPageFragment : Fragment() {
                 //Se o utilizador não tiver autenticado,restringe visibiliade do grupo
                 groupPageBinding.notLoggedIn.visibility = View.VISIBLE
             } else {
+                //Mostra página de posts inicialmente,e carrega oists para grupo escolhido
                 viewModel.replaceDashboardFragment(this@GroupPageFragment,PostFragment(),groupPageBinding.groupPagePlaceholder).also { viewModel.selectedGroup.value?.let { it1 ->
                     viewModel.loadPosts(it1.groupId)
                 } }
 
-
                 groupPageBinding.notLoggedIn.visibility = View.GONE
                 viewModel.userGroups.observe(viewLifecycleOwner, Observer {
                     viewModel.selectedGroup.value?.let {_ ->
+                        //Se utilizador não pertence ao grupo,mostra botão de juntar
                         if( it.contains(viewModel.selectedGroup.value) == false){
                             groupPageBinding.btnLeaveGroup.visibility = View.GONE
                             groupPageBinding.btnJoinGroup.visibility = View.VISIBLE
                             groupPageBinding.btnJoinGroup.setBackgroundColor(Color.parseColor("#34eb40"))
-
+                        //Se utilizador já  pertence ao grupo,mostra botão de sair
                         }else{
                             groupPageBinding.btnLeaveGroup.visibility = View.VISIBLE
                             groupPageBinding.btnLeaveGroup.setBackgroundColor(Color.parseColor("#e81010"))
@@ -173,17 +174,13 @@ class GroupPageFragment : Fragment() {
 
             }
         }
-
-
-
-        // Inflate the layout for this fragment
         return groupPageBinding.root
     }
     override fun onResume() {
         activity?.findViewById<BottomNavigationView>(R.id.bottomNavView)?.menu?.getItem(1)?.setChecked(true)
-
         super.onResume()
     }
+
 
     private fun changeImage(uri: Uri){
         val imgUri = uri
@@ -206,15 +203,11 @@ class GroupPageFragment : Fragment() {
         popup.inflate(R.menu.profile_popup_menu)
 
         popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item: MenuItem? ->
-
             when (item!!.itemId) {
                 R.id.view_profile -> {
                     pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-
                 }
-
             }
-
             true
         })
 
@@ -222,11 +215,10 @@ class GroupPageFragment : Fragment() {
 
         popup.show()
     }
+    //Dá upload da foto de grupo
     private fun uploadPhoto(file : File){
-
         val call = viewModel.selectedGroup.value?.groupId?.let {
             RetrofitInit().photoService().uploadGroupPhoto(
-
                 image = MultipartBody.Part.createFormData("image",file.name,file.asRequestBody()),viewModel.user.value?.token?.token,
                 it
             )
@@ -235,12 +227,11 @@ class GroupPageFragment : Fragment() {
             object : Callback<Photo> {
                 override fun onFailure(call: Call<Photo>, t: Throwable) {
                     t.printStackTrace()
-                    Toast.makeText(this@GroupPageFragment.context,"Error Uploading Image!", Toast.LENGTH_LONG).show()
-
+                    Toast.makeText(this@GroupPageFragment.context,"Erro ao carregar imagem!", Toast.LENGTH_LONG).show()
                 }
                 override fun onResponse(call: Call<Photo>, response: Response<Photo>) {
                     if(response.code() == 403){
-                        Toast.makeText(this@GroupPageFragment.context,"You don't have permission!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@GroupPageFragment.context,"Erro ao carregar imagem!Não autorizado!", Toast.LENGTH_LONG).show()
                     }else{
                         response.body().let {
                             viewModel.selectedGroup.value?.groupPhoto=it?.path

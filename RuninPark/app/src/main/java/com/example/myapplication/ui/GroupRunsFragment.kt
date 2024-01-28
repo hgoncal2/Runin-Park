@@ -3,7 +3,6 @@ package com.example.myapplication.ui
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,14 +43,10 @@ class GroupRunsFragment : Fragment() {
     private var runsList = mutableListOf<Run>()
     private  var  imgUri : Uri? = null
     private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-        // Callback is invoked after the user selects a media item or closes the
-        // photo picker.
         if (uri != null) {
-            Log.d("PhotoPicker", "Selected URI: $uri")
+
             changeImage(uri)
            addImage(uri,addRunDialog)
-        } else {
-            Log.d("PhotoPicker", "No media selected")
         }
     }
 
@@ -60,12 +55,11 @@ class GroupRunsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        //Cria instância do dialog para criar corrida
          addRunDialog = object : CreateRunDialog(this.requireContext(),viewModel){}
-
         groupRunsBinding = FragmentGroupRunsBinding.inflate(inflater,container,false)
         val adapter = RunListAdapter(runsList,this@GroupRunsFragment.requireContext(),viewModel.user.value?.userId){
-               // run -> viewModel.deletePost(
-            //viewModel.user.value!!.token!!,post.groupId,post.postId,this,"group" )
+       //click listener para uma corrida,poderá ser útil no futuro
         }
         groupRunsBinding.groupRunsView.adapter=adapter
         groupRunsBinding.groupRunsView.layoutManager= LinearLayoutManager(this@GroupRunsFragment.requireContext())
@@ -77,42 +71,59 @@ class GroupRunsFragment : Fragment() {
                 adapter.notifyDataSetChanged()
             }
         })
+
         viewModel.userGroups.observe(viewLifecycleOwner, Observer {
             viewModel.selectedGroup.value?.let {_ ->
+                //se utilizador não pertence ao grupo:
                 if( it.contains(viewModel.selectedGroup.value) == false){
+                    //esconde botão de adicionar corrida
                     groupRunsBinding.addRunBtn.visibility = View.GONE
                 }else{
                     groupRunsBinding.addRunBtn.visibility = View.VISIBLE
 
                 }
             }
-
-
-
         })
 
-
         groupRunsBinding.addRunBtn.setOnClickListener{
-
-
-            if(!addRunDialog.isShowing){
+            if(!addRunDialog.isShowing) {
+                //mostra dialog de criar corrida
                 addRunDialog.show()
 
                 val window: Window? = addRunDialog.window
-                window?.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-                val createRunBtn = addRunDialog.findViewById<Button>(R.id.create_run_btn)
+                window?.setLayout(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+                /*
+              Vamos falar um bocado sobre a escolhe de estar a ir buscar os elementos do dialog aqui,e não na função que define o próprio dialog
+              Isto acontece simplesmente porque não arranjei uma boa forma de chamar a Activity de escolher a fotografia dentro da classe
+              abstracta do dialog.
+                 */
                 val hours = addRunDialog.findViewById<AppCompatEditText>(R.id.run_hours_dlg)
                 val minutes = addRunDialog.findViewById<AppCompatEditText>(R.id.run_mins_dlg)
                 val img = addRunDialog.findViewById<ImageView>(R.id.run_img_dlg)
                 val seconds = addRunDialog.findViewById<AppCompatEditText>(R.id.run_secs_dlg)
                 val distance = addRunDialog.findViewById<AppCompatEditText>(R.id.run_dist_dlg)
-                val  btn_sel =addRunDialog.findViewById<ImageButton>(R.id.btn_sel_foto_run)
-                btn_sel?.setOnClickListener{
+                val btnSel = addRunDialog.findViewById<ImageButton>(R.id.btn_sel_foto_run)
+                //Escolher foto da galeria
+                btnSel?.setOnClickListener {
                     pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                 }
-                addRunDialog.findViewById<Button>(R.id.create_run_btn).setOnClickListener{
-                    if(distance.text?.isNotEmpty() == true && distance.text?.isNotBlank() == true && hours.text?.isNotEmpty() == true && minutes.text?.isNotEmpty() == true && seconds.text?.isNotEmpty() == true){
-                        viewModel.createRun(viewModel.selectedGroup.value!!.groupId,changeImage(imgUri),distance.text.toString().toDouble(),hours.text.toString().toInt(),minutes.text.toString().toInt(),seconds.text.toString().toInt(),this)
+                //Verifica se os campos obrigatórios(horas,mins,segs e distancia) estão preenchidos
+                //E de seguida dá reset aos campos.Por alguma razão estes não estavam a ser "zerados"
+                //quando o dialog é destruído,daí isso estar a ser feito aqui.
+                addRunDialog.findViewById<Button>(R.id.create_run_btn).setOnClickListener {
+                    if (distance.text?.isNotEmpty() == true && distance.text?.isNotBlank() == true && hours.text?.isNotEmpty() == true && minutes.text?.isNotEmpty() == true && seconds.text?.isNotEmpty() == true) {
+                        viewModel.createRun(
+                            viewModel.selectedGroup.value!!.groupId,
+                            changeImage(imgUri),
+                            distance.text.toString().toDouble(),
+                            hours.text.toString().toInt(),
+                            minutes.text.toString().toInt(),
+                            seconds.text.toString().toInt(),
+                            this
+                        )
                         hours.setText("")
                         minutes.setText("")
                         seconds.setText("")
@@ -120,25 +131,19 @@ class GroupRunsFragment : Fragment() {
                         img.setImageResource(0)
                         addRunDialog.cancel()
 
-                    }else{
-                        Toast.makeText(this@GroupRunsFragment.requireContext(),"Por favor insira uma corrida válida!",
-                            Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(
+                            this@GroupRunsFragment.requireContext(),
+                            "Por favor insira uma corrida válida!",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
-
-
                 }
-
             }
-
-
-
         }
-        // Inflate the layout for this fragment
         return groupRunsBinding.root
     }
     private fun changeImage(uri: Uri?) : File?{
-
-
         if(uri == null){
             return null
         }

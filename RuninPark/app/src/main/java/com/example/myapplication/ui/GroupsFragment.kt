@@ -43,7 +43,7 @@ class GroupsFragment : Fragment() {
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
+        //dialog para ver grupos
         val groupsDialog = object : AddGroupDialog(this.requireContext(),groupsFiltered,viewModel,this@GroupsFragment){
 
         }
@@ -58,6 +58,7 @@ class GroupsFragment : Fragment() {
 
 
         groupsBinding.btnCreateGroup.setOnClickListener{
+            //dialog para criar grupo
             val createGroupDialog = object : CreateGroupDialog(this.requireContext(),viewModel,this@GroupsFragment){
 
             }
@@ -68,21 +69,19 @@ class GroupsFragment : Fragment() {
 
         }
         viewModel.loggedIn.observe(viewLifecycleOwner, Observer {
+            //Se não estiver autenticado:
             if(viewModel.loggedIn.value == false){
-
-
+                //Carrega todos os grupos,e esconde botões que permite criar/vergrupos
                 viewModel.allGroups.value?.let {}?:viewModel.loadGroups()
                 groupsBinding.addCreateBtnsLayout.visibility = View.GONE
 
-                //adicionar observer
             }else{
+                //Carrega os grupos a que um utilizador pertence
                 viewModel.user.value?.userId?.let {user ->
                     viewModel.userGroups.value?.let {} ?: viewModel.loadUserGroups(user)
                     print("adawd")
                 }
                 groupsBinding.addCreateBtnsLayout.visibility = View.VISIBLE
-
-                // viewModel.user.value?.let { loadUserGroups(it.userId) }
             }
         })
 
@@ -91,11 +90,15 @@ class GroupsFragment : Fragment() {
 
 
 
-
+//Quando clicado no botão para se juntar a um grupo,
 groupsBinding.btnAddGroup.setOnClickListener{
+    //Ao utilizador vão ser mostrados todos os grupos menos aqueles que ele já pertence
+//a variável "groupsFiltered" será o resultado dessa equação
     groupsFiltered.clear()
+    //Carregados todos os grupos do utilizador
     viewModel.user.value?.userId?.let { it1 -> viewModel.loadUserGroups(it1) }
-
+//É necessário uma corotina pois estamos a dar "collect" do estado de uma variável do tipo Flow<Int>,que irá servir como semáforo
+    //Esta variável é posta a 1 depois dos grupos terem sido carregados,e a 0 depois do processo abaixo(filtrar os grupos) estar concluído
 GlobalScope.launch (Dispatchers.Main){
     context?.let { it1 ->
         viewModel.groupsFiltered.collect { value ->
@@ -106,8 +109,7 @@ GlobalScope.launch (Dispatchers.Main){
             for(i in viewModel.userGroups.value!!){
                 idsList.add(i.groupId)
             }
-            //viewModel.allGroups.value?.filterNot {it.groupId in idsList}
-            //  ?.let { it1 -> groupsFiltered.addAll(it1.toMutableList()) }
+
             for(i in viewModel.allGroups.value!!){
                 if(i.groupId !in idsList){
                     filteredList.add(i)
@@ -116,7 +118,6 @@ GlobalScope.launch (Dispatchers.Main){
             groupsFiltered.clear()
             groupsFiltered.addAll(filteredList)
             groupsDialog.adapter?.notifyDataSetChanged()
-
             if(!groupsDialog.isShowing){
                 groupsDialog.show()
                 viewModel._groupsFiltered.value=0
@@ -126,33 +127,14 @@ GlobalScope.launch (Dispatchers.Main){
     }
 }
     viewModel.loadGroups("dialog")
-    /*
-        viewModel.loadGroups("dialog")
-        viewModel.groupsFiltered.value= emptyList()
-
-   viewModel.groupsFiltered.observe(viewLifecycleOwner,Observer{
-       it?.let {
-           if(viewModel.groupsFiltered.value?.isNotEmpty() == true){
-
-           }
-
-
-
-
-
-       }
-
-   })*/
 }
+        //Mostra avisos se não houver grupos criados ou se o utilizador não tiver em nenhum grupo
         viewModel.allGroups.observe(viewLifecycleOwner, Observer {
-
             if(viewModel.loggedIn.value == true){
                 if(viewModel.allGroups.value?.size == 0){
                     if(groupsBinding.noGroups.visibility == View.GONE){
                         groupsBinding.noGroups.visibility= View.VISIBLE
-
                     }
-
                 }else{
                     if(groupsBinding.noGroups.visibility == View.VISIBLE) groupsBinding.noGroups.visibility= View.GONE
 
