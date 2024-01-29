@@ -305,6 +305,8 @@ def getGroups(groupId=None):
 				cnx.close()
 				return "group_deleted",200	
 			else:
+				cursor.close()
+				nx.close()
 				return "No_Permission",403
 		else:
 			cursor.close()
@@ -352,6 +354,8 @@ def getGroupMembers(groupId=None):
 				cnx.close()				
 				return jsonify(Code="200",Description="Grupo eliminado com sucesso!")
 			else:
+				cursor.close()
+				cnx.close()
 				return jsonify(Code="409",Description="Não pode sair do próprio grupo")
 		cursor.execute("delete from GroupMembers where GroupId = '{}' and UserId='{}'".format(groupId,userId))
 		cnx.commit()
@@ -370,11 +374,13 @@ def delGroupMember(groupId=None,userId=None):
 	cursor.execute("select GroupAdmin from GroupMembers where GroupId = '{}' and UserId='{}'".format(groupId,ownerId))
 	owner = cursor.fetchone()['GroupAdmin']
 	if owner==1:
-			cursor.execute("delete from GroupMembers where GroupId = '{}' and UserId='{}'".format(groupId,userId))
-			cnx.commit()
-			cursor.close()
-			cnx.close()
-			return jsonify(Code="200",Description="Removeu o utilizador com sucesso!")
+		cursor.execute("delete from GroupMembers where GroupId = '{}' and UserId='{}'".format(groupId,userId))
+		cnx.commit()
+		cursor.close()
+		cnx.close()
+		return jsonify(Code="200",Description="Removeu o utilizador com sucesso!")
+	cursor.close()
+	cnx.close()
 	return jsonify(code="400",Description="Alguma coisa não correu bem!")
 
 #obter/criar posts num grupo
@@ -482,6 +488,8 @@ def delUserPosts(userId=None,postId=None):
 			cnx.close()
 			return "", 200
 		else:
+			cursor.close()
+			cnx.close()
 			return "no_permission",404
 
 
@@ -560,6 +568,8 @@ def uploadPhotoG(groupId):
 		cursor.close()
 		cnx.close()
 		return jsonify(Path="http://16.170.180.240:5000/static/img/{}.png".format(photoId))
+	cursor.close()
+	cnx.close()
 	return "",403
 
 #adiciona fotos à db
@@ -621,6 +631,8 @@ def getRuns(groupId=None,runId=None):
 			cursor.close()			
 			cnx.close()
 			return jsonify(Code="200",Description="Corrida inserida com sucesso!")
+	cursor.close()
+	cnx.close()
 	return jsonify(Code="400",Description="Alguma coisa correu mal!")
 
 if __name__ == '__main__':
