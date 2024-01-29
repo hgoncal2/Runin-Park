@@ -306,7 +306,7 @@ def getGroups(groupId=None):
 				return "group_deleted",200	
 			else:
 				cursor.close()
-				nx.close()
+				cnx.close()
 				return "No_Permission",403
 		else:
 			cursor.close()
